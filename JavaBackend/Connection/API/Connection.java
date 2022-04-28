@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import AccountMng.Account;
+
 public class Connection {
 	
 	private static String standartToken = "f65f26fa3004b13f58f04794df17cc30-bf43fa11c4789a9146937ce2c36f553e";
@@ -28,10 +30,60 @@ public class Connection {
 		accId = standartAccId;
 	}
 	
-	public Connection(String token, String url) {
-		urlString = url;
+	public Connection(String token) {
 		this.token = token;
+		urlString = standartUrlString;	
 	}
+	
+	public String getAccountIDs() {
+		Account output = new Account();
+		String jsonString = "";
+		
+		try {
+		
+			url = new URL(urlString + "/accounts");
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("Authorization","Bearer f65f26fa3004b13f58f04794df17cc30-bf43fa11c4789a9146937ce2c36f553e");
+			
+			BufferedReader br;
+			String line;
+			
+			int status;
+
+			status = connection.getResponseCode();
+
+			System.out.println(status + " " + connection.getResponseMessage());
+
+			if (status < 299) {
+				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				while ((line = br.readLine()) != null) {
+					jsonString += line;
+				}
+				br.close();
+			} else {
+				br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+				while ((line = br.readLine()) != null) {
+					jsonString += line;
+				}
+				br.close();
+			}
+			connection.disconnect();
+		} catch (MalformedURLException e) {
+			System.out.println("MalformedURLException");
+			e.printStackTrace();
+		} catch (ProtocolException e) {
+			System.out.println("ProtocolException");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("IOException");
+			e.printStackTrace();
+		}
+		
+		
+		return jsonString;
+	}
+	
 	
 	public String getApiResponseGET(String call) {
 		String jsonString = "";
