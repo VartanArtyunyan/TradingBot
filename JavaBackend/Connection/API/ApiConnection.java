@@ -11,6 +11,10 @@ public class ApiConnection {
 
 	JsonParser jsonParser = new JsonParser();
 	Connection connection = new Connection();
+	
+	public ApiConnection(Connection c) {
+		connection = c;
+	}
 
 	public ArrayList<trade> getTrades() {
 		ArrayList<trade> output = new ArrayList<>();
@@ -20,6 +24,8 @@ public class ApiConnection {
 			output = jsonParser.convertApiStringToTradesArray(apiResponseString);
 		return output;
 	}
+	
+	
 
 	public void cd() {
 		String apiResponseString = connection.getCandleStickData("EUR_JPY", null, null, "BAM","D5");
