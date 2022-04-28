@@ -1,0 +1,99 @@
+/* General Stuff */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h2,
+h3,
+a {
+  color: #34495e;
+}
+
+.logo {
+  padding-left: 20px;
+  font-size: 25px;
+  color: #34495e;
+}
+
+/* Nav Section */
+
+.logo a,
+.main-nav a {
+  padding-right: 30px;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+.main-nav a:hover {
+  color: #718daa;
+}
+
+.main-nav {
+  list-style: none;
+  display: flex;
+  text-align: center;
+}
+
+.heade {
+  z-index: 99;
+  position: fixed;
+  height: 100px;
+  width: 100%;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: space-around;
+}
+
+/* =================================
+  Media Queries
+==================================== */
+
+/* Home Section */
+
+.back-img {
+  z-index: 1;
+  width: 100vw;
+  opacity: 0.9;
+  max-height: 100vh;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  filter: blur(5px);
+}
+
+.text-pic {
+  position: absolute;
+  top: 40%;
+  left: 25%;
+  padding: 0px 25px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.text-pic h1 {
+  color: rgb(167, 155, 123);
+  font-size: 50px;
+}
+
+.text-pic p {
+  color: white;
+  font-size: 35px;
+}
+
+/* Sections General */
+
+.sections {
+  padding: 2% 20% 0% 20%;
+}

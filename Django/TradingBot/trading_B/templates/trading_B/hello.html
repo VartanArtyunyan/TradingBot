@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link href='http://fonts.googleapis.com/css?family=Rokkitt:400,700|Lato:400,300' rel='stylesheet' type='text/css'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+
+<body>
+    <header class="heade">
+        <h1 class="logo">Trading-Bot</h1>
+        <ul class="main-nav">
+            <li><a href="#Home">Home</a></li>
+            <li><a href="#AbouttheBot">About-the-Bot</a></li>
+            <li><a href="#Live-Demo">Live-Demo</a></li>
+            <li><a href="#About-Us">About-Us</a></li>
+        </ul>
+    </header>
+    <main>
+        <!-- Home Section -->
+        <div id="Home">
+            <img class="back-img" src="../../static/pictures/TradingBot.jpg" alt="">
+            <div class="text-pic">
+                <h1>Gruppe 03</h1>
+                <p>Signalbasiert (ohne Machine Learning); signale Live berechnen</p>
+            </div>
+        </div>
+        <!-- About-the-Bot Section -->
+        <div class="sections" id="AbouttheBot">
+            <h2>About the Bot</h2>
+            <div>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit voluptatibus asperiores repudiandae
+                sint magnam veritatis, porro, laboriosam iusto excepturi alias officia provident, repellat ea maiores
+                quibusdam facilis officiis impedit error sequi optio tempore. Rerum exercitationem quidem fugiat facere
+                architecto illum, et, ducimus ipsum autem laboriosam vel dolorem minima sapiente libero perferendis, ab
+                quas at asperiores voluptas blanditiis optio. Quibusdam totam tempore itaque eligendi dolor dolores
+                quasi nihil voluptates alias? Dolorum animi nisi mollitia soluta rerum repellendus, placeat totam iure
+                delectus modi. Modi consequuntur minus fugiat recusandae odit facere corporis voluptatibus, est nobis
+                distinctio. Asperiores tempora illo, repellendus tempore nostrum ex.</div>
+        </div>
+        <!-- Live-Demo Section -->
+        <div class="sections" id="Live-Demo">
+            <h2>Live Demo</h2>
+            {% block content %}
+                {% if chart %}
+                    <img src="data:image/png;base64, {{chart|safe}}"
+                {% endif %}
+            {% endblock content %} 
+        </div>
+        <!-- About-Us Section -->
+        <div class="sections" id="About-Us">
+            <h2>About us</h2>
+            <div>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit voluptatibus asperiores repudiandae
+                sint magnam veritatis, porro, laboriosam iusto excepturi alias officia provident, repellat ea maiores
+                quibusdam facilis officiis impedit error sequi optio tempore. Rerum exercitationem quidem fugiat facere
+                architecto illum, et, ducimus ipsum autem laboriosam vel dolorem minima sapiente libero perferendis, ab
+                quas at asperiores voluptas blanditiis optio. Quibusdam totam tempore itaque eligendi dolor dolores
+                quasi nihil voluptates alias? Dolorum animi nisi mollitia soluta rerum repellendus, placeat totam iure
+                delectus modi. Modi consequuntur minus fugiat recusandae odit facere corporis voluptatibus, est nobis
+                distinctio. Asperiores tempora illo, repellendus tempore nostrum ex.</div>
+        </div>
+    </main>
+</body>
+
+</html>
