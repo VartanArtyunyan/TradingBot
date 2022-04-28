@@ -4,7 +4,9 @@ package API;
 import java.util.ArrayList;
 
 import JsonParser.JsonParser;
-
+import de.fhws.Softwareprojekt.JsonCandlesCandle;
+import de.fhws.Softwareprojekt.JsonCandlesMid;
+import de.fhws.Softwareprojekt.JsonCandlesRoot;
 import positionen.trade;
 
 public class ApiConnection {
@@ -20,31 +22,47 @@ public class ApiConnection {
 		ArrayList<trade> output = new ArrayList<>();
 		String apiResponseString = connection.getApiResponseGET("trades");
 
-		if (jsonParser.isValidTradeJson(apiResponseString))
+		if (jsonParser.isValidTradeJson(apiResponseString)) 
 			output = jsonParser.convertApiStringToTradesArray(apiResponseString);
 		return output;
 	}
 	
+	public JsonCandlesRoot getJsonCandlesRoot(String instrument,String from, String to, String price, String granularity) {
+		String apiResponseString = connection.getCandleStickData(instrument, from, to, price ,granularity);
+		
+		return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
+	}
 	
 
 	public void cd() {
-		String apiResponseString = connection.getCandleStickData("EUR_JPY", null, null, "BAM","D5");
-
-		ArrayList<String> ask = jsonParser.extractAskStrings(apiResponseString);
-		for (String s : ask) {
-			System.out.println(s);
-		}
-		ArrayList<String> mid = jsonParser.extractMidStrings(apiResponseString);
-		for (String s : mid) {
-			System.out.println(s);
-		}
-		ArrayList<String> bid = jsonParser.extractBidStrings(apiResponseString);
-		for (String s : bid) {
-			System.out.println(s);
+		System.out.println("testP1");
+		String apiResponseString = connection.getCandleStickData("EUR_JPY", null, null, "M","D5");
+		
+		//String[] sArray = apiResponseString.split(",");
+		//System.out.println(sArray.length + " test");
+		//for(int i = 0; i < sArray.length; i++) {
+		//System.out.println(sArray[i]);
+		//}
+		//System.out.println("testP2");
+		////for (String s : mid) {
+			//System.out.println(s);
+		//}
+		
+		JsonCandlesRoot jcr = jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
+		
+		System.out.println(jcr.instrument);
+		System.out.println(jcr.granularity);
+		for(JsonCandlesCandle jcc : jcr.candles) {
+			System.out.println(jcc.complete);
+			System.out.println(jcc.mid.o);
 		}
 		
-		System.out.println(jsonParser.getVarFromJson(bid.get(0), "o"));
+		
+		//System.out.println(jsonParser.getVarFromJson(mid.get(0), "o"));
 	}
+	
+	
+	
 	
 	
 

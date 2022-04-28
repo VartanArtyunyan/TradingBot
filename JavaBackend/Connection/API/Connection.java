@@ -203,7 +203,6 @@ public class Connection {
 			System.out.println("IOException");
 			e.printStackTrace();
 		}
-		
 		return jsonString;
 	}
 

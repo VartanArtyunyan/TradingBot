@@ -2,6 +2,9 @@ package JsonParser;
 
 import java.util.ArrayList;
 
+import de.fhws.Softwareprojekt.JsonCandlesCandle;
+import de.fhws.Softwareprojekt.JsonCandlesMid;
+import de.fhws.Softwareprojekt.JsonCandlesRoot;
 import positionen.Instrumente;
 import positionen.trade;
 
@@ -12,6 +15,7 @@ public class JsonParser {
 		for (int i = 0; i < sArray.length; i++) {
 			if (sArray[i].contains(string)) {
 				String[] sArray2 = sArray[i].split("\":\"");
+				if(sArray2.length==1) sArray2 = sArray[i].split("\":");
 				if (sArray2[1].substring(sArray2[1].length() - 1, sArray2[1].length()).equals("\""))
 					return sArray2[1].substring(0, sArray2[1].length() - 1);
 				else
@@ -58,7 +62,7 @@ public class JsonParser {
 
 		String[] TradesStringArray = TradesStringJSONArray.split("}");
 
-		for (int i = 0; i < TradesStringArray.length; i++) {
+		for (int i = 1; i < TradesStringArray.length; i++) {
 			output.add(convertApiStringToTradeModel(TradesStringArray[i]));
 		}
 
@@ -80,6 +84,46 @@ public class JsonParser {
 				&& containsVar(json, "initialMarginRequired") && containsVar(json, "currentUnits")
 				&& containsVar(json, "realizedPL") && containsVar(json, "unrealizedPL")
 				&& containsVar(json, "marginUsed");
+	}
+	
+	//Methoden für die Signale
+	
+	public JsonCandlesRoot convertAPiStringToCandlesRootModel(String json) {
+		JsonCandlesRoot output = new JsonCandlesRoot();
+		
+		output.instrument = getVarFromJson(json, "instrument");
+		output.granularity = getVarFromJson(json, "granularity");
+		output.candles = new ArrayList<JsonCandlesCandle>();
+		
+		String[] sArray = getArrayFromJson(json).split("}}");
+		
+		for(int i = 0; i < sArray.length; i++) {
+			output.candles.add(convertApiStringToCandleModel(sArray[i]));
+		}
+		
+		return output;
+	}
+	
+	public JsonCandlesMid convertApiStringToCandlesMidModel(String json) {
+		JsonCandlesMid output = new JsonCandlesMid();
+		
+		output.o = Double.parseDouble(getVarFromJson(json, "o"));
+		output.h = Double.parseDouble(getVarFromJson(json, "h"));
+		output.l = Double.parseDouble(getVarFromJson(json, "l"));
+		output.c = Double.parseDouble(getVarFromJson(json, "c"));
+		
+		return output;
+	}
+	
+	public JsonCandlesCandle convertApiStringToCandleModel(String json) {
+		JsonCandlesCandle output = new JsonCandlesCandle();
+		
+		output.complete = Boolean.parseBoolean(getVarFromJson(json, "complete"));
+		output.volume = Integer.parseInt(getVarFromJson(json, "volume"));
+		output.time = getVarFromJson(json, "time");
+		output.mid= convertApiStringToCandlesMidModel( extractMidStrings(json).get(0));
+		
+		return output;
 	}
 
 	public ArrayList<String> extractBidStrings(String json) {
@@ -108,7 +152,7 @@ public class JsonParser {
 		ArrayList<String> output = new ArrayList<>();
 
 		for (String s : sAL) {
-			int i = s.indexOf("bid");
+			int i = s.indexOf(price);
 			output.add(s.substring(i >= 0 ? i : 2));
 		}
 		return output;

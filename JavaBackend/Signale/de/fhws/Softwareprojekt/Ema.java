@@ -13,14 +13,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import API.ApiConnection;
+
 public class Ema {
 	private String oanda = "https://api-fxpractice.oanda.com/v3/";
 	private String account = "accounts/101-012-22115816-001/";
 	private String token = "Bearer 91dec921714f6128f5ed7f199560852d-1fb0ae23b9e48ab85aec80682b096f5f";
+	
+	ApiConnection api;
 
-	public Ema(String account, String token) {
+	public Ema(String account, String token, ApiConnection api) {
 		this.account = "accounts/" + account + "/";
 		this.token = "Bearer " + token;
+		this.api = api;
 	}
 
 	public Kpi getKpi(String instrument, int periods, String granularity) {
@@ -76,18 +81,23 @@ public class Ema {
 		return kpi;
 	}
 
-	public JsonCandlesRoot extracted(String instrument, String granularity)
-			throws MalformedURLException, IOException, JsonProcessingException, JsonMappingException {
-		HttpURLConnection connection;
-		URL url = new URL(oanda + account + "instruments/" + instrument + "/candles?count=999&granularity="
-				+ granularity + "&from=" + startDate(granularity) + "&alignmentTimezone=Europe/Berlin");
-		connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestProperty("Authorization", token);
-		// Candle-Liste abrufen
-		String jsonString = getResponse(connection);
-		// JSON in Objekte mappen
-		ObjectMapper om = new ObjectMapper();
-		JsonCandlesRoot root = om.readValue(jsonString, JsonCandlesRoot.class);
+	public JsonCandlesRoot extracted(String instrument, String granularity){
+	//		throws MalformedURLException, IOException, JsonProcessingException, JsonMappingException {
+	//	HttpURLConnection connection;
+	//	URL url = new URL(oanda + account + "instruments/" + instrument + "/candles?count=999&granularity="
+	//			+ granularity + "&from=" + startDate(granularity) + "&alignmentTimezone=Europe/Berlin");
+	//	connection = (HttpURLConnection) url.openConnection();
+	//	connection.setRequestProperty("Authorization", token);
+	//	// Candle-Liste abrufen
+	//	String jsonString = getResponse(connection);
+	//	// JSON in Objekte mappen
+	//	ObjectMapper om = new ObjectMapper();
+		
+		
+//hab deinen code jetzt erstmal nur auskommentiert, müsstest mal testen ob das so funktioniert wie es soll, müsste es aber eigentlich tun
+//Mit dem JsonInstrumentRoot hatte ich ein paar schwierigkeiten und bin deswegen nicht fertig geworden, mach das dann morgen fertig
+		
+		JsonCandlesRoot root = api.getJsonCandlesRoot(instrument, startDate(granularity), null, "M", granularity);
 		return root;
 	}
 
