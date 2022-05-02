@@ -68,9 +68,11 @@ public class ApiConnection {
 	public void placeOrder(String instrument, int units) {
 
     }
+	
 	public void closePosition(String instrument, int anzahl) {
 
     }
+	
 	public void closeWholePosition(String instrument) {
 
     }

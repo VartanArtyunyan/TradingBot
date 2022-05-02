@@ -5,4 +5,6 @@ public class JsonCandlesCandle {
 	public int volume;
 	public String time;
 	public JsonCandlesMid mid;
+	public JsonCandlesAsk ask;
+	public JsonCandlesBid bid;
 }
