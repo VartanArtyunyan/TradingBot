@@ -43,7 +43,7 @@ public class EmaListe {
 	//	ausgabe("RSI", e.getRSI(instrument.name, 14, "M15"),instrument);
 		//	ausgabe("ATR",e.getATR(instrument.name, 14, "M15"),instrument);
 		//Kpi kpi2=e.parabolicSar(instrument.name, "M15", 0.02, 0.02, 0.2);
-	//System.out.println(e.getATR(instrument.name, 14, "M15"));
+	//System.out.println(e.getATR(instrument.name, 14, "M15"));Neuer Kommentar
 			}
 		}
 	}
