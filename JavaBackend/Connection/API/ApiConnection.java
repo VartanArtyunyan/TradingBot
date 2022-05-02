@@ -61,9 +61,18 @@ public class ApiConnection {
 		//System.out.println(jsonParser.getVarFromJson(mid.get(0), "o"));
 	}
 	
+	public double getKurs(String instrument) {
+        return 1.09;
+    }
 	
-	
-	
-	
+	public void placeOrder(String instrument, int units) {
+
+    }
+	public void closePosition(String instrument, int anzahl) {
+
+    }
+	public void closeWholePosition(String instrument) {
+
+    }
 
 }

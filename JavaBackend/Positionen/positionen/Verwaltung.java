@@ -20,6 +20,25 @@ public class Verwaltung {
 		trades = new ArrayList<trade>();
 		
 	}
+	
+	public void placeOrder(String i, double wert) {
+		int anzahlAktien;
+		
+		 anzahlAktien = (int) (wert / connection.getKurs(i));
+		 	 
+		 connection.placeOrder(i, anzahlAktien);
+		
+	}
+	public void closeWholePosition(String i) {
+		
+		connection.closeWholePosition(i);
+	}
+	public void closePosition(String i, int anzahl ) {
+		connection.closePosition(i, anzahl);
+	}
+	
+	
+	
 		
 	
 	public void aktualisierePosition() {
@@ -35,20 +54,26 @@ public class Verwaltung {
 				p.addID(trades.get(i).getId());
 				positionen.add(p);
 			}
-		}			
+			
+		}	
+		zusammenschluss();
 	}
 	
 	public void zusammenschluss() {
 		
 		for(int i = 0; i < positionen.size(); i++ ) {
 			double summe = 0;
-			double anzahlAktien = 0;
+			int anzahlAktien = 0;
+			int units = 0;
 			for(int j = 0; j < trades.size(); j++) {
 				if(positionen.get(i).contains(trades.get(j))){
-					summe = summe+ trades.get(j).getPrice() * trades.get(j).getUnits();
+					summe = summe+ (trades.get(j).getPrice() * trades.get(j).getUnits());
 					anzahlAktien = anzahlAktien + trades.get(j).getUnits();
+					
 				}
 			}
+			positionen.get(i).setGesamtsumme(summe);
+			positionen.get(i).setGesamtzahlaktien(anzahlAktien);
 		}
 		
 	}
