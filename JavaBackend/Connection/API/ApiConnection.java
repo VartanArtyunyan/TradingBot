@@ -7,6 +7,7 @@ import JsonParser.JsonParser;
 import de.fhws.Softwareprojekt.JsonCandlesCandle;
 import de.fhws.Softwareprojekt.JsonCandlesMid;
 import de.fhws.Softwareprojekt.JsonCandlesRoot;
+import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import positionen.trade;
 
 public class ApiConnection {
@@ -33,9 +34,14 @@ public class ApiConnection {
 		return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
 	}
 	
+	public JsonInstrumentsRoot getJsonInstrumentsRoot(){
+		String apiResponseString = connection.getApiResponseGET("instruments");
+		
+		
+		return jsonParser.convertAPiStringToInstrumentsRootModel(apiResponseString);
+	}
 
 	public void cd() {
-		System.out.println("testP1");
 		String apiResponseString = connection.getCandleStickData("EUR_JPY", null, null, "M","D5");
 		
 		//String[] sArray = apiResponseString.split(",");
@@ -47,6 +53,8 @@ public class ApiConnection {
 		////for (String s : mid) {
 			//System.out.println(s);
 		//}
+		
+		
 		
 		JsonCandlesRoot jcr = jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
 		

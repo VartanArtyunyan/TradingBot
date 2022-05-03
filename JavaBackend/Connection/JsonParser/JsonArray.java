@@ -4,10 +4,14 @@ import java.util.ArrayList;
 
 public class JsonArray {
 	
-	ArrayList<String> content = new ArrayList<>();
+	ArrayList<String> content;
+	
+	public JsonArray() {
+		content = new ArrayList<>();
+	}
 	
 	public JsonArray(String JsonArray) {
-		
+		content = new ArrayList<>();
 		char[] cArray = JsonArray.toCharArray();
 		
 		String cache = "";
@@ -16,7 +20,9 @@ public class JsonArray {
 
 		int braceCounter = 0;
 		
-		for(int i = 1; i < cArray.length-1; i++) {
+		
+		
+		for(int i = 1;i < cArray.length-1; i++) {
 			
 			if(cArray[i] == ',' && sqrBracketCounter <= 0 && braceCounter <= 0) {
 				content.add(cache);
@@ -38,18 +44,23 @@ public class JsonArray {
 			}
 			
 		}
-		
 		content.add(cache);
 		cache="";
-		
-		
+	}
+	
+	public String get(int index) {
+		return content.get(index);
+	}
+	
+	public int length() {
+		return content.size();
 	}
 	
 	public String toString() {
 		String output = "";
 
 		for(String s: content) {
-			output+=s;
+			output+=s+'\n';
 		}
 		
 		

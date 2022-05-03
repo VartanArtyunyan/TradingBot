@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import de.fhws.Softwareprojekt.JsonCandlesCandle;
 import de.fhws.Softwareprojekt.JsonCandlesMid;
 import de.fhws.Softwareprojekt.JsonCandlesRoot;
+import de.fhws.Softwareprojekt.JsonInstrumentsInstrument;
+import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import positionen.Instrumente;
 import positionen.trade;
 
@@ -89,17 +91,77 @@ public class JsonParser {
 	//Methoden für die Signale
 	
 	public JsonCandlesRoot convertAPiStringToCandlesRootModel(String json) {
+		
+		JsonObject input = new JsonObject(json);
+		JsonArray jsonCandlesArray = input.getArray("candles");
+		
+		
 		JsonCandlesRoot output = new JsonCandlesRoot();
 		
-		output.instrument = getVarFromJson(json, "instrument");
-		output.granularity = getVarFromJson(json, "granularity");
+		
+		output.instrument = input.getValue("instrument");
+		output.granularity = input.getValue("granularity");
 		output.candles = new ArrayList<JsonCandlesCandle>();
 		
-		String[] sArray = getArrayFromJson(json).split("}}");
-		
-		for(int i = 0; i < sArray.length; i++) {
-			output.candles.add(convertApiStringToCandleModel(sArray[i]));
+		for(int i = 0; i < jsonCandlesArray.length(); i++) {
+			JsonObject candle = new JsonObject(jsonCandlesArray.get(i));
+			JsonObject mid = candle.getObject("mid");
+			
+			JsonCandlesCandle jcc = new JsonCandlesCandle();
+			JsonCandlesMid jcm = new JsonCandlesMid();
+			
+			jcc.complete = Boolean.parseBoolean(candle.getValue("complete"));
+			jcc.time = candle.getValue("time");
+			jcc.volume = Integer.parseInt(candle.getValue("volume"));
+			
+			
+			jcm.c = Double.parseDouble(mid.getValue("c"));
+			jcm.h = Double.parseDouble(mid.getValue("h"));
+			jcm.l = Double.parseDouble(mid.getValue("l"));
+			jcm.o = Double.parseDouble(mid.getValue("o"));
+			
+			jcc.mid = jcm;
+			
+			output.candles.add(jcc);
+			
 		}
+		
+		
+		return output;
+	}
+	
+	public JsonInstrumentsRoot convertAPiStringToInstrumentsRootModel(String json){
+		JsonInstrumentsRoot output = new JsonInstrumentsRoot();
+		JsonObject input = new JsonObject(json);
+		JsonArray jsonInstrumentsArray = input.getArray("instruments");
+		
+		output.lastTransactionID = input.getValue("lastTransactionID");
+		output.instruments = new ArrayList<>();
+		
+		for(int i = 0; i < jsonInstrumentsArray.length(); i++ ) {
+			JsonObject instrument = new JsonObject(jsonInstrumentsArray.get(i));
+			
+			JsonInstrumentsInstrument jii = new JsonInstrumentsInstrument();
+			
+			jii.displayName = instrument.getValue("displayName");
+			jii.displayPrecision = Integer.parseInt(instrument.getValue("displayPrecision"));
+			jii.marginRate = instrument.getValue("marginRate");
+			jii.maximumOrderUnits = instrument.getValue("maximumOrderUnits");
+			jii.maximumPositionSize = instrument.getValue("maximumPositionSize");
+			jii.maximumTrailingStopDistance = instrument.getValue("maximumTrailingStopDistance");
+			jii.minimumTradeSize = instrument.getValue("minimumTradeSize");
+			jii.minimumTrailingStopDistance = instrument.getValue("minimumTrailingStopDistance");
+			jii.name = instrument.getValue("name");
+			jii.pipLocation = Integer.parseInt(instrument.getValue("pipLocation"));
+			jii.tradeUnitsPrecision = Integer.parseInt(instrument.getValue("tradeUnitsPrecision"));
+			jii.type = instrument.getValue("type");
+			
+			output.instruments.add(jii);
+			
+			
+		}
+		
+		
 		
 		return output;
 	}
