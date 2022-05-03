@@ -5,8 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+
 import java.time.LocalDate;
 
 
@@ -14,14 +13,11 @@ import java.time.LocalDate;
 import API.ApiConnection;
 
 public class Ema {
-	private String oanda = "https://api-fxpractice.oanda.com/v3/";
-	private String account = "accounts/101-012-22115816-001/";
-	private String token = "Bearer 91dec921714f6128f5ed7f199560852d-1fb0ae23b9e48ab85aec80682b096f5f";
+	
 	private ApiConnection connection;
 	
-	public Ema(String account, String token, ApiConnection connection) {
-		this.account = "accounts/" + account + "/";
-		this.token = "Bearer " + token;
+	public Ema(ApiConnection connection) {
+
 		this.connection = connection;
 	}
 

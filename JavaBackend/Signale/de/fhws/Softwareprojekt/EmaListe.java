@@ -11,8 +11,7 @@ public class EmaListe {
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
 		
-		String account = "101-012-22115816-001";
-		String token = "91dec921714f6128f5ed7f199560852d-1fb0ae23b9e48ab85aec80682b096f5f";
+	
 
 		System.out.println("Instrumentliste - Suchbegriff:");
 		String filter;
@@ -23,7 +22,7 @@ public class EmaListe {
 		}
 		;
 
-		Ema e = new Ema(account, token, connection);
+		Ema e = new Ema(connection);
 		
 	
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
