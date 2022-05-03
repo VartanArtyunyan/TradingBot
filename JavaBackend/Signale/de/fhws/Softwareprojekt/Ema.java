@@ -126,6 +126,7 @@ public class Ema {
 				}
 
 				kpi.parabolicSAR += (extrempunktAlt - kpi.parabolicSAR) * startBFAlt;
+				kpi.parabolicSARs.add(kpi.parabolicSAR);
 				extrempunktAlt = extrempunkt;
 				startBFAlt = startBF;
 				vortrend = kpi.trend;
@@ -153,8 +154,27 @@ public class Ema {
 		Kpi kpi2 = getKpi(instrument, y, granularity);
 		Kpi md = getKpi(instrument, z, granularity);
 	double ergebnis = 0;
-    double Vorergebnis=0;
-		for(int i= md.emas.size()-md.periods-1;i<md.emas.size();i++)
+ //   double Vorergebnis=0;
+    for(int i=md.periods;i<md.emas.size()+1;i++)
+    {
+    	if(i==md.periods)md.macds.add(kpi1.emas.get(i-1)-kpi2.emas.get(i-1));
+    	
+    	ergebnis=0;
+    	if(i<md.emas.size())
+    	md.macds.add(kpi1.emas.get(i)-kpi2.emas.get(i));
+    	for(int b=i-md.periods;b<i;b++)
+    	{
+    		ergebnis+=kpi1.emas.get(b)-kpi2.emas.get(b);
+    	}
+    	ergebnis=ergebnis/md.periods;
+    	
+    	md.macdsTriggert.add(ergebnis);
+    	
+    }
+ 
+    md.macd=md.macds.get(md.macds.size()-1);
+    md.macdTriggert=ergebnis;
+		/*for(int i= md.emas.size()-md.periods-1;i<md.emas.size();i++)
 		{
 		ergebnis=(i>=(md.emas.size()-md.periods))?ergebnis+(kpi1.emas.get(i)-kpi2.emas.get(i)):ergebnis;
 		Vorergebnis=(i<md.emas.size()-1)?Vorergebnis+(kpi1.emas.get(i)-kpi2.emas.get(i)):Vorergebnis;
@@ -162,7 +182,7 @@ public class Ema {
 		md.Vormacd=kpi1.vorema-kpi2.vorema;
 		md.macd=kpi1.ema-kpi2.ema;
 		md.VormacdTriggert=
-		md.macdTriggert=ergebnis/md.periods;
+		md.macdTriggert=ergebnis/md.periods;*/
 		return md;
 	}
 
@@ -255,11 +275,13 @@ public class Ema {
 		kpi.atr=kpi5.atr;
 		kpi.atrListe=kpi5.atrListe;
 		kpi.macd=kpi3.macd;
-		kpi.Vormacd=kpi3.Vormacd;
-		kpi.VormacdTriggert=kpi3.VormacdTriggert;
+		kpi.macds=kpi3.macds;
+		kpi.macdsTriggert=kpi3.macdsTriggert;
 		kpi.macdTriggert=kpi3.macdTriggert;
 		kpi.parabolicSAR=kpi2.parabolicSAR;
+		kpi.parabolicSARs=kpi2.parabolicSARs;
 		kpi.rsi=kpi4.rsi;
+		kpi.rsiListe=kpi4.rsiListe;
 		kpi.trend=kpi2.trend;
 		kpi.trendWechsel=kpi2.trendWechsel;
 		return kpi;
@@ -318,6 +340,7 @@ public class Ema {
 				}
 				startPreis=kpi.root.candles.get(z).mid.c;
 				kpi.rsi=100-(100/((gain/loss)+1));
+				kpi.rsiListe.add(kpi.rsi);
 			}
 	return kpi;
 	}
