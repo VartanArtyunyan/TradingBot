@@ -2,9 +2,15 @@ package de.fhws.Softwareprojekt;
 
 import java.util.Scanner;
 
+import API.ApiConnection;
+import API.Connection;
+
 public class EmaListe {
 
 	public static void main(String[] args) {
+		Connection con = new Connection();
+		ApiConnection connection = new ApiConnection(con);
+		
 		String account = "101-012-22115816-001";
 		String token = "91dec921714f6128f5ed7f199560852d-1fb0ae23b9e48ab85aec80682b096f5f";
 
@@ -17,7 +23,7 @@ public class EmaListe {
 		}
 		;
 
-		Ema e = new Ema(account, token);
+		Ema e = new Ema(account, token, connection);
 		
 	
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();

@@ -53,7 +53,7 @@ public class Connection {
 
 			status = connection.getResponseCode();
 
-			System.out.println(status + " " + connection.getResponseMessage());
+			//System.out.println(status + " " + connection.getResponseMessage());
 
 			if (status < 299) {
 				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -102,7 +102,7 @@ public class Connection {
 
 			status = connection.getResponseCode();
 
-			System.out.println(status + " " + connection.getResponseMessage());
+			//System.out.println(status + " " + connection.getResponseMessage());
 
 			if (status < 299) {
 				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -156,7 +156,7 @@ public class Connection {
 	     }
 		
 		
-		System.out.println(query);
+		
 		return getInstruementResponse(instrument,"candles",query);
 		
 	}
@@ -177,7 +177,7 @@ public class Connection {
 
 			status = connection.getResponseCode();
 
-			System.out.println(status + " " + connection.getResponseMessage());
+		//	System.out.println(status + " " + connection.getResponseMessage());
 
 			if (status < 299) {
 				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));

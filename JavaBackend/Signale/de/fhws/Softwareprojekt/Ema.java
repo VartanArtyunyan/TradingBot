@@ -10,18 +10,19 @@ import java.net.URL;
 import java.time.LocalDate;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import API.ApiConnection;
 
 public class Ema {
 	private String oanda = "https://api-fxpractice.oanda.com/v3/";
 	private String account = "accounts/101-012-22115816-001/";
 	private String token = "Bearer 91dec921714f6128f5ed7f199560852d-1fb0ae23b9e48ab85aec80682b096f5f";
-
-	public Ema(String account, String token) {
+	private ApiConnection connection;
+	
+	public Ema(String account, String token, ApiConnection connection) {
 		this.account = "accounts/" + account + "/";
 		this.token = "Bearer " + token;
+		this.connection = connection;
 	}
 
 	public Kpi getKpi(String instrument, int periods, String granularity) {
@@ -77,19 +78,18 @@ public class Ema {
 		return kpi;
 	}
 
-	public JsonCandlesRoot extracted(String instrument, String granularity)
-			throws MalformedURLException, IOException, JsonProcessingException, JsonMappingException {
-		HttpURLConnection connection;
-		URL url = new URL(oanda + account + "instruments/" + instrument + "/candles?count=4900&granularity="
-				+ granularity + "&from=" + startDate(granularity)+"&alignmentTimezone=Europe/Berlin&dailyAlignment=22");
+	public JsonCandlesRoot extracted(String instrument, String granularity){
+		//HttpURLConnection connection;
+		//URL url = new URL(oanda + account + "instruments/" + instrument + "/candles?count=4900&granularity="
+			//	+ granularity + "&from=" + startDate(granularity)+"&alignmentTimezone=Europe/Berlin&dailyAlignment=22");
 		//+ "&alignmentTimezone=Europe/Berlin"
-		connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestProperty("Authorization", token);
+		//connection = (HttpURLConnection) url.openConnection();
+		//connection.setRequestProperty("Authorization", token);
 		// Candle-Liste abrufen
-		String jsonString = getResponse(connection);
+	//	String jsonString = getResponse(connection);
 		// JSON in Objekte mappen
-		ObjectMapper om = new ObjectMapper();
-		JsonCandlesRoot root = om.readValue(jsonString, JsonCandlesRoot.class);
+	//	ObjectMapper om = new ObjectMapper();
+		JsonCandlesRoot root = connection.getJsonCandlesRoot(instrument, startDate(granularity), null, "M", granularity);
 		return root;
 	}
 
@@ -233,19 +233,19 @@ public class Ema {
 	}
 
 	public JsonInstrumentsRoot getInstruments() {
-		try {
-			URL url = new URL(oanda + account + "instruments");
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestProperty("Authorization", token);
+	//	try {
+	//		URL url = new URL(oanda + account + "instruments");
+	//		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	//		connection.setRequestProperty("Authorization", token);
 
-			String jsonString = getResponse(connection);
+	//		String jsonString = getResponse(connection);
 			// JSON in Objekte mappen
-			ObjectMapper om = new ObjectMapper();
-			return om.readValue(jsonString, JsonInstrumentsRoot.class);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-		return null;
+	//		ObjectMapper om = new ObjectMapper();
+			return connection.getJsonInstrumentsRoot();
+	//	} catch (Exception e) {
+	//		System.out.println(e.getMessage());
+	//	}
+	//	return null;
 	}
 
 	public String getResponse(HttpURLConnection connection) throws IOException {
