@@ -30,7 +30,7 @@ public class ApiConnection {
 	
 	public JsonCandlesRoot getJsonCandlesRoot(String instrument,String from, String to, String price, String granularity) {
 		String apiResponseString = connection.getCandleStickData(instrument, from, to, price ,granularity);
-		
+		System.out.println("Candle Empfangen");
 		return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
 	}
 	

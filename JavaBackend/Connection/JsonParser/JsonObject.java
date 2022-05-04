@@ -6,15 +6,16 @@ import java.util.Iterator;
 public class JsonObject {
 
 	ArrayList<JsonVar> contents;;
-	
+
 	public JsonObject() {
 		contents = new ArrayList<>();
 	}
 
-	public JsonObject(String Json) {
+	 public JsonObject(String Json) {
 		contents = new ArrayList<>();
+		//System.out.println("vor umwandlung zu CharArray");
 		char[] cArray = Json.toCharArray();
-
+		//System.out.println("nach umwandlung zu CharArray");
 		CopyState state = CopyState.copyName;
 
 		JsonVar var = new JsonVar();
@@ -24,46 +25,25 @@ public class JsonObject {
 		int sqrBracketCounter = 0;
 
 		int braceCounter = 0;
-
+		
+		//System.out.println("vor schleife");
 		for (int i = 2; i < cArray.length - 1; i++) {
 
-			
-
 				switch (state) {
-
-				case searchName:
-					if (cArray[i] == '"')
-						state = CopyState.copyName;
-					break;
-
-				case searchVar:
-					if (cArray[i] == ':' && cArray[i + 1] != '"') {
-						state = CopyState.copyVar;
-					} else if (cArray[i] == '"') {
-						state = CopyState.copyVar;
-					}
-					break;
 
 				case copyName:
 					if (cArray[i] == '"') {
 						var.addName(cache);
 						cache = "";
-						state = CopyState.searchVar;
+						state = CopyState.copyVar;
+						i++;
 					} else {
 						cache += cArray[i];
 					}
 					break;
 
 				case copyVar:
-					if (cArray[i] == ',' && sqrBracketCounter <= 0 && braceCounter <= 0) {
-						if (cache.charAt(cache.length() - 1) == '"')
-							cache = cache.substring(0, cache.length() - 1);
-						var.addContent(cache);
-						contents.add(var);
-						var = new JsonVar();
-						cache = "";
-						state = CopyState.searchName;
-					} else if (cArray[i] == '[') {
+					if (cArray[i] == '[') {
 						sqrBracketCounter++;
 						cache += '[';
 					} else if (cArray[i] == '{') {
@@ -75,20 +55,32 @@ public class JsonObject {
 					} else if (cArray[i] == '}') {
 						braceCounter--;
 						cache += '}';
-					} else {
+					} else if(cArray[i] == '"'  && sqrBracketCounter <= 0 && braceCounter <= 0){
+						
+					}else if(cArray[i] == ','  && sqrBracketCounter <= 0 && braceCounter <= 0){
+						var.addContent(cache);
+						contents.add(var);
+						var = new JsonVar();
+						cache = "";
+						state = CopyState.copyName;
+						i++;
+					}else {
 						cache += cArray[i];
 					}
 					break;
-
+				default:
+					break;
 				}
 
-			
 		}
+		//System.out.println("nach schleife");
 		cache = cache.substring(0, cache.length() - 1);
 		var.addContent(cache);
 		contents.add(var);
 		var = new JsonVar();
 		cache = "";
+		
+		//System.out.println(contents.size());
 
 	}
 	
