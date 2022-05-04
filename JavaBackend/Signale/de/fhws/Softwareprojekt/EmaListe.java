@@ -99,7 +99,7 @@ public class EmaListe {
 		ApiConnection connection = new ApiConnection(con);
 		Ema e = new Ema(connection);
 		
-		Kpi aufrufAlles = e.aufrufAlles("EUR_USD", 200, 14, "M15",0.02, 0.02, 0.02, 12,26,9);
+		Kpi aufrufAlles = e.aufrufAlles("EUR_USD", 200, 14, "M15",0.02, 0.02, 0.02, 12,26,9,2,2);
 		double ema200 = aufrufAlles.ema;
 		double aktuellerKurs = aufrufAlles.lastPrice;
 		boolean kaufentscheidung = false;
