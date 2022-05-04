@@ -21,16 +21,14 @@ public class Ema {
 		this.connection = connection;
 	}
 
-	public Kpi getKpi(String instrument, int periods, String granularity) {
+	public Kpi getKpi(String instrument, int periods, String granularity, JsonCandlesRoot jcr) {
 
 		// HttpURLConnection connection;
 
 		Kpi kpi = new Kpi(instrument, granularity, periods);
 
-		try {
-			// Abruf Candle-Liste vorbereiten und Verbindung aufbauen
-			// dabei so viele Candles wie möglich holen für genauere EMA-Ermittlung
-			kpi. root = extracted(instrument, granularity);
+		
+			kpi. root = jcr;
 
 			// KPI's ermitteln **************************************
 			int count = 0;
@@ -67,10 +65,7 @@ public class Ema {
 			}
 			kpi.avg = kpi.root.candles.isEmpty() ? 0 : sum2 / periods;
 
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return kpi;
-		}
+		
 		return kpi;
 	}
 
@@ -89,8 +84,8 @@ public class Ema {
 		return root;
 	}
 
-	public Kpi parabolicSar(String instrument, String granularity,int periods, double startBF, double inkrementBF, double maxBF) {
-			Kpi kpi = getKpi(instrument,periods,granularity);
+	public Kpi parabolicSar(String instrument, String granularity,int periods, double startBF, double inkrementBF, double maxBF,JsonCandlesRoot jcr) {
+			Kpi kpi = getKpi(instrument,periods,granularity,jcr);
 			double startBFAf = startBF;
 			double extrempunkt = 0;
 			double extrempunktAlt = 0;
@@ -145,10 +140,10 @@ public class Ema {
 			return kpi;
 	}
 
-	public Kpi getMACD(String instrument, String granularity, int x, int y, int z) {
-		Kpi kpi1 = getKpi(instrument, x, granularity);
-		Kpi kpi2 = getKpi(instrument, y, granularity);
-		Kpi md = getKpi(instrument, z, granularity);
+	public Kpi getMACD(String instrument, String granularity, int x, int y, int z, JsonCandlesRoot jcr) {
+		Kpi kpi1 = getKpi(instrument, x, granularity,jcr);
+		Kpi kpi2 = getKpi(instrument, y, granularity,jcr);
+		Kpi md = getKpi(instrument, z, granularity,jcr);
 	double ergebnis = 0;
  //   double Vorergebnis=0;
     for(int i=md.periods;i<md.emas.size()+1;i++)
@@ -263,11 +258,14 @@ public class Ema {
 	}
 	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity,double startBF, double inkrementBF, double maxBF,int x, int y, int z)
 	{
-		Kpi kpi=getKpi(instrument, emaperiods, granularity);
-		Kpi kpi2=parabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF);
-		Kpi kpi3=getMACD(instrument, granularity, x, y, z);
-		Kpi kpi4=getRSI(instrument, periods, granularity);
-		Kpi kpi5=getATR(instrument, periods, granularity);
+		
+		JsonCandlesRoot jcr = extracted(instrument, granularity);
+		
+		Kpi kpi=getKpi(instrument, emaperiods, granularity,jcr);
+		Kpi kpi2=parabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
+		Kpi kpi3=getMACD(instrument, granularity, x, y, z,jcr);
+		Kpi kpi4=getRSI(instrument, periods, granularity,jcr);
+		Kpi kpi5=getATR(instrument, periods, granularity,jcr);
 		kpi.atr=kpi5.atr;
 		kpi.atrListe=kpi5.atrListe;
 		kpi.macd=kpi3.macd;
@@ -284,10 +282,10 @@ public class Ema {
 	
 	}
 	//Tom 
-	public Kpi getATR(String instrument,int periods,String granularity)
+	public Kpi getATR(String instrument,int periods,String granularity, JsonCandlesRoot jcr)
 	{
 
-			Kpi kpi=getKpi(instrument,periods,granularity);
+			Kpi kpi=getKpi(instrument,periods,granularity,jcr);
 			double betrag=0;
 			double prev=0;
 			for(int i=1;i<kpi.root.candles.size();i++)
@@ -306,8 +304,8 @@ public class Ema {
 			}
 			return kpi;
 		}
-	public Kpi getRSI(String instrument, int periods, String granularity) {
-		Kpi kpi=getKpi(instrument,periods,granularity);
+	public Kpi getRSI(String instrument, int periods, String granularity,JsonCandlesRoot jcr) {
+		Kpi kpi=getKpi(instrument,periods,granularity,jcr);
 		double gain=0;
 		double loss=0;
 		
