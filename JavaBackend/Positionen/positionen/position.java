@@ -11,6 +11,8 @@ public class position {
 	double einsatz;
 	double aktuellerkurs;
 	double grenzwert;
+	int anzahlaktie;
+	
 	
 	public position(Instrumente währung) {
 		this.währung = währung;
@@ -42,5 +44,22 @@ public class position {
 		
 		return output;
 	}
-
+	public void setGesamtsumme(double P) {
+		gesamtsumme= P;
+		
+	}
+	public void setGesamtzahlaktien(int anzahl) {
+		anzahlaktie = anzahl;
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
