@@ -26,6 +26,8 @@ public class EmaListe {
 		Ema e = new Ema(connection);
 		
 		
+		
+		
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
 		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
 			/*if (instrument.type.compareTo("CURRENCY")==0) {
