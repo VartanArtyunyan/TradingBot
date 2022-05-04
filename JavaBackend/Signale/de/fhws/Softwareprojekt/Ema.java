@@ -191,7 +191,7 @@ public class Ema {
 			break;
 		}
 		case ("M15"): {
-			tage = 45;// 30/4
+			tage = 20;// 30/4
 			break;
 		}
 		case ("M10"): {
@@ -256,7 +256,7 @@ public class Ema {
 		return jsonString;
 		
 	}
-	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity,double startBF, double inkrementBF, double maxBF,int x, int y, int z)
+	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity,double startBF, double inkrementBF, double maxBF,int x, int y, int z,int multiplicatorUpper,int multiplicatorLower)
 	{
 		
 		JsonCandlesRoot jcr = extracted(instrument, granularity);
@@ -266,6 +266,7 @@ public class Ema {
 		Kpi kpi3=getMACD(instrument, granularity, x, y, z,jcr);
 		Kpi kpi4=getRSI(instrument, periods, granularity,jcr);
 		Kpi kpi5=getATR(instrument, periods, granularity,jcr);
+		Kpi kpi6=getSupertrend(instrument, periods, granularity, jcr, multiplicatorUpper, multiplicatorLower);
 		kpi.atr=kpi5.atr;
 		kpi.atrListe=kpi5.atrListe;
 		kpi.macd=kpi3.macd;
@@ -278,11 +279,16 @@ public class Ema {
 		kpi.rsiListe=kpi4.rsiListe;
 		kpi.trend=kpi2.trend;
 		kpi.trendWechsel=kpi2.trendWechsel;
+		kpi.superTrend=kpi6.superTrend;
+		kpi.superTrends=kpi6.superTrends;
 		return kpi;
 	
-	}
+
+	} 
+
 	//Tom 
 	public Kpi getATR(String instrument,int periods,String granularity, JsonCandlesRoot jcr)
+
 	{
 
 			Kpi kpi=getKpi(instrument,periods,granularity,jcr);
@@ -304,8 +310,12 @@ public class Ema {
 			}
 			return kpi;
 		}
+
+	//Tom
+
 	public Kpi getRSI(String instrument, int periods, String granularity,JsonCandlesRoot jcr) {
 		Kpi kpi=getKpi(instrument,periods,granularity,jcr);
+
 		double gain=0;
 		double loss=0;
 		
@@ -337,6 +347,64 @@ public class Ema {
 				kpi.rsiListe.add(kpi.rsi);
 			}
 	return kpi;
+	}
+	public Kpi getSupertrend(String instrument, int periods, String granularity,JsonCandlesRoot jcr,int multiplicatorUpper,int multiplicatorLower)
+	{
+		Kpi kpi=getATR(instrument, periods, granularity, jcr);
+		double upperband=0;
+		double upperbandPrev=0;
+		double lowerband=0;
+		double lowerbandPrev=0;
+		
+		int count=0;
+		for(int i=1;i<kpi.root.candles.size();i++)
+		{
+			if (i>periods)
+			{
+		
+			//Wenn upperband kleiner als upperbandPrev oder vorherige Schlusskurz größer ist als upperbandPrev dann nehme upperband
+				//Wenn lowerband größer ist als lowerbandPrev pder vorherige Schlusskurs kleiner als lowerbandPrev ist dann nehme lowerband
+				upperband=((kpi.root.candles.get(i).mid.h+kpi.root.candles.get(i).mid.l)/2)+(multiplicatorUpper*kpi.atrListe.get(count));
+				lowerband=((kpi.root.candles.get(i).mid.h+kpi.root.candles.get(i).mid.l)/2)-(multiplicatorLower*kpi.atrListe.get(count));
+				if(i==periods+1)
+					{
+					upperbandPrev=upperband;
+					lowerbandPrev=lowerband;
+					kpi.superTrend=upperbandPrev;
+					}
+				
+					
+				upperband=upperband<upperbandPrev?upperband:upperbandPrev;
+				if((upperband==upperbandPrev)&&(i!=periods+1))
+				upperband=kpi.root.candles.get(i-1).mid.c>upperbandPrev?upperband:upperbandPrev;
+				
+				lowerband=lowerband>lowerbandPrev?lowerband:lowerbandPrev;
+				if((lowerband==lowerbandPrev)&&(i!=periods+1))
+				lowerband=kpi.root.candles.get(i-1).mid.c<lowerbandPrev?lowerband:lowerbandPrev;
+				
+				count++;
+			
+			if(kpi.superTrend==upperbandPrev)
+			{
+		if(kpi.root.candles.get(i).mid.c<upperband)
+			kpi.superTrend=upperband;
+		else if(kpi.root.candles.get(i).mid.c>upperband)
+			kpi.superTrend=lowerband;
+			}
+			else if(kpi.superTrend==lowerbandPrev)
+			{
+				if(kpi.root.candles.get(i).mid.c>lowerband)
+					kpi.superTrend=lowerband;
+				else if(kpi.root.candles.get(i).mid.c<lowerband)
+					kpi.superTrend=upperband;
+			}
+			
+			lowerbandPrev=lowerband;
+			upperbandPrev=upperband;
+			kpi.superTrends.add(kpi.superTrend);
+		}
+		}
+		return kpi;
 	}
 
 }
