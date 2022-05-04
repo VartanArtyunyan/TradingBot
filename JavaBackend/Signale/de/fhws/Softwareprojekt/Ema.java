@@ -196,7 +196,7 @@ public class Ema {
 			break;
 		}
 		case ("M15"): {
-			tage = 45;// 30/4
+			tage = 20;// 30/4
 			break;
 		}
 		case ("M10"): {
@@ -282,8 +282,7 @@ public class Ema {
 		kpi.trendWechsel=kpi2.trendWechsel;
 		return kpi;
 	
-	}
-	//Tom 
+	} 
 	public Kpi getATR(String instrument,int periods,String granularity)
 	{
 
@@ -306,6 +305,7 @@ public class Ema {
 			}
 			return kpi;
 		}
+	//Tom
 	public Kpi getRSI(String instrument, int periods, String granularity) {
 		Kpi kpi=getKpi(instrument,periods,granularity);
 		double gain=0;
