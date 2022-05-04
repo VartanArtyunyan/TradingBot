@@ -12,8 +12,9 @@ public class JsonReader {
     }
 
     private static String streamToString(InputStream inputStream) {
-        String text = new Scanner(inputStream, "UTF-8").useDelimiter("\\Z").next();
-        return text;
+     String text = new Scanner(inputStream, "UTF-8").useDelimiter("\\Z").next(); 
+     return text;
+      
     }
 
     public static String jsonGetRequest(String urlQueryString) {
