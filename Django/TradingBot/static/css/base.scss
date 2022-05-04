@@ -15,16 +15,32 @@ body {
   padding: 0;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE and Edge */
+html,
+body {
+  -ms-overflow-style: none;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
 h2,
 h3,
 a {
-  color: #34495e;
+  color: wheat;
+}
+
+h2 {
+  font-size: 40px;
 }
 
 .logo {
   padding-left: 20px;
   font-size: 25px;
-  color: #34495e;
+  color: wheat;
 }
 
 /* Nav Section */
@@ -51,9 +67,19 @@ a {
   position: fixed;
   height: 100px;
   width: 100%;
-  background-color: #f4f4f4;
   display: flex;
+}
+
+.inner-header {
+  height: 100px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  overflow: hidden;
   justify-content: space-around;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
 }
 
 /* =================================
@@ -64,14 +90,15 @@ a {
 
 .back-img {
   z-index: 1;
-  width: 100vw;
+  width: 100%;
   opacity: 0.9;
   max-height: 100vh;
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
-  filter: blur(5px);
+  filter: blur(15px);
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .text-pic {
@@ -95,5 +122,9 @@ a {
 /* Sections General */
 
 .sections {
-  padding: 2% 20% 0% 20%;
+  padding: 5% 20% 0% 20%;
+}
+
+.last {
+  padding-bottom: 5%;
 }
