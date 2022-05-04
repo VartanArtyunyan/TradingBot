@@ -118,6 +118,8 @@ public class EmaListe {
 			//MACD Differenz Berechnen
 			double differenz = Math.round(abfrageMACD - trigger);
 			
+			
+			
 			System.out.println(differenz);
 
 			kaufentscheidung = true;
