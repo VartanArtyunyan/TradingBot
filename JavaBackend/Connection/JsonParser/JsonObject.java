@@ -1,5 +1,6 @@
 package JsonParser;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,10 +21,12 @@ public class JsonObject {
 		final char[] cArray = Json.toCharArray();
 		//System.out.println("nach umwandlung zu CharArray");
 		CopyState state = CopyState.copyName;
+		
+		StringWriter nameCache = new StringWriter();
+		StringWriter varCache = new StringWriter();
 
 
-		String nameCache = "";
-		String varCache = "";
+		
 		
 
 		int sqrBracketCounter = 0;
@@ -41,34 +44,34 @@ public class JsonObject {
 						state = CopyState.copyVar;
 						i++;
 					} else {
-						nameCache += cArray[i];
+						nameCache.append(cArray[i]);
 					}
 					break;
 
 				case copyVar:
 					if (cArray[i] == '[') {
 						sqrBracketCounter++;
-						varCache += cArray[i];
+						varCache.append(cArray[i]);
 					} else if (cArray[i] == '{') {
 						braceCounter++;
-						varCache += cArray[i];
+						varCache.append(cArray[i]);
 					} else if (cArray[i] == ']') {
 						sqrBracketCounter--;
-						varCache += cArray[i];
+						varCache.append(cArray[i]);
 					} else if (cArray[i] == '}') {
 						braceCounter--;
-						varCache += cArray[i];
+						varCache.append(cArray[i]);
 					} else if(cArray[i] == '"'  && sqrBracketCounter <= 0 && braceCounter <= 0){
 						
 					} else if(cArray[i] == ','  && sqrBracketCounter <= 0 && braceCounter <= 0){
 						
-						content.put(nameCache, varCache);
-						nameCache = "";
-						varCache = "";
+						content.put(nameCache.toString(), varCache.toString());
+						nameCache = new StringWriter();
+						varCache = new StringWriter();
 						state = CopyState.copyName;
 						i++;
 					} else {
-						varCache += cArray[i];
+						varCache.append(cArray[i]);
 					}
 					break;
 					
@@ -76,9 +79,10 @@ public class JsonObject {
 
 		}
 		//System.out.println("nach schleife");
+		String lastVar = varCache.toString();
 		
-		varCache = varCache.substring(0, varCache.length() - 1);
-		content.put(nameCache, varCache);
+		lastVar = lastVar.substring(0, lastVar.length() - 1);
+		content.put(nameCache.toString(), lastVar);
 		
 		
 		//System.out.println(contents.size());
