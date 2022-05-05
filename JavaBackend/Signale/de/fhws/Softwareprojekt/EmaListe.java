@@ -8,11 +8,13 @@ import API.Connection;
 public class EmaListe {
 	
 	
+	
 	public static void main(String[] args) {
+		
+		
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
 		
-	
 		
 		System.out.println("Instrumentliste - Suchbegriff:");
 		String filter;
@@ -57,7 +59,7 @@ public class EmaListe {
 				//neu22222
 				
 				
-				ausgabe("Test", kombiniereMACDEMAPSAR(), instrument);
+				ausgabe("Test", kombiniereMACDEMAPSAR(connection), instrument);
 			}
 		//}}
 		
@@ -72,7 +74,7 @@ public class EmaListe {
 				+ " - " + kpi.lastTime + ")");
 	}
 	
-	public static Kpi kombiniereMACDEMAPSAR() {
+	public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
 		// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte: 12,26,9)
 		/* 	
 		
@@ -95,8 +97,8 @@ public class EmaListe {
 			
 			*/
 	
-		Connection con = new Connection();
-		ApiConnection connection = new ApiConnection(con);
+		//Connection con = new Connection();
+		//ApiConnection connection = new ApiConnection(con);
 		Ema e = new Ema(connection);
 		
 		Kpi aufrufAlles = e.aufrufAlles("EUR_USD", 200, 14, "M15",0.02, 0.02, 0.02, 12,26,9,2,2);

@@ -111,7 +111,7 @@ public class JsonParser {
 	//	System.out.println("granularität in JsonCandlesRootObject eingetragen");
 		output.candles = new ArrayList<JsonCandlesCandle>();
 		
-	//	System.out.println(jsonCandlesArray.length() + " Candles übergeben");
+		System.out.println(jsonCandlesArray.length() + " Candles übergeben");
 		
 		for(int i = 0; i < jsonCandlesArray.length(); i++) {
 			JsonObject candle = new JsonObject(jsonCandlesArray.get(i));

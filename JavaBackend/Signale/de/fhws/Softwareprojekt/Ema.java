@@ -191,7 +191,7 @@ public class Ema {
 			break;
 		}
 		case ("M15"): {
-			tage = 20;// 30/4
+			tage = 40;// 30/4
 			break;
 		}
 		case ("M10"): {
