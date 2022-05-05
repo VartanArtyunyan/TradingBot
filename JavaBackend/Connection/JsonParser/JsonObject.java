@@ -1,30 +1,35 @@
 package JsonParser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 public class JsonObject {
 
-	ArrayList<JsonVar> contents;;
+	HashMap<String,String> content;
 
 	public JsonObject() {
-		contents = new ArrayList<>();
+		content = new HashMap<>();
 	}
 
 	 public JsonObject(String Json) {
-		contents = new ArrayList<>();
+		
+		content = new HashMap<>();
 		//System.out.println("vor umwandlung zu CharArray");
-		char[] cArray = Json.toCharArray();
+		final char[] cArray = Json.toCharArray();
 		//System.out.println("nach umwandlung zu CharArray");
 		CopyState state = CopyState.copyName;
 
-		JsonVar var = new JsonVar();
 
-		String cache = "";
+		String nameCache = "";
+		String varCache = "";
+		
 
 		int sqrBracketCounter = 0;
 
 		int braceCounter = 0;
+	
 		
 		//System.out.println("vor schleife");
 		for (int i = 2; i < cArray.length - 1; i++) {
@@ -33,99 +38,74 @@ public class JsonObject {
 
 				case copyName:
 					if (cArray[i] == '"') {
-						var.addName(cache);
-						cache = "";
 						state = CopyState.copyVar;
 						i++;
 					} else {
-						cache += cArray[i];
+						nameCache += cArray[i];
 					}
 					break;
 
 				case copyVar:
 					if (cArray[i] == '[') {
 						sqrBracketCounter++;
-						cache += '[';
+						varCache += cArray[i];
 					} else if (cArray[i] == '{') {
 						braceCounter++;
-						cache += '{';
+						varCache += cArray[i];
 					} else if (cArray[i] == ']') {
 						sqrBracketCounter--;
-						cache += ']';
+						varCache += cArray[i];
 					} else if (cArray[i] == '}') {
 						braceCounter--;
-						cache += '}';
+						varCache += cArray[i];
 					} else if(cArray[i] == '"'  && sqrBracketCounter <= 0 && braceCounter <= 0){
 						
-					}else if(cArray[i] == ','  && sqrBracketCounter <= 0 && braceCounter <= 0){
-						var.addContent(cache);
-						contents.add(var);
-						var = new JsonVar();
-						cache = "";
+					} else if(cArray[i] == ','  && sqrBracketCounter <= 0 && braceCounter <= 0){
+						
+						content.put(nameCache, varCache);
+						nameCache = "";
+						varCache = "";
 						state = CopyState.copyName;
 						i++;
-					}else {
-						cache += cArray[i];
+					} else {
+						varCache += cArray[i];
 					}
 					break;
-				default:
-					break;
+					
 				}
 
 		}
 		//System.out.println("nach schleife");
-		cache = cache.substring(0, cache.length() - 1);
-		var.addContent(cache);
-		contents.add(var);
-		var = new JsonVar();
-		cache = "";
+		
+		varCache = varCache.substring(0, varCache.length() - 1);
+		content.put(nameCache, varCache);
+		
 		
 		//System.out.println(contents.size());
 
 	}
 	
 	public JsonObject getObject(String input) {
-		int index = searchIndexOf(input);
-		if(index < 0) return new JsonObject();
-		return new JsonObject(contents.get(index).content);
+		return new JsonObject(content.get(input));
 	}
 
 	public JsonArray getArray(String input) {
-		int index = searchIndexOf(input);
-		if(index < 0) return new JsonArray();
-		return new JsonArray(contents.get(index).content);
+		return new JsonArray(content.get(input));
 	}
 	
-	public JsonVar getVar(String input) {
-		int index = searchIndexOf(input);
-		if(index < 0) return new JsonVar();
-		return contents.get(index);
-	}
 	
 	public String getValue(String input) {
-		return getVar(input).content;
+		return content.get(input);
 	}
 
-	public int searchIndexOf(String input) {
-		int index = 0;
-		Iterator<JsonVar> iterator = contents.iterator();
 
-		while (iterator.hasNext()) {
-			JsonVar jv = iterator.next();
-			if (jv.name.equals(input))
-				return index;
-			index++;
-		}
-
-		return -1;
-	}
 
 	public String toString() {
 		String output = "";
 
-		for (JsonVar jv : contents) {
-			output += jv.toString() + "\n";
-		}
+	//	for (String s1; String s2 : content.entrySet()) {
+	//		output += jv.toString() + "\n";
+	//	}
 
 		return output;
 	}

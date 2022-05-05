@@ -28,9 +28,9 @@ public class ApiConnection {
 		return output;
 	}
 	
-	public JsonCandlesRoot getJsonCandlesRoot(String instrument,String from, String to, String price, String granularity) {
-		String apiResponseString = connection.getCandleStickData(instrument, from, to, price ,granularity);
-		System.out.println("Candle Empfangen");
+	public JsonCandlesRoot getJsonCandlesRoot(int count,String instrument,String from, String to, String price, String granularity) {
+		String apiResponseString = connection.getCandleStickData(count,instrument, from, to, price ,granularity);
+		
 		return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
 	}
 	
@@ -42,7 +42,7 @@ public class ApiConnection {
 	}
 
 	public void cd() {
-		String apiResponseString = connection.getCandleStickData("EUR_JPY", null, null, "M","D5");
+		String apiResponseString = connection.getCandleStickData(-1,"EUR_JPY", null, null, "M","D5");
 		
 		//String[] sArray = apiResponseString.split(",");
 		//System.out.println(sArray.length + " test");

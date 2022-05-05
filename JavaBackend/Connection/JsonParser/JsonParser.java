@@ -91,31 +91,27 @@ public class JsonParser {
 	//Methoden für die Signale
 	
 	public JsonCandlesRoot convertAPiStringToCandlesRootModel(String json) {
-		System.out.println("converAPIStringTOCandlesRootModel aufgerufen");
-		String[] sArray = json.split(",");
-		
-	//	for(int i = 0; i < sArray.length; i++) {
-		//	System.out.println(sArray[i]);
-		//}
+	//	System.out.println("converAPIStringTOCandlesRootModel aufgerufen");
+	
 		
 		
 		
 		JsonObject input = new JsonObject(json);
-		System.out.println("JsonObject erstellt");
+		//System.out.println("JsonObject erstellt");
 		//System.out.println(input);
 		JsonArray jsonCandlesArray = input.getArray("candles");
-		System.out.println("JsonArrayObjektn erstellt");
+	//	System.out.println("JsonArrayObjektn erstellt");
 		
 		JsonCandlesRoot output = new JsonCandlesRoot();
-		System.out.println("JsonCandlesRootObject erstellt");
+	//	System.out.println("JsonCandlesRootObject erstellt");
 		
 		output.instrument = input.getValue("instrument");
-		System.out.println("instrument in JsonCandlesRootObject eingetragen");
+	//	System.out.println("instrument in JsonCandlesRootObject eingetragen");
 		output.granularity = input.getValue("granularity");
-		System.out.println("granularität in JsonCandlesRootObject eingetragen");
+	//	System.out.println("granularität in JsonCandlesRootObject eingetragen");
 		output.candles = new ArrayList<JsonCandlesCandle>();
 		
-		System.out.println(jsonCandlesArray.length() + " Candles übergeben");
+	//	System.out.println(jsonCandlesArray.length() + " Candles übergeben");
 		
 		for(int i = 0; i < jsonCandlesArray.length(); i++) {
 			JsonObject candle = new JsonObject(jsonCandlesArray.get(i));

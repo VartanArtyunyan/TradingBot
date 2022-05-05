@@ -133,10 +133,12 @@ public class Connection {
 	}
 	
 	
-	public String getCandleStickData(String instrument, String from, String to, String price, String granularity) {
+	public String getCandleStickData(int count, String instrument, String from, String to, String price, String granularity) {
 		
 		ArrayList<String> querys = new ArrayList<>();
-		
+
+				
+		if(count >= 0)querys.add("count="+count);
 		if(price!=null)querys.add("price="+price);
 		if(from!=null)querys.add("from="+from);
 		if(to!=null)querys.add("to="+to);
@@ -144,7 +146,7 @@ public class Connection {
 		
 		String query = "";
 		
-		if(querys.size()>0)query+="";
+		if(querys.size()>0)query+="?";
 		
 		Iterator<String> iterator = querys.iterator();
 	    while (iterator.hasNext()) {
@@ -164,8 +166,8 @@ public class Connection {
 		String jsonString = "";
 		
 		try {
-			url = new URL(urlString + "/instruments/" + instrument + "/" + call +  "?count=4900&" + query);
-			System.out.println(urlString + "/instruments/" + instrument + "/" + call +  "?count=4900&" + query);
+			url = new URL(urlString + "/instruments/" + instrument + "/" + call + query);
+			//System.out.println(urlString + "/instruments/" + instrument + "/" + call + query);
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Authorization","Bearer f65f26fa3004b13f58f04794df17cc30-bf43fa11c4789a9146937ce2c36f553e");

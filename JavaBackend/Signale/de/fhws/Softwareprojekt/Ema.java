@@ -80,7 +80,7 @@ public class Ema {
 	//	String jsonString = getResponse(connection);
 		// JSON in Objekte mappen
 	//	ObjectMapper om = new ObjectMapper();
-		JsonCandlesRoot root = connection.getJsonCandlesRoot(instrument, startDate(granularity), null, "M", granularity);
+		JsonCandlesRoot root = connection.getJsonCandlesRoot(4900, instrument, startDate(granularity), null, "M", granularity);
 		return root;
 	}
 
