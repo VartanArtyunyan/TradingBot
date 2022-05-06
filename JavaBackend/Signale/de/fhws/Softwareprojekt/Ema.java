@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 
 import API.ApiConnection;
+//import sun.security.mscapi.CKeyStore.ROOT;
 
 public class Ema {
 	
@@ -183,19 +184,19 @@ public class Ema {
 		int tage = 1;
 		switch (granularity) {
 		case ("D"): {
-			tage = 1300;// Samstags keine Werte--> ca. 1000 Candle
+			tage = 4900;// Samstags keine Werte--> ca. 1000 Candle
 			break;
 		}
 		case ("H1"): {
-			tage = 110;// ein Monat ca. 500 Candles
+			tage = 200;// ein Monat ca. 500 Candles
 			break;
 		}
 		case ("M15"): {
-			tage = 40;// 30/4
+			tage = 65;// 30/4
 			break;
 		}
 		case ("M10"): {
-			tage = 6;
+			tage = 43;
 			break;
 		}
 		}
@@ -267,6 +268,9 @@ public class Ema {
 		Kpi kpi4=getRSI(instrument, periods, granularity,jcr);
 		Kpi kpi5=getATR(instrument, periods, granularity,jcr);
 		Kpi kpi6=getSupertrend(instrument, periods, granularity, jcr, multiplicatorUpper, multiplicatorLower);
+		Kpi kpi7=getSMA(instrument, periods, granularity, jcr);
+		kpi.sma=kpi7.sma;
+		kpi.smaList=kpi7.smaList;
 		kpi.atr=kpi5.atr;
 		kpi.atrListe=kpi5.atrListe;
 		kpi.macd=kpi3.macd;
@@ -347,6 +351,28 @@ public class Ema {
 				kpi.rsiListe.add(kpi.rsi);
 			}
 	return kpi;
+	}
+	public Kpi getSMA(String instrument, int periods, String granularity,JsonCandlesRoot jcr)
+	{
+		Kpi kpi=getKpi(instrument,periods,granularity,jcr);
+	
+		for(int i=0;i< kpi.root.candles.size();i++)
+		{
+			double ergebnis=0;
+			if(i>=periods-1)
+			{
+			for(int z=i-periods+1;z<=i;z++)
+			{
+			ergebnis+=kpi.root.candles.get(z).mid.c;
+			}
+			ergebnis/=periods;
+			kpi.sma=ergebnis;
+			kpi.smaList.add(kpi.sma);
+			
+			}
+			
+		}
+		return kpi;
 	}
 	public Kpi getSupertrend(String instrument, int periods, String granularity,JsonCandlesRoot jcr,int multiplicatorUpper,int multiplicatorLower)
 	{

@@ -16,7 +16,8 @@ public class Kpi {
 	ArrayList<Double>macds=new ArrayList<>();
     ArrayList<Double> macdsTriggert=new ArrayList<>();
 	double macdTriggert=0;
-	
+	double sma=0;
+	ArrayList<Double>smaList =new ArrayList<>();
 ArrayList<Double> superTrends=new ArrayList<>();
 double superTrend=0;
 	boolean trendWechsel=false;
