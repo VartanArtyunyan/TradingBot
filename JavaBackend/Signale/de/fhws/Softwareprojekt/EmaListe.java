@@ -101,50 +101,105 @@ public class EmaListe {
 		//ApiConnection connection = new ApiConnection(con);
 		Ema e = new Ema(connection);
 		
-		Kpi aufrufAlles = e.aufrufAlles("EUR_USD", 200, 14, "M15",0.02, 0.02, 0.02, 12,26,9,2,2);
-		double ema200 = aufrufAlles.ema;
-		double aktuellerKurs = aufrufAlles.lastPrice;
+		Kpi werte = e.aufrufAlles("EUR_USD", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 		boolean kaufentscheidung = false;
-		JsonCandlesRoot x = aufrufAlles.root;
-		Kpi macd = e.getMACD("EUR_USD", "M15", 12, 26, 9, x);
-		double abfrageMACD = macd.macd;
-		double trigger = macd.macdTriggert;
-		/*System.out.println(aktuellerKurs);
-		System.out.println(ema200);
-		System.out.println(abfrageMACD);
-		System.out.println(trigger);*/
-		
-		if (aktuellerKurs > ema200) {
-			//Kurs liegt über EMA200
-			//Abfragen, wie MACD zu Signallinie steht
-			//Wenn optimal, dann PSAR abgleichen
-			System.out.println("Kurswert liegt unter Trend");
-			//MACD Differenz Berechnen
-			double differenz = Math.round(abfrageMACD - trigger);
-			
-			
-			
-			System.out.println(differenz);
+		JsonCandlesRoot x = werte.root;
 
-			kaufentscheidung = true;
-		}
-		else if (aktuellerKurs < ema200) {
-			//Kurs liegt unter EMA200
-			//Abfragen, wie MACD zu Signallinie steht
-			//Wenn optimal, dann PSAR abgleichen
-			System.out.println("Kurswert liegt über Trend");
-			//MACD Differenz Berechnen
-			double differenz = Math.round(abfrageMACD - trigger);
-			System.out.println(differenz);
-			
-			kaufentscheidung = true;
-		}
-		else //Kurs liegt auf EMA200 -> kommt so gut wie nie vor
-			kaufentscheidung = false;
+		//System.out.println(werte.lastPrice);
+		//System.out.println(werte.parabolicSAR);
+		//System.out.println(werte.ema);
+		//System.out.println(werte.macd);
+		//System.out.println(werte.macdTrigger);
+		//System.out.println(pruefeMACD(werte));
+		//System.out.println(pruefeEMA200(werte));
+		//System.out.println(pruefePSAR(werte));
 		
-		return aufrufAlles;
+		//ToDo: Abgleichen der Werte von EMA200, MACD und PSAR
+		//		Ermitteln welche Rückgabewerte zu einer Kaufentscheidung führt
+		//		Kaufposition aufrufen
+
+		
+		return werte;
 
 	}
+	public static int pruefeMACD(Kpi werte) {
+		// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
+				
+		boolean verhaeltnisVorzeichenNegativ = false;
+		boolean verhaeltnisVorzeichenPositiv = false;
+		int rueckgabewert = 99;
+		for (int i = 1; i<6; i++) {
+			double macd = werte.macds.get(werte.macds.size()-i);
+			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
+			double macdVerhaeltnis = macd-trigger;
+			if(macdVerhaeltnis < 0) {
+				verhaeltnisVorzeichenNegativ = true;
+				//verhaeltnisVorzeichenPositiv = false;
+			}
+			else if (macdVerhaeltnis > 0) {
+				//verhaeltnisVorzeichenNegativ = false;
+				verhaeltnisVorzeichenPositiv = true;
+			}
+			else /*macdVerhaeltnis = 0*/ {
+				break;
+			}
+			
+			System.out.println(macdVerhaeltnis);
+			//wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben
+			//und dann das Vorzeichen sich ändert, gilt die Bedingung als erfüllt
+		}
+		if(verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false) {
+			//die letzten 5 MACDs sind negativ
+			rueckgabewert = -1;
+		}
+		else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true) {
+			//die letzten 5 MACDs sind positiv
+			rueckgabewert = 1;
+		}
+		else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true) || (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)){
+			//die letzten 5 MACDs haben nicht das gleiche Vorzeichen
+			rueckgabewert = 0;
+		}
+		return rueckgabewert;
+	}
+	
+	public static int pruefeEMA200(Kpi werte) {
+		//Prüfe, ob der aktuelle Preis unter oder über des Langzeittrends (EMA200) liegt
+		//Ausgabewerte: 1 -> Kurs über Trend; -1 -> Kurs unter Trend; 0 -> Kurs gleich Preis
+		int rueckgabewert = 99;
+		double ema200 = werte.ema;
+		double aktuellerKurs = werte.lastPrice;
+		
+		if (aktuellerKurs > ema200) {
+			rueckgabewert = 1;
+		}
+		if (aktuellerKurs < ema200) {
+			rueckgabewert = -1;
+		}
+		else /*aktuellerKurs = ema200*/{
+			rueckgabewert = 0;
+		}
+		
+		return rueckgabewert;
+	}
 
+	public static int pruefePSAR(Kpi werte) {
+		//Prüfue, ob der aktuelle Preis unter oder über dem Parabolic SAR liegt
+		//Ausgabewerte: 1 -> PSAR-Punkt unter Preis; -1 -> PSAR-Punkt über Preis; 0 -> PSAR-Punkt gleich Preis
+		int rueckgabewert = 99;
+		double aktuellerKurs = werte.lastPrice;
+		double PSAR = werte.parabolicSAR;
+		if (aktuellerKurs > PSAR) {
+			rueckgabewert = 1;
+		}
+		if (aktuellerKurs < PSAR) {
+			rueckgabewert = -1;
+		}
+		else /*aktuellerKurs = PSAR*/{
+			rueckgabewert = 0;
+		}
+		return rueckgabewert;
+		
+	}
 
 }
