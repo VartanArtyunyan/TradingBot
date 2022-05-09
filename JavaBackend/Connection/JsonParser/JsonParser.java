@@ -91,17 +91,27 @@ public class JsonParser {
 	//Methoden für die Signale
 	
 	public JsonCandlesRoot convertAPiStringToCandlesRootModel(String json) {
+	//	System.out.println("converAPIStringTOCandlesRootModel aufgerufen");
+	
+		
+		
 		
 		JsonObject input = new JsonObject(json);
+		//System.out.println("JsonObject erstellt");
+		//System.out.println(input);
 		JsonArray jsonCandlesArray = input.getArray("candles");
-		
+	//	System.out.println("JsonArrayObjektn erstellt");
 		
 		JsonCandlesRoot output = new JsonCandlesRoot();
-		
+	//	System.out.println("JsonCandlesRootObject erstellt");
 		
 		output.instrument = input.getValue("instrument");
+	//	System.out.println("instrument in JsonCandlesRootObject eingetragen");
 		output.granularity = input.getValue("granularity");
+	//	System.out.println("granularität in JsonCandlesRootObject eingetragen");
 		output.candles = new ArrayList<JsonCandlesCandle>();
+		
+	//	System.out.println(jsonCandlesArray.length() + " Candles übergeben");
 		
 		for(int i = 0; i < jsonCandlesArray.length(); i++) {
 			JsonObject candle = new JsonObject(jsonCandlesArray.get(i));
@@ -133,6 +143,7 @@ public class JsonParser {
 	public JsonInstrumentsRoot convertAPiStringToInstrumentsRootModel(String json){
 		JsonInstrumentsRoot output = new JsonInstrumentsRoot();
 		JsonObject input = new JsonObject(json);
+		//System.out.println(input);
 		JsonArray jsonInstrumentsArray = input.getArray("instruments");
 		
 		output.lastTransactionID = input.getValue("lastTransactionID");
