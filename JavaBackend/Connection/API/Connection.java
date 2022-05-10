@@ -53,7 +53,7 @@ public class Connection {
 
 			status = connection.getResponseCode();
 
-			System.out.println(status + " " + connection.getResponseMessage());
+			//System.out.println(status + " " + connection.getResponseMessage());
 
 			if (status < 299) {
 				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -102,7 +102,7 @@ public class Connection {
 
 			status = connection.getResponseCode();
 
-			System.out.println(status + " " + connection.getResponseMessage());
+			//System.out.println(status + " " + connection.getResponseMessage());
 
 			if (status < 299) {
 				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -133,14 +133,16 @@ public class Connection {
 	}
 	
 	
-	public String getCandleStickData(String instrument, String from, String to, String price, String granularity) {
+	public String getCandleStickData(int count, String instrument, String from, String to, String price, String granularity) {
 		
 		ArrayList<String> querys = new ArrayList<>();
-		
+
+				
+		if(count >= 0)querys.add("count="+count);
 		if(price!=null)querys.add("price="+price);
 		if(from!=null)querys.add("from="+from);
 		if(to!=null)querys.add("to="+to);
-		if(granularity!=null)querys.add("granularity?"+granularity);
+		if(granularity!=null)querys.add("granularity="+granularity);
 		
 		String query = "";
 		
@@ -154,9 +156,8 @@ public class Connection {
 	           query+="&";
 	        }
 	     }
+	    
 		
-		
-		System.out.println(query);
 		return getInstruementResponse(instrument,"candles",query);
 		
 	}
@@ -166,6 +167,7 @@ public class Connection {
 		
 		try {
 			url = new URL(urlString + "/instruments/" + instrument + "/" + call + query);
+			//System.out.println(urlString + "/instruments/" + instrument + "/" + call + query);
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Authorization","Bearer f65f26fa3004b13f58f04794df17cc30-bf43fa11c4789a9146937ce2c36f553e");
@@ -177,7 +179,7 @@ public class Connection {
 
 			status = connection.getResponseCode();
 
-			System.out.println(status + " " + connection.getResponseMessage());
+		//	System.out.println(status + " " + connection.getResponseMessage());
 
 			if (status < 299) {
 				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));

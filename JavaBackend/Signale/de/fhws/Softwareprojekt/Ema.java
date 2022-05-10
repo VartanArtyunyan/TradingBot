@@ -5,35 +5,31 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+
 import java.time.LocalDate;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import API.ApiConnection;
+//import sun.security.mscapi.CKeyStore.ROOT;
 
 public class Ema {
-	private String oanda = "https://api-fxpractice.oanda.com/v3/";
-	private String account = "accounts/101-012-22115816-001/";
-	private String token = "Bearer 91dec921714f6128f5ed7f199560852d-1fb0ae23b9e48ab85aec80682b096f5f";
+	
+	private ApiConnection connection;
+	
+	public Ema(ApiConnection connection) {
 
-	public Ema(String account, String token) {
-		this.account = "accounts/" + account + "/";
-		this.token = "Bearer " + token;
+		this.connection = connection;
 	}
 
-	public Kpi getKpi(String instrument, int periods, String granularity) {
+	public Kpi getKpi(String instrument, int periods, String granularity, JsonCandlesRoot jcr) {
 
 		// HttpURLConnection connection;
 
 		Kpi kpi = new Kpi(instrument, granularity, periods);
 
-		try {
-			// Abruf Candle-Liste vorbereiten und Verbindung aufbauen
-			// dabei so viele Candles wie möglich holen für genauere EMA-Ermittlung
-			kpi. root = extracted(instrument, granularity);
+		
+			kpi. root = jcr;
 
 			// KPI's ermitteln **************************************
 			int count = 0;
@@ -70,31 +66,27 @@ public class Ema {
 			}
 			kpi.avg = kpi.root.candles.isEmpty() ? 0 : sum2 / periods;
 
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return kpi;
-		}
+		
 		return kpi;
 	}
 
-	public JsonCandlesRoot extracted(String instrument, String granularity)
-			throws MalformedURLException, IOException, JsonProcessingException, JsonMappingException {
-		HttpURLConnection connection;
-		URL url = new URL(oanda + account + "instruments/" + instrument + "/candles?count=4900&granularity="
-				+ granularity + "&from=" + startDate(granularity)+"&alignmentTimezone=Europe/Berlin&dailyAlignment=22");
+	public JsonCandlesRoot extracted(String instrument, String granularity){
+		//HttpURLConnection connection;
+		//URL url = new URL(oanda + account + "instruments/" + instrument + "/candles?count=4900&granularity="
+			//	+ granularity + "&from=" + startDate(granularity)+"&alignmentTimezone=Europe/Berlin&dailyAlignment=22");
 		//+ "&alignmentTimezone=Europe/Berlin"
-		connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestProperty("Authorization", token);
+		//connection = (HttpURLConnection) url.openConnection();
+		//connection.setRequestProperty("Authorization", token);
 		// Candle-Liste abrufen
-		String jsonString = getResponse(connection);
+	//	String jsonString = getResponse(connection);
 		// JSON in Objekte mappen
-		ObjectMapper om = new ObjectMapper();
-		JsonCandlesRoot root = om.readValue(jsonString, JsonCandlesRoot.class);
+	//	ObjectMapper om = new ObjectMapper();
+		JsonCandlesRoot root = connection.getJsonCandlesRoot(4900, instrument, startDate(granularity), null, "M", granularity);
 		return root;
 	}
 
-	public Kpi parabolicSar(String instrument, String granularity,int periods, double startBF, double inkrementBF, double maxBF) {
-			Kpi kpi = getKpi(instrument,periods,granularity);
+	public Kpi parabolicSar(String instrument, String granularity,int periods, double startBF, double inkrementBF, double maxBF,JsonCandlesRoot jcr) {
+			Kpi kpi = getKpi(instrument,periods,granularity,jcr);
 			double startBFAf = startBF;
 			double extrempunkt = 0;
 			double extrempunktAlt = 0;
@@ -126,6 +118,7 @@ public class Ema {
 				}
 
 				kpi.parabolicSAR += (extrempunktAlt - kpi.parabolicSAR) * startBFAlt;
+				kpi.parabolicSARs.add(kpi.parabolicSAR);
 				extrempunktAlt = extrempunkt;
 				startBFAlt = startBF;
 				vortrend = kpi.trend;
@@ -144,17 +137,37 @@ public class Ema {
 				}
 
 				count++;
+				
 			}
 			return kpi;
 	}
 
-	public Kpi getMACD(String instrument, String granularity, int x, int y, int z) {
-		Kpi kpi1 = getKpi(instrument, x, granularity);
-		Kpi kpi2 = getKpi(instrument, y, granularity);
-		Kpi md = getKpi(instrument, z, granularity);
+	public Kpi getMACD(String instrument, String granularity, int x, int y, int z, JsonCandlesRoot jcr) {
+		Kpi kpi1 = getKpi(instrument, x, granularity,jcr);
+		Kpi kpi2 = getKpi(instrument, y, granularity,jcr);
+		Kpi md = getKpi(instrument, z, granularity,jcr);
 	double ergebnis = 0;
-    double Vorergebnis=0;
-		for(int i= md.emas.size()-md.periods-1;i<md.emas.size();i++)
+ //   double Vorergebnis=0;
+    for(int i=md.periods;i<md.emas.size()+1;i++)
+    {
+    	if(i==md.periods)md.macds.add(kpi1.emas.get(i-1)-kpi2.emas.get(i-1));
+    	
+    	ergebnis=0;
+    	if(i<md.emas.size())
+    	md.macds.add(kpi1.emas.get(i)-kpi2.emas.get(i));
+    	for(int b=i-md.periods;b<i;b++)
+    	{
+    		ergebnis+=kpi1.emas.get(b)-kpi2.emas.get(b);
+    	}
+    	ergebnis=ergebnis/md.periods;
+    	
+    	md.macdsTriggert.add(ergebnis);
+    	
+    }
+ 
+    md.macd=md.macds.get(md.macds.size()-1);
+    md.macdTriggert=ergebnis;
+		/*for(int i= md.emas.size()-md.periods-1;i<md.emas.size();i++)
 		{
 		ergebnis=(i>=(md.emas.size()-md.periods))?ergebnis+(kpi1.emas.get(i)-kpi2.emas.get(i)):ergebnis;
 		Vorergebnis=(i<md.emas.size()-1)?Vorergebnis+(kpi1.emas.get(i)-kpi2.emas.get(i)):Vorergebnis;
@@ -162,7 +175,7 @@ public class Ema {
 		md.Vormacd=kpi1.vorema-kpi2.vorema;
 		md.macd=kpi1.ema-kpi2.ema;
 		md.VormacdTriggert=
-		md.macdTriggert=ergebnis/md.periods;
+		md.macdTriggert=ergebnis/md.periods;*/
 		return md;
 	}
 
@@ -172,19 +185,19 @@ public class Ema {
 		int tage = 1;
 		switch (granularity) {
 		case ("D"): {
-			tage = 1300;// Samstags keine Werte--> ca. 1000 Candle
+			tage = 4900;// Samstags keine Werte--> ca. 1000 Candle
 			break;
 		}
 		case ("H1"): {
-			tage = 110;// ein Monat ca. 500 Candles
+			tage = 200;// ein Monat ca. 500 Candles
 			break;
 		}
 		case ("M15"): {
-			tage = 45;// 30/4
+			tage = 65;// 30/4
 			break;
 		}
 		case ("M10"): {
-			tage = 6;
+			tage = 43;
 			break;
 		}
 		}
@@ -213,19 +226,19 @@ public class Ema {
 	}
 
 	public JsonInstrumentsRoot getInstruments() {
-		try {
-			URL url = new URL(oanda + account + "instruments");
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestProperty("Authorization", token);
+	//	try {
+	//		URL url = new URL(oanda + account + "instruments");
+	//		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	//		connection.setRequestProperty("Authorization", token);
 
-			String jsonString = getResponse(connection);
+	//		String jsonString = getResponse(connection);
 			// JSON in Objekte mappen
-			ObjectMapper om = new ObjectMapper();
-			return om.readValue(jsonString, JsonInstrumentsRoot.class);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-		return null;
+	//		ObjectMapper om = new ObjectMapper();
+			return connection.getJsonInstrumentsRoot();
+	//	} catch (Exception e) {
+	//		System.out.println(e.getMessage());
+	//	}
+	//	return null;
 	}
 
 	public String getResponse(HttpURLConnection connection) throws IOException {
@@ -245,31 +258,45 @@ public class Ema {
 		return jsonString;
 		
 	}
-	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity,double startBF, double inkrementBF, double maxBF,int x, int y, int z)
+	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity,double startBF, double inkrementBF, double maxBF,int x, int y, int z,int multiplicatorUpper,int multiplicatorLower)
 	{
-		Kpi kpi=getKpi(instrument, emaperiods, granularity);
-		Kpi kpi2=parabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF);
-		Kpi kpi3=getMACD(instrument, granularity, x, y, z);
-		Kpi kpi4=getRSI(instrument, periods, granularity);
-		Kpi kpi5=getATR(instrument, periods, granularity);
+		
+		JsonCandlesRoot jcr = extracted(instrument, granularity);
+		
+		Kpi kpi=getKpi(instrument, emaperiods, granularity,jcr);
+		Kpi kpi2=parabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
+		Kpi kpi3=getMACD(instrument, granularity, x, y, z,jcr);
+		Kpi kpi4=getRSI(instrument, periods, granularity,jcr);
+		Kpi kpi5=getATR(instrument, periods, granularity,jcr);
+		Kpi kpi6=getSupertrend(instrument, periods, granularity, jcr, multiplicatorUpper, multiplicatorLower);
+		Kpi kpi7=getSMA(instrument, periods, granularity, jcr);
+		kpi.sma=kpi7.sma;
+		kpi.smaList=kpi7.smaList;
 		kpi.atr=kpi5.atr;
 		kpi.atrListe=kpi5.atrListe;
 		kpi.macd=kpi3.macd;
-		kpi.Vormacd=kpi3.Vormacd;
-		kpi.VormacdTriggert=kpi3.VormacdTriggert;
+		kpi.macds=kpi3.macds;
+		kpi.macdsTriggert=kpi3.macdsTriggert;
 		kpi.macdTriggert=kpi3.macdTriggert;
 		kpi.parabolicSAR=kpi2.parabolicSAR;
+		kpi.parabolicSARs=kpi2.parabolicSARs;
 		kpi.rsi=kpi4.rsi;
+		kpi.rsiListe=kpi4.rsiListe;
 		kpi.trend=kpi2.trend;
 		kpi.trendWechsel=kpi2.trendWechsel;
+		kpi.superTrend=kpi6.superTrend;
+		kpi.superTrends=kpi6.superTrends;
 		return kpi;
 	
-	}
+
+	} 
+
 	//Tom 
-	public Kpi getATR(String instrument,int periods,String granularity)
+	public Kpi getATR(String instrument,int periods,String granularity, JsonCandlesRoot jcr)
+
 	{
 
-			Kpi kpi=getKpi(instrument,periods,granularity);
+			Kpi kpi=getKpi(instrument,periods,granularity,jcr);
 			double betrag=0;
 			double prev=0;
 			for(int i=1;i<kpi.root.candles.size();i++)
@@ -288,8 +315,12 @@ public class Ema {
 			}
 			return kpi;
 		}
-	public Kpi getRSI(String instrument, int periods, String granularity) {
-		Kpi kpi=getKpi(instrument,periods,granularity);
+
+	//Tom
+
+	public Kpi getRSI(String instrument, int periods, String granularity,JsonCandlesRoot jcr) {
+		Kpi kpi=getKpi(instrument,periods,granularity,jcr);
+
 		double gain=0;
 		double loss=0;
 		
@@ -318,8 +349,89 @@ public class Ema {
 				}
 				startPreis=kpi.root.candles.get(z).mid.c;
 				kpi.rsi=100-(100/((gain/loss)+1));
+				kpi.rsiListe.add(kpi.rsi);
 			}
 	return kpi;
+	}
+	public Kpi getSMA(String instrument, int periods, String granularity,JsonCandlesRoot jcr)
+	{
+		Kpi kpi=getKpi(instrument,periods,granularity,jcr);
+	
+		for(int i=0;i< kpi.root.candles.size();i++)
+		{
+			double ergebnis=0;
+			if(i>=periods-1)
+			{
+			for(int z=i-periods+1;z<=i;z++)
+			{
+			ergebnis+=kpi.root.candles.get(z).mid.c;
+			}
+			ergebnis/=periods;
+			kpi.sma=ergebnis;
+			kpi.smaList.add(kpi.sma);
+			
+			}
+			
+		}
+		return kpi;
+	}
+	public Kpi getSupertrend(String instrument, int periods, String granularity,JsonCandlesRoot jcr,int multiplicatorUpper,int multiplicatorLower)
+	{
+		Kpi kpi=getATR(instrument, periods, granularity, jcr);
+		double upperband=0;
+		double upperbandPrev=0;
+		double lowerband=0;
+		double lowerbandPrev=0;
+		
+		int count=0;
+		for(int i=1;i<kpi.root.candles.size();i++)
+		{
+			if (i>periods)
+			{
+		
+			//Wenn upperband kleiner als upperbandPrev oder vorherige Schlusskurz größer ist als upperbandPrev dann nehme upperband
+				//Wenn lowerband größer ist als lowerbandPrev pder vorherige Schlusskurs kleiner als lowerbandPrev ist dann nehme lowerband
+				upperband=((kpi.root.candles.get(i).mid.h+kpi.root.candles.get(i).mid.l)/2)+(multiplicatorUpper*kpi.atrListe.get(count));
+				lowerband=((kpi.root.candles.get(i).mid.h+kpi.root.candles.get(i).mid.l)/2)-(multiplicatorLower*kpi.atrListe.get(count));
+				if(i==periods+1)
+					{
+					upperbandPrev=upperband;
+					lowerbandPrev=lowerband;
+					kpi.superTrend=upperbandPrev;
+					}
+				
+					
+				upperband=upperband<upperbandPrev?upperband:upperbandPrev;
+				if((upperband==upperbandPrev)&&(i!=periods+1))
+				upperband=kpi.root.candles.get(i-1).mid.c>upperbandPrev?upperband:upperbandPrev;
+				
+				lowerband=lowerband>lowerbandPrev?lowerband:lowerbandPrev;
+				if((lowerband==lowerbandPrev)&&(i!=periods+1))
+				lowerband=kpi.root.candles.get(i-1).mid.c<lowerbandPrev?lowerband:lowerbandPrev;
+				
+				count++;
+			
+			if(kpi.superTrend==upperbandPrev)
+			{
+		if(kpi.root.candles.get(i).mid.c<upperband)
+			kpi.superTrend=upperband;
+		else if(kpi.root.candles.get(i).mid.c>upperband)
+			kpi.superTrend=lowerband;
+			}
+			else if(kpi.superTrend==lowerbandPrev)
+			{
+				if(kpi.root.candles.get(i).mid.c>lowerband)
+					kpi.superTrend=lowerband;
+				else if(kpi.root.candles.get(i).mid.c<lowerband)
+					kpi.superTrend=upperband;
+			}
+			
+			lowerbandPrev=lowerband;
+			upperbandPrev=upperband;
+			kpi.superTrends.add(kpi.superTrend);
+		}
+		}
+		return kpi;
 	}
 
 }
