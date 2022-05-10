@@ -26,12 +26,15 @@ def start():
     }
 
     #URL = "/de/api/v1/eventDates/2022-05-09T10:02:42Z/2022-05-11T12:02:42Z"
-    dat = date.today()
-    gerade = datetime.datetime.now()
-    bis = (gerade - timedelta(hours=2)).strftime("%H:%M:%S") #Zeitverschiebung nach UTC
-    von = (gerade - timedelta(hours=5)).strftime("%H:%M:%S")
+    #dat = date.today()
+    #gerade = datetime.datetime.now()
+    #bis = (gerade - timedelta(hours=2)).strftime("%H:%M:%S") #Zeitverschiebung nach UTC
+    #von = (gerade - timedelta(hours=5)).strftime("%H:%M:%S")
+    dat = "2022-05-09"
+    von = "00:00:00"
+    bis = "23:59:59"
 
-    URL = f"https://calendar-api.fxstreet.com/de/api/v1/eventDates/{dat}T{von}Z/{dat}T{bis}Z?=&volatilities=HIGH&volatilities=MEDIUM&"
+    URL = f"https://calendar-api.fxstreet.com/de/api/v1/eventDates/{dat}T{von}Z/{dat}T{bis}Z?=&volatilities=HIGH&volatilities=MEDIUM"
     conn.request("GET", URL, payload, headers)
     #conn.request("GET", "/en/api/v1/eventDates/2022-05-04", payload, headers)
 
@@ -39,11 +42,11 @@ def start():
     data = res.read()
     x = gzip_decode(data)
     s = x.decode('utf-8')
-    f = open("jsonCalender2.txt", "w")
+    f = open("jsonCalender1.json", "w")
     f.write(s)
     f.close
 
-
+start()
 
 
 
