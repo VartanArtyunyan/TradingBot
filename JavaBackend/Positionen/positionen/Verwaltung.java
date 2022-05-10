@@ -28,13 +28,19 @@ public class Verwaltung {
 		 	 
 		 connection.placeOrder(i, anzahlAktien);
 		
+		 
+		 aktualisierePosition();
 	}
 	public void closeWholePosition(String i) {
 		
 		connection.closeWholePosition(i);
+		
+		aktualisierePosition();
 	}
 	public void closePosition(String i, int anzahl ) {
 		connection.closePosition(i, anzahl);
+		
+		aktualisierePosition();
 	}
 	
 	
