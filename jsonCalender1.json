@@ -7,7 +7,7 @@
         "periodType": "MONTH",
         "actual": 3.9,
         "revised": null,
-        "consensus": 3.2,
+        "consensus":3.2,
         "ratioDeviation": 0.50698,
         "previous": 14.7,
         "isBetterThanExpected": true,
