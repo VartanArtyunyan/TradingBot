@@ -97,45 +97,59 @@ public class Ema {
 			kpi.trend = "bull";
 			String vortrend = "bull";
 			for (JsonCandlesCandle candle :kpi.root.candles) {
-				// 1 Durchgang
+				// 1 Durchgang 
 				if (count == 0) {
-					lAlt = kpi.parabolicSAR = candle.mid.l;
-					hAlt = extrempunkt = candle.mid.h;
+					 kpi.parabolicSAR = candle.mid.l;
+					 extrempunkt = candle.mid.h;
 
 				} else {
 
 					if (kpi.trend.compareTo("bull") == 0) {
-						extrempunkt = candle.mid.h > hAlt ? candle.mid.h : hAlt;
-						if ((candle.mid.h > hAlt) && (startBF != maxBF)) {
+						extrempunkt = candle.mid.h > extrempunkt ? candle.mid.h : extrempunkt;
+						if ((extrempunkt >extrempunktAlt) && (startBF != maxBF)&&(vortrend.compareTo(kpi.trend)==0) ){
 							startBF += inkrementBF;
 						}
-					} else {
-						extrempunkt = candle.mid.l < lAlt ? candle.mid.l : lAlt;
-						if ((candle.mid.h < hAlt) && (startBF != maxBF)) {
+					}
+					if(kpi.trend.compareTo("bear")==0)
+					{
+						extrempunkt = candle.mid.l < extrempunkt ? candle.mid.l : extrempunkt;
+						if ((extrempunkt <extrempunktAlt) && (startBF != maxBF)&&(vortrend.compareTo(kpi.trend)==0)) {
 							startBF += inkrementBF;
 						}
 					}
 				}
-
-				kpi.parabolicSAR += (extrempunktAlt - kpi.parabolicSAR) * startBFAlt;
+if(count>0)
+{
+	if(((kpi.parabolicSAR+(extrempunktAlt - kpi.parabolicSAR)*startBFAlt)>candle.mid.l&&kpi.trend.compareTo("bull")==0)||(((kpi.parabolicSAR+(extrempunktAlt - kpi.parabolicSAR)*startBFAlt)<candle.mid.h)&&kpi.trend.compareTo("bear")==0))
+		kpi.parabolicSAR=extrempunktAlt;
+	else
+		kpi.parabolicSAR+=	 (extrempunktAlt - kpi.parabolicSAR) * startBFAlt;
+	
+}
 				kpi.parabolicSARs.add(kpi.parabolicSAR);
 				extrempunktAlt = extrempunkt;
 				startBFAlt = startBF;
 				vortrend = kpi.trend;
 				// Trendwechsel checken
-				if (candle.mid.h > kpi.parabolicSAR) {
+				if (kpi.parabolicSAR <candle.mid.h) {
 					if (kpi.trend.compareTo("bull") != 0) {
 						startBF = startBFAf;
 					}
 					kpi.trend = "bull";
+					
 				}
-				if (kpi.parabolicSAR > candle.mid.l) {
+				else
+				{	
+				 if(candle.mid.l<kpi.parabolicSAR) {
 					if (kpi.trend.compareTo("bear") != 0) {
 						startBF = startBFAf;
 					}
 					kpi.trend = "bear";
+					
 				}
-
+				}
+			//	hAlt=candle.mid.h;
+			//	lAlt=candle.mid.l;
 				count++;
 				
 			}
