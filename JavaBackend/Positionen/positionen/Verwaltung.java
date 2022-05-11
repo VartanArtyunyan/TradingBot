@@ -21,20 +21,26 @@ public class Verwaltung {
 		
 	}
 	
-	public void placeOrder(String i, double wert) {
+	public void placeOrder(String i, double wert, double kurs, double obergrenze, double untergrenze) {
 		int anzahlAktien;
 		
-		 anzahlAktien = (int) (wert / connection.getKurs(i));
+		 anzahlAktien = (int) (wert / kurs);
 		 	 
-		 connection.placeOrder(i, anzahlAktien);
+		 connection.placeOrder(i, anzahlAktien, obergrenze, untergrenze);
 		
+		 
+		 aktualisierePosition();
 	}
 	public void closeWholePosition(String i) {
 		
 		connection.closeWholePosition(i);
+		
+		aktualisierePosition();
 	}
 	public void closePosition(String i, int anzahl ) {
 		connection.closePosition(i, anzahl);
+		
+		aktualisierePosition();
 	}
 	
 	
