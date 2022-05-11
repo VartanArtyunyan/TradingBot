@@ -78,7 +78,7 @@ public class EmaListe {
 	//public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
 		// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte: 12,26,9)
 
-	
+		
 		//Connection con = new Connection();
 		//ApiConnection connection = new ApiConnection(con);
 		Ema ema= new Ema(connection);
@@ -89,7 +89,7 @@ public class EmaListe {
 		JsonCandlesRoot h = werte.root;
 
 		//System.out.println(werte.lastPrice);
-		//System.out.println(werte.parabolicSAR);
+		System.out.println(werte.parabolicSAR);
 		//System.out.println(werte.ema);
 		//System.out.println(werte.macd);
 		//System.out.println(werte.macdTrigger);
@@ -104,7 +104,7 @@ public class EmaListe {
 		try {
 			if(pruefeEMA200(werte) == 1) {						//1. liegt Trend (= 200 EMA) über Kurs?
 				if(pruefeMACD(werte) == -1) {					//2. liegt MACD-Linie in den letzten 5 Perioden unter Signallinie?
-					if (werte.macd >= 0) {						//3. ist der aktuelle MACD auf oder über 0?
+					if ((werte.macd-werte.macdTriggert) >= 0) {	//3. ist der aktuelle MACD auf oder über 0?
 						for (int i = 0; i < 2; i++) {			//4. Schleifendurchlauf für nächste Bedingung
 							if(pruefePSAR(werte) == 1) {		//5. ist der PSAR-Wert unter dem Kurs?
 								//long							//Long-Position
@@ -112,7 +112,6 @@ public class EmaListe {
 							}
 							else if (pruefePSAR(werte) != 1 && i <1) {//5.1 PSAR ist über dem Kurs -> eine Periode warten
 									Thread.sleep(berechneMillisekunden(granularity));
-									i++;
 							}
 							else if (pruefePSAR(werte) != 1 && i == 1) {//5.2 PSAR ist über dem Kurs nach der nächsten Periode -> abbruch
 								break;
@@ -123,10 +122,12 @@ public class EmaListe {
 			}
 			else if (pruefeEMA200(werte) == -1){				//1. liegt Trend unter Kurs?
 				if(pruefeMACD(werte) == 1) {					//2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
-					if(werte.macd <= 0) {						//3. ist der aktuelle MACD auf oder unter 0?
+					if((werte.macd-werte.macdTriggert) <= 0) {	//3. ist der aktuelle MACD auf oder unter 0?
 						for (int i = 0; i < 2; i++) {			//4. Schleifendurchlauf für nächste Bedingung
 							if(pruefePSAR(werte) == -1) {		//5. ist der PSAR-Wert über dem Kurs?
 								//short							//Short-Position 
+								//Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze, double untergrenze);
+								//Verwaltung.placeOrder(instrument, double wer, double kurs, double obergrenze, double untergrenze);
 								//return werte;
 							}
 							else if (pruefePSAR(werte) != -1 && i <1) {//5.1 PSAR ist unter dem Kurs -> eine Periode warten
@@ -140,6 +141,7 @@ public class EmaListe {
 					}
 				}
 			}
+			//wenn 0?
 			
 				
 		}
@@ -192,7 +194,9 @@ public class EmaListe {
 		//Prüfe, ob der aktuelle Preis unter oder über des Langzeittrends (EMA200) liegt
 		//Ausgabewerte: 1 -> Kurs über Trend; -1 -> Kurs unter Trend; 0 -> Kurs gleich Preis
 		int rueckgabewert = 99;
-		double ema200 = werte.ema;
+		double faktorRundung = 1.001;
+		double ema200 = werte.ema * faktorRundung;
+		
 		double aktuellerKurs = werte.lastPrice;
 		
 		if (aktuellerKurs > ema200) {
