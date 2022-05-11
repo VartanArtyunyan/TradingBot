@@ -13,7 +13,7 @@ Connection:
 Nachricht verarbeiten und traden:
 1. Aktuelle Werte liegen vor
 2. Kalkulation
-3. Trade in Datei: Buy or Sell, Currency, Amount
+3. Trade in Datei: Buy or Sell, Currency, Amount (+ Hebel, Stop-Loss, Timebased)
 
 
 
@@ -24,3 +24,9 @@ Kalkulation
     2.1 Abweichung feststellen
     2.2 ratioDeviation?
 3. Volatility -> Multiplikator für eingesetzte Geldmenge
+
+
+Connection?
+
+
+-> Praktikum
