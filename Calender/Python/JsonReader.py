@@ -1,13 +1,15 @@
 import json
 from tkinter import E
 
+def read():
+    x = open('jsonCalender2.json')
+    text = x.read()
+    x.close()
+    y = json.loads(text)
+    return y
 
-x = open('jsonCalender2.txt')
-text = x.read()
-x.close()
-y = json.loads(text)
 
-importantValues = []
+""" importantValues = []
 
 for i in y:
     werte = {}
@@ -25,4 +27,4 @@ for i in y:
     werte.update(aa)
     importantValues.append(werte)
 
-print(importantValues)
+print(importantValues) """

@@ -26,11 +26,12 @@ def start():
     }
 
     #URL = "/de/api/v1/eventDates/2022-05-09T10:02:42Z/2022-05-11T12:02:42Z"
-    #dat = date.today()
     #gerade = datetime.datetime.now()
     #bis = (gerade - timedelta(hours=2)).strftime("%H:%M:%S") #Zeitverschiebung nach UTC
     #von = (gerade - timedelta(hours=5)).strftime("%H:%M:%S")
-    dat = "2022-05-09"
+    #dat = "2022-05-09"
+
+    dat = date.today()
     von = "00:00:00"
     bis = "23:59:59"
 
@@ -42,7 +43,7 @@ def start():
     data = res.read()
     x = gzip_decode(data)
     s = x.decode('utf-8')
-    f = open("jsonCalender1.json", "w")
+    f = open("jsonCalender2.json", "w")
     f.write(s)
     f.close
 
