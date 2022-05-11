@@ -1,0 +1,26 @@
+Connection:
+
+
+1. täglich komplette Nachrichten des Tages ziehen + speichern
+2. Zeitpunkt der nächsten Nachricht feststellen
+3. Um Zeitpunkt regelmäßig aktualieren ob aktuelle Werte vorhanden (nullcheck: actual)
+    3.1 bei N/A Nachrichten (ohne Zeitpunkt) parallel check um andere Nachrichten
+4. Bei aktuellem Wert -> Nachricht verarbeiten und traden
+    4.1 Trade als Datei übergeben (Buy or Sell, Currency, Amount)
+5. Nächsten Zeitpunkt herausfinden bis Ende der Liste
+
+
+Nachricht verarbeiten und traden:
+1. Aktuelle Werte liegen vor
+2. Kalkulation
+3. Trade in Datei: Buy or Sell, Currency, Amount
+
+
+
+
+Kalkulation
+1. Report oder Speach? -> ?
+2. Positiv oder negativ (Better than expected)
+    2.1 Abweichung feststellen
+    2.2 ratioDeviation?
+3. Volatility -> Multiplikator für eingesetzte Geldmenge
