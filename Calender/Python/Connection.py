@@ -39,7 +39,7 @@ def start():
     conn.request("GET", URL, payload, headers)
     #conn.request("GET", "/en/api/v1/eventDates/2022-05-04", payload, headers)
 
-    res = conn.getresponse()
+    res = conn.getresponse()    #responseCode / HTTP status < 400 anlegen
     data = res.read()
     x = gzip_decode(data)
     s = x.decode('utf-8')

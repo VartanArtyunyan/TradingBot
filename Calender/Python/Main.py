@@ -8,7 +8,7 @@ def DateTimeSplitter(word):
 
 
 
-Connection.start()
+#Connection.start()
 
 JsonArray = JsonReader.read()
 
