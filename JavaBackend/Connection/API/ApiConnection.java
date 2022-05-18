@@ -28,8 +28,8 @@ public class ApiConnection {
 		return output;
 	}
 	
-	public JsonCandlesRoot getJsonCandlesRoot(int count,String instrument,String from, String to, String price, String granularity) {
-		String apiResponseString = connection.getCandleStickData(count,instrument, from, to, price ,granularity);
+	public JsonCandlesRoot getJsonCandlesRoot(int count, String instrument, String from, String to, String price, String granularity) {
+		String apiResponseString = connection.getCandleStickData(count, instrument, from, to, price ,granularity);
 		
 		return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
 	}

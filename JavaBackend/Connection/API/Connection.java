@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import AccountMng.Account;
+import JsonParser.JsonObject;
 
 public class Connection {
 	
@@ -161,6 +162,7 @@ public class Connection {
 		return getInstruementResponse(instrument,"candles",query);
 		
 	}
+	
 	
 	public String getInstruementResponse(String instrument, String call, String query) {
 		String jsonString = "";

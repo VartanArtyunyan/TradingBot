@@ -1,10 +1,7 @@
 package JsonParser;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 
 public class JsonObject {
 
@@ -88,6 +85,8 @@ public class JsonObject {
 		//System.out.println(contents.size());
 
 	}
+	 
+	
 	
 	public JsonObject getObject(String input) {
 		return new JsonObject(content.get(input));
