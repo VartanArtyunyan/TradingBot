@@ -1,4 +1,5 @@
 import datetime
+from pickle import FALSE
 import Connection
 import JsonReader
 import time
@@ -18,15 +19,26 @@ def breakTimer(event):
     time_interval = time_1 - time_2
     return time_interval
 
-#Connection.start()
+def timeInSeconds(date):
+    arr = date.split(":")
+    return (arr[0] * 3600 + arr[1] * 60 + arr[2])
 
+def handleNextEvent(event):
+    erfolgreich = FALSE
+    while not erfolgreich:
+
+
+
+
+#Connection.start()
 JsonArray = JsonReader.read()
 
 
-for i in JsonArray:
-    nextEvent = i
+for nextEvent in JsonArray:
     nextEventTime = DateTimeSplitter(nextEvent["dateUtc"])
     print(str(breakTimer(nextEventTime[1])) + " : " + nextEvent["name"])
+    handleNextEvent(nextEvent)
+
     #time.sleep(breakTimer(nextEventTime))
     """ while True:
         if nextEvent[1] == datetime.Datetime.now():

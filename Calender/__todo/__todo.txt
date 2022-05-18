@@ -3,7 +3,7 @@ Connection:
 
 1. täglich komplette Nachrichten des Tages ziehen + speichern
 2. Zeitpunkt der nächsten Nachricht feststellen
-3. Um Zeitpunkt regelmäßig aktualieren ob aktuelle Werte vorhanden (nullcheck: actual)
+3. Um Zeitpunkt regelmäßig aktualieren ob aktuelle Werte vorhanden (nullcheck: actual) revidiert?
     3.1 bei N/A Nachrichten (ohne Zeitpunkt) parallel check um andere Nachrichten
 4. Bei aktuellem Wert -> Nachricht verarbeiten und traden
     4.1 Trade als Datei übergeben (Buy or Sell, Currency, Amount)
