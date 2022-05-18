@@ -61,6 +61,8 @@ public class Ema {
 						kpi.min = candle.mid.c < kpi.min || kpi.min == 0 ? kpi.min = candle.mid.c : kpi.min;
 						kpi.lastTime = candle.time.substring(0, 16);
 						kpi.lastPrice = candle.mid.c;
+						kpi.lastHighestPrice=candle.mid.h;
+						kpi.lastLowestPrice=candle.mid.l;
 					}
 				}
 			}
