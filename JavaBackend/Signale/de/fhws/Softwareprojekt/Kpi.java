@@ -16,13 +16,16 @@ public class Kpi {
 	ArrayList<Double>macds=new ArrayList<>();
     ArrayList<Double> macdsTriggert=new ArrayList<>();
 	double macdTriggert=0;
-	
+	double sma=0;
+	ArrayList<Double>smaList =new ArrayList<>();
 ArrayList<Double> superTrends=new ArrayList<>();
 double superTrend=0;
 	boolean trendWechsel=false;
 double rsi=0;
 ArrayList<Double>rsiListe=new ArrayList<>();	
 	double lastPrice = 0;
+	double lastHighestPrice=0;
+	double lastLowestPrice=0;
 	String firstTime = "";
 	String lastTime = "";
 	double min = 0;

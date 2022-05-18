@@ -1,0 +1,16 @@
+Done:
+
+1. Make a todo list
+2. Install Django and Dependencies (python -m pip install Django)
+3. Start a new Project (django-admin startproject TradingBot)
+4. Check if everything is working (python manage.py runserver)
+5. Create New App (python manage.py startapp trading_B)
+6. Add trading_B to TradingBot settings file under installed Apps
+7. Install rest framework (pip install djangorestframework)
+8. Add restframework to TradingBot settings file under installed Apps
+9. Connect trading_B files to TradingBot 
+(Tell Django in the TradingBot urls file to look for pages in trading_B urls)
+10. Add views file in trading_B and connect it to the urls file
+11. Make a templates folder and add a index.html file
+12. Add global and local static folders/files
+13. Register the static folders/files in the settings file
