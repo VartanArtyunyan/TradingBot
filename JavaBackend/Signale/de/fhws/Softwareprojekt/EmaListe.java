@@ -24,7 +24,7 @@ public class EmaListe {
 			filter = "";
 		}
 		;*/
-		kombiniereMACDEMAPSAR(connection,"EUR_USD", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+		kombiniereMACDEMAPSAR(connection,"USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 		Ema e = new Ema(connection);
 		
 		
@@ -74,6 +74,8 @@ public class EmaListe {
 				+ kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: " + kpi.avg + "  " + kpi.firstTime
 				+ " - " + kpi.lastTime + ")");
 	}
+
+	
 	public static void kombiniereMACDEMAPSAR(ApiConnection connection, String instrument, int emaperiods,int periods, String granularity,double startBF, double inkrementBF, double maxBF,int x, int y, int z,int multiplicatorUpper,int multiplicatorLower) {
 	//public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
 		// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte: 12,26,9)
@@ -89,21 +91,25 @@ public class EmaListe {
 		JsonCandlesRoot h = werte.root;
 
 		//System.out.println(werte.lastPrice);
-		System.out.println(werte.parabolicSAR);
+		//System.out.println(werte.parabolicSAR);
 		//System.out.println(werte.ema);
 		//System.out.println(werte.macd);
 		//System.out.println(werte.macdTrigger);
 		//System.out.println(pruefeMACD(werte));
 		//System.out.println(pruefeEMA200(werte));
 		//System.out.println(pruefePSAR(werte));
+		System.out.println(pruefeVorperioden(werte, "RSI"));
+		System.out.println(pruefeRSI(werte));
 		
-		//ToDo: Abgleichen der Werte von EMA200, MACD und PSAR
+		
+		//ToDo: Doppelten Code vermeiden -> Funktionen zusammenlegen
 		//		Ermitteln welche Rückgabewerte zu einer Kaufentscheidung führt
 		//		Kaufposition aufrufen
+
 		
 		try {
 			if(pruefeEMA200(werte) == 1) {						//1. liegt Trend (= 200 EMA) über Kurs?
-				if(pruefeMACD(werte) == -1) {					//2. liegt MACD-Linie in den letzten 5 Perioden unter Signallinie?
+				if(pruefeVorperioden(werte, "MACD") == -1) {	//2. liegt MACD-Linie in den letzten 5 Perioden unter Signallinie?
 					if ((werte.macd-werte.macdTriggert) >= 0) {	//3. ist der aktuelle MACD auf oder über 0?
 						for (int i = 0; i < 2; i++) {			//4. Schleifendurchlauf für nächste Bedingung
 							if(pruefePSAR(werte) == 1) {		//5. ist der PSAR-Wert unter dem Kurs?
@@ -121,7 +127,7 @@ public class EmaListe {
 				}
 			}
 			else if (pruefeEMA200(werte) == -1){				//1. liegt Trend unter Kurs?
-				if(pruefeMACD(werte) == 1) {					//2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
+				if(pruefeVorperioden(werte, "MACD") == 1) {		//2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
 					if((werte.macd-werte.macdTriggert) <= 0) {	//3. ist der aktuelle MACD auf oder unter 0?
 						for (int i = 0; i < 2; i++) {			//4. Schleifendurchlauf für nächste Bedingung
 							if(pruefePSAR(werte) == -1) {		//5. ist der PSAR-Wert über dem Kurs?
@@ -151,6 +157,80 @@ public class EmaListe {
 		}
 		
 	}
+	
+	public static int pruefeVorperioden(Kpi werte, String entscheideSignal) {
+		//Die Methode, soll die Vorperiode prüfen, ob bestimmte Ereignisse vorgefallen sind oder nicht
+		//Dabei werden die Methoden pruefeMACD() und pruefeRSI() zusammengelegt
+		int ausgabe = 99;
+		int MACDRueckgabewert = 99;
+		int RSIRueckgabewert = 99;
+		boolean verhaeltnisVorzeichenNegativ = false;	
+		boolean verhaeltnisVorzeichenPositiv = false;
+		boolean RSIOverbought = false;	//RSI über 70% 
+		boolean RSIOversold = false; 	//RSI unter 30%
+		
+		for(int i = 2; i<7; i++) {
+			double macd = werte.macds.get(werte.macds.size()-i);
+			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
+			double macdVerhaeltnis = macd-trigger;
+			System.out.println(werte.rsiListe.get(werte.rsiListe.size()-i));
+			if(macdVerhaeltnis < 0) {
+				verhaeltnisVorzeichenNegativ = true;
+			}
+			else if (macdVerhaeltnis > 0) {
+				verhaeltnisVorzeichenPositiv = true;
+			}
+			else { //macdVerhaeltnis == 0   
+				break;
+			}
+			if (werte.rsiListe.get(werte.rsiListe.size()-i) > 70) {
+				RSIOverbought = true;
+			}
+			else if (werte.rsiListe.get(werte.rsiListe.size()-i) < 30) {
+				RSIOversold = true;
+			}
+			else { //"70 >= werte.rsiListe.get(werte.rsiListe.size()-i) >=30"
+				break;
+			}
+		}
+		if(verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false) {
+			//die letzten 5 MACDs sind negativ
+			MACDRueckgabewert = -1;
+		}
+		else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true) {
+			//die letzten 5 MACDs sind positiv oder 
+			MACDRueckgabewert = 1;
+		}
+		else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true) || (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)){
+			//die letzten 5 MACDs haben nicht das gleiche Vorzeichen 
+			MACDRueckgabewert = 0;
+		}
+		if (RSIOversold == true && RSIOverbought == false) {
+			//die letzten 5 RSIs sind Oversold, also unter 30%
+			RSIRueckgabewert = -1;
+		}
+		else if (RSIOversold == false && RSIOverbought == true) {
+			//die letzten 5 RSIs sind Overbought, also über 70%
+			RSIRueckgabewert = 1;
+		}
+		else if ((RSIOversold == true && RSIOverbought == true) || (RSIOversold == false && RSIOverbought == false)) {
+			//die letzten 5 RSIs schwanken oder liegen alle zwischen 30 und 70 Prozent
+			RSIRueckgabewert = 0;
+		}
+		if (entscheideSignal == "MACD") {
+			ausgabe = MACDRueckgabewert;
+		}
+		else if (entscheideSignal =="RSI") {
+			ausgabe = RSIRueckgabewert;
+		}
+		else if (entscheideSignal != "MACD" && entscheideSignal != "RSI") {
+			//keine Änderung von ausgabe
+			ausgabe = 99;
+		}
+		return ausgabe;
+	}
+	
+	
 	public static int pruefeMACD(Kpi werte) {
 		// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
 				
@@ -189,6 +269,40 @@ public class EmaListe {
 		}
 		return rueckgabewert;
 	}
+	
+	public static int pruefeRSI(Kpi werte) {
+		//prüfen, ob RSI in den Vorperioden immer über 70% oder immer unter 30% liegt
+		int rueckgabewert = 99;
+		boolean RSIOverbought = false;	//RSI über 70% 
+		boolean RSIOversold = false; 	//RSI unter 30%
+		
+		for (int i = 2; i<7; i++) {
+			System.out.println(werte.rsiListe.get(werte.rsiListe.size()-i));
+			if(werte.rsiListe.get(werte.rsiListe.size()-i) > 70) {
+				RSIOverbought = true;
+			}
+			else if (werte.rsiListe.get(werte.rsiListe.size()-i) < 30) {
+				RSIOversold = true;
+			}
+			else { //RSI zwischen 30 und 70% (einschließlich)
+				break;
+			}
+		}
+		if(RSIOversold == true && RSIOverbought == false) {
+			//die letzten 5 RSIs sind alle Oversold, also unter 30%
+			rueckgabewert = -1;
+		}
+		else if (RSIOversold == false && RSIOverbought == true) {
+			//die letzten 5 RSIs sind Overbought, also über 70%
+			rueckgabewert = 1;
+		}
+		else if ((RSIOversold == true && RSIOverbought == true) || (RSIOversold == false && RSIOverbought == false)){
+			//die letzten 5 RSIs sind nicht gleich bzw. schwanken
+			rueckgabewert = 0;
+		}
+		return rueckgabewert;		
+	}
+	
 	
 	public static int pruefeEMA200(Kpi werte) {
 		//Prüfe, ob der aktuelle Preis unter oder über des Langzeittrends (EMA200) liegt
@@ -230,6 +344,9 @@ public class EmaListe {
 		return rueckgabewert;
 		
 	}
+	
+	
+	
 	public static int berechneMillisekunden (String granularity) {
 		int millisekunden = 0;
 		
