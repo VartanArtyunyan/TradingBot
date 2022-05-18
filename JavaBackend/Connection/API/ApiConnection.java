@@ -73,9 +73,15 @@ public class ApiConnection {
         return 1.09;
     }
 	
-	public void placeOrder(String instrument, int units) {
+	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
 		
     }
+	
+	public double getBalance() {
+		
+		return 0;
+		
+	}
 	
 	public void closePosition(String instrument, int anzahl) {
 

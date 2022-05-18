@@ -1,94 +1,100 @@
 package de.fhws.Softwareprojekt;
 
-
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 
 import API.ApiConnection;
 import API.Connection;
-
+import positionen.Verwaltung;
 
 public class TestN {
-	Map <String,Integer>map=new HashMap<>();
-	//Sperren Boolean
-	Map<Map<String,Integer>,Boolean> m=new HashMap<Map<String,Integer>, Boolean>();
-	public static void main(String[] args) {
-		Connection con = new Connection();
-		ApiConnection connection = new ApiConnection(con);
-		
+	Map<String, Integer> map = new HashMap<>();
+	// Sperren Boolean
+	Map<Map<String, Integer>, Boolean> m = new HashMap<Map<String, Integer>, Boolean>();
 	
-
-		System.out.println("Instrumentliste - Suchbegriff:");
-		String filter;
-		try (Scanner scanner = new Scanner(System.in);) {
-			filter = scanner.nextLine().toUpperCase();
-		} catch (Exception e) {
-			filter = "";
-		}
-		;
-
-		Ema e = new Ema(connection);
+	ApiConnection connection;
+	Verwaltung verwaltung;
+	Ema e;
+	ArrayList<JsonInstrumentsInstrument> instrumentsList;
+	JsonInstrumentsRoot instrumentsRoot;
+	HashSet<Kpi>signale;
+	
+	
+	public TestN(ApiConnection connection, Verwaltung verwaltung) {
 		
-	ArrayList<Kpi>signale=new ArrayList<>();
-		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
-		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
-			if (instrument.name.toUpperCase().contains(filter) || instrument.displayName.toUpperCase().contains(filter)
-					|| instrument.type.toUpperCase().contains(filter)) {
+		this.connection = connection;
+		this.verwaltung = verwaltung;
+		this.e = new Ema(connection);
+		
+		
+		this.instrumentsList = new ArrayList<>();
+		this.instrumentsRoot = e.getInstruments();
+		
+		this.signale=new HashSet<>();
+		
+		for(JsonInstrumentsInstrument i : instrumentsRoot.instruments) {
+			if(i.type.compareTo("CURRENCY") == 0) instrumentsList.add(i);
+			}
+		
+	}
+	
+	public void runSignals() {
+		
+		for(JsonInstrumentsInstrument instrument : instrumentsList) {
 			//	Kpi kpi=e.getKpi(instrument.name, 14, "M15");
 				//kpi=e.getATR(instrument.name,14 , "M15");
 			
 				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M15", 0.02, 0.02, 0.2, 12,26,9,2,2);
-				TestN t=new TestN();
-				int r=t.kombiniereMACDEMAPSAR(connection, kpi);
 				
-				String c="";
-				if(r!=0)
+				int r= kombiniereMACDEMAPSAR(connection, kpi);
+				
+				
+				if(r!=0 && r != 2 && r != -2)
 				{
+				kpi.longShort = (r == 1) ? true : false;
 				ausgabe("alles",kpi,instrument);
 				signale.add(kpi);
 				
 				}
 			
-			//ausgabe("EMA200d", e.getKpi(instrument.name, 200, "M15"),instrument);
-	//ausgabe("EMA3d", e.getKpi(instrument.name, 3, "M15"),instrument);
-			//ausgabe("EMA200d", e.getKpi(instrument.name, 200, "M15"), instrument);
-		//	ausgabe("EMA200d",e.getMACD(instrument.name, "D"),instrument);
-//		ausgabe("EMA25d", e.getEma(instrument.name, 25, "D"),instrument);
-//		ausgabe("EMA200h", e.getEma(instrument.name, 200, "H1"),instrument);
-//		ausgabe("EMA25h", e.getEma(instrument.name, 25, "H1"),instrument);
-		//ausgabe("EMA200M15", e.getKpi(instrument.name, 200, "M15"),instrument);
-	//	ausgabe("EMA25M15", e.getMACD(instrument.name,  "M15",12,26,9),instrument);
-//ausgabe("EMA25M15", e.parabolicSar(instrument.name, "M15",14, 0.02, 0.02, 0.2),instrument);
-		//		System.out.println(e.getATR("EUR_USD",14,"M15"));
-	//	ausgabe("RSI", e.getRSI(instrument.name, 14, "M15"),instrument);
-		//	ausgabe("ATR",e.getATR(instrument.name, 14, "M15"),instrument);
-		//Kpi kpi2=e.parabolicSar(instrument.name, "M15", 0.02, 0.02, 0.2);
-	//System.out.println(e.getATR(instrument.name, 14, "M15"));
-				//neu22222
+		
 			}
-		}
-		//try(BufferedWriter schreibSignale=Files.newBufferedWriter(Paths.get(System.getProperty("user.home"),"signale.csv") );)
-		try(FileOutputStream fos = new FileOutputStream("signale.csv",true);
+		
+	}
+	
+	
+
+	public void endPeriod() {
+		
+		try(
+
+				FileOutputStream fos = new FileOutputStream("signale.csv", true);
 				OutputStreamWriter osw = new OutputStreamWriter(fos);
 				BufferedWriter bw = new BufferedWriter(osw);)
-		{
-			for(Kpi s:signale)
-			{
-			String zeile=String.format("%s;%s; %f;%f;%f;%f;%f",s.instrument,s.lastTime,s.lastPrice,s.macd,s.macdTriggert,s.parabolicSAR,s.ema );
-			bw.write(zeile);
-		    bw.newLine();
-			}
-			bw.flush();
-		}
-		catch(Exception e1)
-		{
-			System.out.println(e1.getMessage());
-		}
+				{
+					for (Kpi s : signale) {	
+						if(s.longShort)  verwaltung.placeLongOrder(s.instrument, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
+						else verwaltung.placeShortOrder(s.instrument, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
+						String zeile = String.format("%s;%s; %f;%f;%f;%f;%f", s.instrument, s.lastTime, s.lastPrice, s.macd,
+								s.macdTriggert, s.parabolicSAR, s.ema);
+						bw.write(zeile);
+						bw.newLine();
+					}
+					bw.flush();
+				}catch(
+				Exception e1)
+				{
+					System.out.println(e1.getMessage());
+				}
+		
+		signale = new HashSet<>();
+		
 	}
 
 	public static void ausgabe(String emaName, Kpi kpi, JsonInstrumentsInstrument instrument) {
@@ -97,7 +103,8 @@ public class TestN {
 				+ kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: " + kpi.avg + "  " + kpi.firstTime
 				+ " - " + kpi.lastTime + ")");
 	}
-	public  int kombiniereMACDEMAPSAR(ApiConnection connection,Kpi werte) {
+
+	public static int kombiniereMACDEMAPSAR(ApiConnection connection,Kpi werte) {
 		//public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
 			// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte: 12,26,9)	
 			//Connection con = new Connection();
@@ -181,7 +188,8 @@ public class TestN {
 			
 			
 		}
-	public  int pruefeMACD(Kpi werte) {
+
+	public static int pruefeMACD(Kpi werte) {
 		// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
 				
 		boolean verhaeltnisVorzeichenNegativ = false;
@@ -219,7 +227,7 @@ public class TestN {
 		}
 		return rueckgabewert;
 	}
-	
+
 	public static int VergleicheWerte(Kpi werte) {
 		// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist			
 		boolean verhaeltnisVorzeichenNegativ = false;
@@ -244,7 +252,8 @@ public class TestN {
 		rueckgabewert=(verhaeltnisVorzeichenPositiv == true&&werte.macd<werte.macdTriggert&&(werte.macd<0))?1:(verhaeltnisVorzeichenNegativ == true&&werte.macds.get(werte.macds.size()-1)>werte.macdsTriggert.get(werte.macdsTriggert.size()-1)&&werte.macd>0)?-1:0;
 		return rueckgabewert;
 	}
-	public  int pruefeRSI(Kpi werte)
+
+	public static int pruefeRSI(Kpi werte)
 	{
 		
 		int rueckgabwert=0;
@@ -260,12 +269,13 @@ public class TestN {
 		//Checken ob Vorzeichenwechsel
 		return rueckgabwert=(longPosition==true&&werte.rsi>50)?1:shortPosition==true&&werte.rsi>50?-1:0;
 	}
+
 	public static int pruefeSMA(Kpi werte)
 	{
 	return werte.sma>werte.lastHighestPrice?1:werte.sma<werte.lastLowestPrice?-1:0;
 	}
-	
-	//richtig
+
+	// richtig
 	public static int pruefeEMA200(Kpi werte) {
 		//Prüfe, ob der aktuelle Preis unter oder über des Langzeittrends (EMA200) liegt
 		//Ausgabewerte: 1 -> Kurs über Trend; -1 -> Kurs unter Trend; 0 -> Kurs gleich Preis
@@ -285,8 +295,9 @@ public class TestN {
 		rueckgabewert=aktuellerKurs>ema200?1:aktuellerKurs<ema200?-1:0;
 		return rueckgabewert;
 	}
+
 //richtig
-	public  int pruefePSAR(Kpi werte) {
+	public static int pruefePSAR(Kpi werte) {
 		//Prüfue, ob der aktuelle Preis unter oder über dem Parabolic SAR liegt
 		//Ausgabewerte: 1 -> PSAR-Punkt unter Preis; -1 -> PSAR-Punkt über Preis; 0 -> PSAR-Punkt gleich Preis
 		int rueckgabewert = 99;
@@ -306,6 +317,7 @@ public class TestN {
 		return rueckgabewert;
 		
 	}
+
 	public static int berechneMillisekunden (String granularity) {
 		int millisekunden = 0;
 		

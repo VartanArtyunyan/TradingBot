@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Kpi {
+	
+	boolean longShort;   //false = short, long = true
+	
 	JsonCandlesRoot root;
 	public String instrument;
 	public String granularity;
@@ -40,5 +43,21 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 		this.instrument=instrument;
 		this.granularity=granularity;
 		this.periods=periods;
+	}
+	
+	public double getLongStopLoss() {
+		return parabolicSAR;
+	}
+	
+	public double getLongTakeProfit() {
+		return lastPrice + (lastPrice - parabolicSAR)*2;
+	}
+	
+	public double getShortStopLoss() {
+		return parabolicSAR;
+	}
+	
+	public double getShortTakeProfit() {
+		return lastPrice - (parabolicSAR - lastPrice)*2;
 	}
 }

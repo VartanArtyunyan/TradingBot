@@ -21,16 +21,41 @@ public class Verwaltung {
 		
 	}
 	
-	public void placeOrder(String i, double wert, double kurs, double obergrenze, double untergrenze) {
-		int anzahlAktien;
+	//public void placeOrder(String i, double wert, double kurs, double obergrenze, double untergrenze) {
+	//	int anzahlAktien;
 		
-		 anzahlAktien = (int) (wert / kurs);
+	//	 anzahlAktien = (int) (wert / kurs);
 		 	 
-		 connection.placeOrder(i, anzahlAktien, obergrenze, untergrenze);
+	//	 connection.placeOrder(i, anzahlAktien, obergrenze, untergrenze);
 		
 		 
-		 aktualisierePosition();
+	//	 aktualisierePosition();
+	//}
+	
+	public void placeShortOrder(String instrument, double takeProfit, double stopLoss, double kurs) {
+		
+		double curBalance = connection.getBalance();
+		
+		double units = (curBalance*(-0.02))/kurs;
+		
+		connection.placeOrder(instrument, units, takeProfit, stopLoss);
+		
+		
 	}
+	
+	public void placeLongOrder(String instrument, double takeProfit, double stopLoss, double kurs) {
+		
+	double curBalance = connection.getBalance();
+		
+		double units = (curBalance*0.02)/kurs;
+		
+		connection.placeOrder(instrument, units, takeProfit, stopLoss);
+		
+		
+		
+	}
+	
+	
 	public void closeWholePosition(String i) {
 		
 		connection.closeWholePosition(i);
