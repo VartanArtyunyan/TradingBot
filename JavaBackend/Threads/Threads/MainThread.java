@@ -1,45 +1,63 @@
 package Threads;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+
 import de.fhws.Softwareprojekt.Ema;
 import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.TestN;
 
-public class MainThread extends Thread{
-	
-	
-	TestN t;
-	int granularity;
-	
-	SignalThread signalThread;
-	timerThread timerThread;
-	
+public class MainThread extends Thread {
+
+
+
+	ArrayList<stopableThread> threads = new ArrayList<>();
+
 	boolean execute;
+
+	public MainThread() {
+
 	
-	
-	
-	public MainThread(TestN t, String granularity) {
-		
-		this.t = t;
-		
-		signalThread = new SignalThread(t);
-		timerThread = new timerThread(t,convertToTime(granularity));
-		
-		
-		
 	}
-	
+
+	public void addThread(stopableThread srt) {
+		threads.add(srt);
+	}
+
 	public void run() {
+
+		for (stopableThread st : threads) {
+		st.start();
+		}
 		
-		signalThread.run();
-		timerThread.run();
-			
+
+		Scanner scanner = new Scanner(System.in);
+		String input = "";
+
+		boolean run = true;
+		while (run) {
+
+			input = scanner.nextLine();
+			input = input.toLowerCase();
+
+			if (input.equals("stop")) {
+				run = false;
+				stopThreads();
+
+			} else {
+				System.out.println("ungültige eingabe");
+			}
+
+		}
+
 	}
 	
-	public static int convertToTime(String granularity) {
-		int output = Integer.parseInt(granularity.substring(1));
-		
-		return output;
+	public void stopThreads() {
+		for (stopableThread st : threads) {
+			st.stopThread();
+		}
 	}
+
 	
 
 }

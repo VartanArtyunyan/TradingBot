@@ -44,13 +44,13 @@ public class TestN {
 		
 	}
 	
-	public void runSignals() {
+	public void runSignals(String granularity) {
 		
 		for(JsonInstrumentsInstrument instrument : instrumentsList) {
 			//	Kpi kpi=e.getKpi(instrument.name, 14, "M15");
 				//kpi=e.getATR(instrument.name,14 , "M15");
 			
-				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M15", 0.02, 0.02, 0.2, 12,26,9,2,2);
+				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, granularity, 0.02, 0.02, 0.2, 12,26,9,2,2);
 				
 				int r= kombiniereMACDEMAPSAR(connection, kpi);
 				
@@ -79,12 +79,21 @@ public class TestN {
 				BufferedWriter bw = new BufferedWriter(osw);)
 				{
 					for (Kpi s : signale) {	
-						if(s.longShort)  verwaltung.placeLongOrder(s.instrument, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
-						else verwaltung.placeShortOrder(s.instrument, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
-						String zeile = String.format("%s;%s; %f;%f;%f;%f;%f", s.instrument, s.lastTime, s.lastPrice, s.macd,
-								s.macdTriggert, s.parabolicSAR, s.ema);
-						bw.write(zeile);
-						bw.newLine();
+						if(s.longShort && s.macdTriggert > s.macd) {
+							verwaltung.placeLongOrder(s.instrument, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
+							String zeile = writeValues(s);
+							bw.write(zeile);
+							bw.newLine();
+							
+						}
+						else if(s.macdTriggert < s.macd) {
+							verwaltung.placeShortOrder(s.instrument, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
+							String zeile = writeValues(s);
+							bw.write(zeile);
+							bw.newLine();
+						}
+						
+						
 					}
 					bw.flush();
 				}catch(
@@ -95,6 +104,12 @@ public class TestN {
 		
 		signale = new HashSet<>();
 		
+	}
+
+	private String writeValues(Kpi s) {
+		String zeile = String.format("%s;%s; %f;%f;%f;%f;%f", s.instrument, s.lastTime, s.lastPrice, s.macd,
+				s.macdTriggert, s.parabolicSAR, s.ema);
+		return zeile;
 	}
 
 	public static void ausgabe(String emaName, Kpi kpi, JsonInstrumentsInstrument instrument) {
