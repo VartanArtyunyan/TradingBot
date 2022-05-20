@@ -216,6 +216,12 @@ if(count>0)
 			tage = 43;
 			break;
 		}
+		case("M5"):
+		{
+			tage=22;
+			break;
+			
+		}
 		}
 		date = date.minusDays(tage);
 
