@@ -3,19 +3,19 @@ import API.Connection;
 import Threads.MainThread;
 import Threads.SignalThread;
 import Threads.timerThread;
-import de.fhws.Softwareprojekt.TestN;
+import de.fhws.Softwareprojekt.Signals;
 import positionen.Verwaltung;
 
 public class Main {
 
-	static String granularity = "M15";
+	static String granularity = "M5";
 
 	public static void main(String[] args) {
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
 		Verwaltung verwaltung = new Verwaltung(connection);
 
-		TestN testN = new TestN(connection, verwaltung);
+		Signals testN = new Signals(connection, verwaltung);
 
 		MainThread mainThread = new MainThread();
 

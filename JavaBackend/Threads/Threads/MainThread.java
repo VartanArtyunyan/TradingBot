@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 import de.fhws.Softwareprojekt.Ema;
 import de.fhws.Softwareprojekt.Kpi;
-import de.fhws.Softwareprojekt.TestN;
+import de.fhws.Softwareprojekt.Signals;
 
 public class MainThread extends Thread {
 

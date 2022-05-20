@@ -1,20 +1,21 @@
 package Threads;
 
-import de.fhws.Softwareprojekt.TestN;
+import de.fhws.Softwareprojekt.Signals;
 
 public class timerThread extends stopableThread {
 
-	TestN t;
+	Signals t;
 
 	int time;
 
-	public timerThread(TestN t, String granularity) {
+	public timerThread(Signals t, String granularity) {
 		this.t = t;
 		time = convertToTime(granularity);
 	}
 
 	public void run() {
 		while(execute) {
+			System.out.println("start timerThread");
 		try {
 			this.sleep(time);
 		} catch (InterruptedException e) {
@@ -23,6 +24,7 @@ public class timerThread extends stopableThread {
 		}
 
 		t.endPeriod();
+		System.out.println("ende timerThread");
 	}
 	}
 

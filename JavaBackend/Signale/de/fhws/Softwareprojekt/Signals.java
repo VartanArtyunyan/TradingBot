@@ -13,10 +13,8 @@ import API.ApiConnection;
 import API.Connection;
 import positionen.Verwaltung;
 
-public class TestN {
-	Map<String, Integer> map = new HashMap<>();
-	// Sperren Boolean
-	Map<Map<String, Integer>, Boolean> m = new HashMap<Map<String, Integer>, Boolean>();
+public class Signals {
+
 	
 	ApiConnection connection;
 	Verwaltung verwaltung;
@@ -26,7 +24,7 @@ public class TestN {
 	HashSet<Kpi>signale;
 	
 	
-	public TestN(ApiConnection connection, Verwaltung verwaltung) {
+	public Signals(ApiConnection connection, Verwaltung verwaltung) {
 		
 		this.connection = connection;
 		this.verwaltung = verwaltung;
@@ -36,7 +34,7 @@ public class TestN {
 		this.instrumentsList = new ArrayList<>();
 		this.instrumentsRoot = e.getInstruments();
 		
-		this.signale=new HashSet<>();
+		this.signale = new HashSet<>();
 		
 		for(JsonInstrumentsInstrument i : instrumentsRoot.instruments) {
 			if(i.type.compareTo("CURRENCY") == 0) instrumentsList.add(i);
@@ -77,20 +75,20 @@ public class TestN {
 				FileOutputStream fos = new FileOutputStream("signale.csv", true);
 				OutputStreamWriter osw = new OutputStreamWriter(fos);
 				BufferedWriter bw = new BufferedWriter(osw);)
+	
 				{
+					bw.write("Instrument;lastTime;lastPrice;TakeProfit;StopLoss;macd;macdTrigger;parabolicSAR;ema\n");
 					for (Kpi s : signale) {	
 						if(s.longShort && s.macdTriggert > s.macd) {
 							verwaltung.placeLongOrder(s.instrument, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
-							String zeile = writeValues(s);
-							bw.write(zeile);
-							bw.newLine();
+							String zeile = writeValues(s,s.getLongTakeProfit(), s.getLongStopLoss());
+							bw.write(zeile + "\n");
 							
 						}
-						else if(s.macdTriggert < s.macd) {
+						else if(!s.longShort && s.macdTriggert < s.macd) {
 							verwaltung.placeShortOrder(s.instrument, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
-							String zeile = writeValues(s);
-							bw.write(zeile);
-							bw.newLine();
+							String zeile = writeValues(s, s.getShortTakeProfit(), s.getShortStopLoss());
+							bw.write(zeile + "\n");
 						}
 						
 						
@@ -106,8 +104,8 @@ public class TestN {
 		
 	}
 
-	private String writeValues(Kpi s) {
-		String zeile = String.format("%s;%s; %f;%f;%f;%f;%f", s.instrument, s.lastTime, s.lastPrice, s.macd,
+	private String writeValues(Kpi s, double takeProfit, double stopLoss) {
+		String zeile = String.format("%s;%s; %f;%f;%f;%f;%f;%f;%f", s.instrument, s.lastTime, s.lastPrice, takeProfit, stopLoss, s.macd,
 				s.macdTriggert, s.parabolicSAR, s.ema);
 		return zeile;
 	}

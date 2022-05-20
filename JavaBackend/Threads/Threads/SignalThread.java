@@ -1,14 +1,14 @@
 package Threads;
 
-import de.fhws.Softwareprojekt.TestN;
+import de.fhws.Softwareprojekt.Signals;
 
 public class SignalThread extends stopableThread{
 	
-	TestN t;
+	Signals t;
 	String granularity;
 	
 	
-	public SignalThread(TestN t, String granularity) {
+	public SignalThread(Signals t, String granularity) {
 		this.t = t;
 		this.granularity = granularity;
 	}
