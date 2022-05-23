@@ -83,15 +83,12 @@ public class Signals {
 							verwaltung.placeLongOrder(s.instrument, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 							String zeile = writeValues(s,s.getLongTakeProfit(), s.getLongStopLoss());
 							bw.write(zeile + "\n");
-							
 						}
 						else if(!s.longShort && s.macdTriggert < s.macd) {
 							verwaltung.placeShortOrder(s.instrument, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
 							String zeile = writeValues(s, s.getShortTakeProfit(), s.getShortStopLoss());
 							bw.write(zeile + "\n");
-						}
-						
-						
+						}	
 					}
 					bw.flush();
 				}catch(

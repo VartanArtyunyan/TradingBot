@@ -280,7 +280,7 @@ if(count>0)
 		return jsonString;
 		
 	}
-	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity,double startBF, double inkrementBF, double maxBF,int x, int y, int z,int multiplicatorUpper,int multiplicatorLower)
+	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity, double startBF, double inkrementBF, double maxBF,int x, int y, int z,int multiplicatorUpper,int multiplicatorLower)
 	{
 		
 		JsonCandlesRoot jcr = extracted(instrument, granularity);
@@ -309,8 +309,7 @@ if(count>0)
 		kpi.superTrend=kpi6.superTrend;
 		kpi.superTrends=kpi6.superTrends;
 		return kpi;
-	
-
+		
 	} 
 
 	//Tom 
