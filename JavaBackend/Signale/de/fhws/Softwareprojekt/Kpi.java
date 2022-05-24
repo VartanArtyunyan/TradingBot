@@ -3,7 +3,7 @@ package de.fhws.Softwareprojekt;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Kpi {
+public class Kpi{
 	
 	boolean longShort;   //false = short, long = true
 	
@@ -45,6 +45,10 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 		this.periods=periods;
 	}
 	
+	public double getKaufpreis() {
+		return 0.0;  // müsste eigentlich 0,02*kontostand zurückgeben
+	}
+	
 	public double getLongStopLoss() {
 		return parabolicSAR;
 	}
@@ -60,4 +64,21 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	public double getShortTakeProfit() {
 		return lastPrice - (parabolicSAR - lastPrice)*2;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		
+		Kpi input = (Kpi) o;
+		return this.instrument.equals(input.instrument);
+		
+	}
+	@Override
+	public int hashCode() {
+		
+		return this.instrument.hashCode();
+	}
+
+	
+
+	
 }

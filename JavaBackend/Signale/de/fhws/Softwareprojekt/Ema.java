@@ -222,6 +222,10 @@ if(count>0)
 			break;
 			
 		}
+		case("M1"):{
+			tage=3;
+			break;
+		}
 		}
 		date = date.minusDays(tage);
 
@@ -263,23 +267,7 @@ if(count>0)
 	//	return null;
 	}
 
-	public String getResponse(HttpURLConnection connection) throws IOException {
-		BufferedReader br;
-		String line;
-		String jsonString = "";
-
-		if (connection.getResponseCode() < 299) {
-			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			while ((line = br.readLine()) != null) {
-				jsonString += line;
-			}
-			br.close();
-		} else {
-			System.out.println("Fehler beim lesen");
-		}
-		return jsonString;
-		
-	}
+	
 	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity, double startBF, double inkrementBF, double maxBF,int x, int y, int z,int multiplicatorUpper,int multiplicatorLower)
 	{
 		
