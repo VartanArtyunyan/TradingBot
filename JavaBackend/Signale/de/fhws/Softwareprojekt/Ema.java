@@ -50,6 +50,7 @@ public class Ema {
 					// Mit allen anderen Candles ein möglichst genaues EMA errechnen
 					// EMA-Formel: (Schlusskurs * SF) + (( 1 - SF ) * Vor-EMA)
 					kpi.ema = candle.mid.c * sf + (1 - sf) * kpi.ema;
+					kpi.lastPrices.add(candle.mid.c);
 					kpi.emas.add(kpi.ema);
 					if (count == kpi.root.candles.size() - 1) {
 						kpi.vorema = candle.mid.c * sf + (1 - sf) * kpi.ema;
@@ -164,7 +165,7 @@ if(count>0)
 		Kpi md = getKpi(instrument, z, granularity,jcr);
 	double ergebnis = 0;
  //   double Vorergebnis=0;
-    for(int i=md.periods;i<md.emas.size()+1;i++)
+/*    for(int i=md.periods;i<md.emas.size()+1;i++)
     {
     	if(i==md.periods)md.macds.add(kpi1.emas.get(i-1)-kpi2.emas.get(i-1));
     	
@@ -179,10 +180,24 @@ if(count>0)
     	
     	md.macdsTriggert.add(ergebnis);
     	
-    }
+    }*/
+	for(int i=0;i<md.emas.size();i++)
+	{
+		md.macds.add(kpi1.emas.get(i)-kpi2.emas.get(i));
+		if(i>=z-1)
+		{
+		for(int j=i-z+1;j<=i;j++)
+		{
+			
+			ergebnis+=md.macds.get(j);
+		}
+		md.macdsTriggert.add(ergebnis/z);
+		}
+			ergebnis=0;
+	}
  
     md.macd=md.macds.get(md.macds.size()-1);
-    md.macdTriggert=ergebnis;
+    md.macdTriggert=md.macdsTriggert.get(md.macdsTriggert.size()-1);
 		/*for(int i= md.emas.size()-md.periods-1;i<md.emas.size();i++)
 		{
 		ergebnis=(i>=(md.emas.size()-md.periods))?ergebnis+(kpi1.emas.get(i)-kpi2.emas.get(i)):ergebnis;

@@ -27,6 +27,7 @@ double superTrend=0;
 double rsi=0;
 ArrayList<Double>rsiListe=new ArrayList<>();	
 	double lastPrice = 0;
+	ArrayList<Double>lastPrices=new ArrayList<>();
 	double lastHighestPrice=0;
 	double lastLowestPrice=0;
 	String firstTime = "";
