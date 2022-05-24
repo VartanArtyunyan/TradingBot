@@ -35,7 +35,7 @@ public class ApiConnection {
 	}
 	
 	public JsonInstrumentsRoot getJsonInstrumentsRoot(){
-		String apiResponseString = connection.getApiResponseGET("instruments");
+		String apiResponseString = connection.getInstruments();
 		
 		
 		return jsonParser.convertAPiStringToInstrumentsRootModel(apiResponseString);
