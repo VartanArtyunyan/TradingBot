@@ -127,7 +127,7 @@ public class Signals {
 
 		if (pruefeEMA200(werte) == 1) { // 1. liegt Trend (= 200 EMA) über Kurs?
 			if (pruefeMACD(werte) == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter Signallinie?
-				if ((werte.macd - werte.macdTriggert) >= 0) { // 3. ist der aktuelle MACD auf oder über 0?
+			//	if ((werte.macd - werte.macdTriggert) >= 0) { // 3. ist der aktuelle MACD auf oder über 0?
 					// for (int i = 0; i < 2; i++) { //4. Schleifendurchlauf für nächste Bedingung
 					if (pruefePSAR(werte) == 1) { // 5. ist der PSAR-Wert unter dem Kurs?
 						// long //Long-Position
@@ -135,18 +135,18 @@ public class Signals {
 						rueckgabewert = 1;
 					} else
 						rueckgabewert = 2;
-				}
+				//}
 			}
 		} else if (pruefeEMA200(werte) == -1) { // 1. liegt Trend unter Kurs?
 			if (pruefeMACD(werte) == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
-				if ((werte.macd - werte.macdTriggert) <= 0) { // 3. ist der aktuelle MACD auf oder unter 0?
+				//if ((werte.macd - werte.macdTriggert) <= 0) { // 3. ist der aktuelle MACD auf oder unter 0?
 					// 4. Schleifendurchlauf für nächste Bedingung
 					if (pruefePSAR(werte) == -1) {
 						// 5. ist der PSAR-Wert über dem Kurs?
 						rueckgabewert = -1;
 					} else
 						rueckgabewert = -2;
-				}
+				//}
 
 			}
 		}
@@ -185,29 +185,45 @@ public class Signals {
 	}
 
 	public static int pruefeMACD(Kpi werte) {
-	    // Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
-	    int zaehlerNegativ=0;
-	    int zaehlerPositiv=0;
-	    int rueckgabewert = 99;
-	    for (int i = 2; i < 7; i++) {
-	        double macd = werte.macds.get(werte.macds.size() - i);
-	        double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
-	        double macdVerhaeltnis = macd - trigger;
-	        if (macdVerhaeltnis < 0) {
-	            zaehlerNegativ++;
-	        } else if (macdVerhaeltnis > 0) {
-	            zaehlerPositiv++;
-	        } else /* macdVerhaeltnis = 0 */ {
-	            break;
-	        }
+		// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
+		int zaehlerNegativ=0;
+		int zaehlerPositiv=0;
+		boolean Negativ=false;
+		boolean Positiv=true;
+		int rueckgabewert = 99;
+		int aktuellerWert=0;
+		for (int i = 1; i < 7; i++) {
+		
+			double macd = werte.macds.get(werte.macds.size() - i);
+			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
+			double macdVerhaeltnis = macd - trigger;
+			if(i==1)
+			{
+				if(macdVerhaeltnis<0)
+					Negativ=true;
+			}
+			if(macdVerhaeltnis>0)
+			{
+				Positiv=true;
+		}
+		
+		else
+		{
+			if (macdVerhaeltnis < 0) {
+				zaehlerNegativ++;
+			} else if (macdVerhaeltnis > 0) {
+				zaehlerPositiv++;
+			} else /* macdVerhaeltnis = 0 */ {
+				break;
+			}
+		}
+	}	// System.out.println(macdVerhaeltnis);
+			// wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben
+			// und dann das Vorzeichen sich ändert, gilt die Bedingung als erfüllt
+		
+		rueckgabewert=zaehlerNegativ==5&&Positiv==true?-1:zaehlerPositiv==5&&Negativ==true?1:0;
 
-	        // System.out.println(macdVerhaeltnis);
-	        // wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben
-	        // und dann das Vorzeichen sich ändert, gilt die Bedingung als erfüllt
-	    }
-	    rueckgabewert=zaehlerNegativ==5?-1:zaehlerPositiv==5?1:0;
-
-	    return rueckgabewert;
+		return rueckgabewert;
 	}
 
 	public static int VergleicheWerte(Kpi werte) {
