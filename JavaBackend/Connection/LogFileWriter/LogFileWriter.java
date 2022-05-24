@@ -13,6 +13,9 @@ import java.nio.file.Paths;
 public class LogFileWriter implements Closeable{
 
 	BufferedWriter bw;
+	String inputPath;
+	String path;
+	boolean writeHeader;
 	LogBuffer lBuffer;
 	String header = "Instrument;last Time;last Price;TakeProfit;StopLoss;macd;macdTrigger;parabolicSAR;ema\n";
 
@@ -23,33 +26,13 @@ public class LogFileWriter implements Closeable{
 	public LogFileWriter(String path) {
 		initialise(path);
 	}
-
-	private void initialise(String path) {
-
-		try {
-			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path, true)));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		lBuffer = new LogBuffer(path, bw);
-
-		if (!Files.exists(Paths.get(path))) {
-			try {
-				bw.write(header);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
-
+	
 	public void log(String instrument, String lastTime, double lastPrice, double takeProfit, double stopLoss,
 			double macd, double macdTriggert, double parabolicSAR, double ema) {
 		String input = String.format("%s;%s;%f;%f;%f;%f;%f;%f;%f", instrument, lastTime, lastPrice, takeProfit, stopLoss, macd, macdTriggert, parabolicSAR, ema);
 		try {
 			lBuffer.flush();
-			bw.write(input);
+			bw.write(input + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 			lBuffer.put(input);
@@ -61,6 +44,50 @@ public class LogFileWriter implements Closeable{
 		lBuffer.close();
 		bw.close();
 	}
+
+	private void initialise(String path) {
+		this.inputPath = path;
+		this.path = inputPath;
+		
+		writeHeader = !Files.exists(Paths.get(path));
+
+		openFile(path);
+
+		lBuffer = new LogBuffer(path, bw);
+
+		if (writeHeader) {
+			try {
+				bw.write(header);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	public void openFile(String path) {
+		boolean retry = true;
+		int postfix = 1;
+		do {
+		try {
+			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path, true)));
+			retry = false;
+		} catch (FileNotFoundException e) {
+			path = addPostfix(inputPath, Integer.toString(postfix) );
+			writeHeader = !Files.exists(Paths.get(path));
+			postfix++;
+		}
+		}while(retry);
+	}
+	
+	public String addPostfix(String path, String postfix) {
+		int index = path.indexOf('.');
+		return path.substring(0, index) + postfix + path.substring(index);
+	}
+	
+	
+
+	
 
 
 	

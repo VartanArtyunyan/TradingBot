@@ -66,7 +66,8 @@ public class LogBuffer implements Closeable{
 	
 	
 	private void importBuffer(String path) {
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));){			
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));)
+		{			
 			buffer = (ArrayList<String>) ois.readObject();			
 		} catch (Exception e) {
 			this.buffer = new ArrayList<>();
@@ -78,8 +79,8 @@ public class LogBuffer implements Closeable{
 			if(isClosed()) flush();
 		} catch (IOException e) {
 			e.printStackTrace();
-			try {
-				oos = new ObjectOutputStream(new FileOutputStream(bufferPath));
+			try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(bufferPath));)
+			{
 				oos.writeObject(buffer);	
 			} catch (Exception e1) {
 				e1.printStackTrace();
