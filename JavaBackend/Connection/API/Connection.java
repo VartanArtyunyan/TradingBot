@@ -38,16 +38,16 @@ public class Connection {
 
 	public String getAccountIDs() {
 
-		return getApiResponse(urlString + "/accounts", "GET");
+		return GET(urlString + "/accounts");
 
 	}
-	
+
 	public String getTrades() {
-		return getApiResponse(urlString + "/accounts/" + accId + "/" + "trades", "GET");
+		return GET(urlString + "/accounts/" + accId + "/" + "trades");
 	}
-	
+
 	public String getInstruments() {
-		return getApiResponse(urlString + "/accounts/" + accId + "/" + "instruments", "GET");
+		return GET(urlString + "/accounts/" + accId + "/" + "instruments");
 	}
 
 	public String getCandleStickData(int count, String instrument, String from, String to, String price,
@@ -82,55 +82,88 @@ public class Connection {
 
 		String url = urlString + "/instruments/" + instrument + "/" + "candles" + query;
 
-		return getApiResponse(url, "GET");
+		return GET(url);
+
+	}
+	
+	public void placeOrder() {
+		
+	}
+
+	private void setConnection(String urlString, String requestMethod) throws IOException {
+		
+
+		url = new URL(urlString);
+		connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestMethod(requestMethod);
+		connection.setRequestProperty("Authorization", "Bearer " + token);
+	}
+
+	private String GET(String urlString) {
+
+		try {
+			setConnection(urlString, "GET");
+
+			String output = getResponse();
+			connection.disconnect();
+			return output;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "";
+		}
 
 	}
 
-	public String getApiResponse(String urlString, String requestMethod) {
-		String jsonString = "";
-
+	private String POST(String urlString, String requestJson) {
+		
 		try {
 
-			url = new URL(urlString);
-			connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod(requestMethod);
-			connection.setRequestProperty("Authorization", "Bearer " + token);
+			setConnection(urlString, "POST");
+			connection.setDoOutput(true);
+			connection.setRequestProperty("Content-Type", "application/json");
 
-			BufferedReader br;
-			String line;
-
-			int status;
-
-			status = connection.getResponseCode();
-
-			// System.out.println(status + " " + connection.getResponseMessage());
-
-			if (status < 299) {
-				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-				while ((line = br.readLine()) != null) {
-					jsonString += line;
-				}
-				br.close();
-			} else {
-				br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-				while ((line = br.readLine()) != null) {
-					jsonString += line;
-				}
-				br.close();
-			}
+			connection.getOutputStream().write(requestJson.getBytes(), 0, requestJson.length());
+			connection.getOutputStream().close();
+			
+			String output = getResponse();
 			connection.disconnect();
-		} catch (MalformedURLException e) {
-			System.out.println("MalformedURLException");
-			e.printStackTrace();
-		} catch (ProtocolException e) {
-			System.out.println("ProtocolException");
-			e.printStackTrace();
+			return output;
 		} catch (IOException e) {
-			System.out.println("IOException");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return "";
+		}
+
+	}
+
+	public String getResponse() throws IOException {
+		String jsonString = "";
+
+		BufferedReader br;
+		String line;
+
+		int status;
+
+		status = connection.getResponseCode();
+
+		
+		if (status < 299) {
+			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			while ((line = br.readLine()) != null) {
+				jsonString += line;
+			}
+			br.close();
+		} else {
+			br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+			while ((line = br.readLine()) != null) {
+				jsonString += line;
+			}
+			br.close();
 		}
 
 		return jsonString;
+
 	}
 
 }
