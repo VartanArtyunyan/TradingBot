@@ -42,6 +42,10 @@ public class Connection {
 
 	}
 	
+	public String getTrades() {
+		return getApiResponse(urlString + "/accounts/" + accId + "/" + "trades", "GET");
+	}
+	
 	public String getInstruments() {
 		return getApiResponse(urlString + "/accounts/" + accId + "/" + "instruments", "GET");
 	}

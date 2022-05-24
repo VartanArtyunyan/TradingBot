@@ -185,39 +185,29 @@ public class Signals {
 	}
 
 	public static int pruefeMACD(Kpi werte) {
-		// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
+	    // Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
+	    int zaehlerNegativ=0;
+	    int zaehlerPositiv=0;
+	    int rueckgabewert = 99;
+	    for (int i = 2; i < 7; i++) {
+	        double macd = werte.macds.get(werte.macds.size() - i);
+	        double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
+	        double macdVerhaeltnis = macd - trigger;
+	        if (macdVerhaeltnis < 0) {
+	            zaehlerNegativ++;
+	        } else if (macdVerhaeltnis > 0) {
+	            zaehlerPositiv++;
+	        } else /* macdVerhaeltnis = 0 */ {
+	            break;
+	        }
 
-		boolean verhaeltnisVorzeichenNegativ = false;
-		boolean verhaeltnisVorzeichenPositiv = false;
-		int rueckgabewert = 99;
-		for (int i = 2; i < 7; i++) {
-			double macd = werte.macds.get(werte.macds.size() - i);
-			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
-			double macdVerhaeltnis = macd - trigger;
-			if (macdVerhaeltnis < 0) {
-				verhaeltnisVorzeichenNegativ = true;
-			} else if (macdVerhaeltnis > 0) {
-				verhaeltnisVorzeichenPositiv = true;
-			} else /* macdVerhaeltnis = 0 */ {
-				break;
-			}
+	        // System.out.println(macdVerhaeltnis);
+	        // wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben
+	        // und dann das Vorzeichen sich ändert, gilt die Bedingung als erfüllt
+	    }
+	    rueckgabewert=zaehlerNegativ==5?-1:zaehlerPositiv==5?1:0;
 
-			// System.out.println(macdVerhaeltnis);
-			// wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben
-			// und dann das Vorzeichen sich ändert, gilt die Bedingung als erfüllt
-		}
-		if (verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false) {
-			// die letzten 5 MACDs sind negativ
-			rueckgabewert = -1;
-		} else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true) {
-			// die letzten 5 MACDs sind positiv
-			rueckgabewert = 1;
-		} else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true)
-				|| (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)) {
-			// die letzten 5 MACDs haben nicht das gleiche Vorzeichen
-			rueckgabewert = 0;
-		}
-		return rueckgabewert;
+	    return rueckgabewert;
 	}
 
 	public static int VergleicheWerte(Kpi werte) {
