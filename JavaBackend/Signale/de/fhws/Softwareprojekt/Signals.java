@@ -101,6 +101,8 @@ public class Signals {
 	}
 
 	public static int kombiniereMACDEMAPSAR(ApiConnection connection, Kpi werte) {
+		
+	
 		// public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
 		// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte:
 		// 12,26,9)
@@ -124,7 +126,10 @@ public class Signals {
 		if (pruefeEMA200(werte) == 1) { // 1. liegt Trend (= 200 EMA) über Kurs?
 			if (pruefeVorperioden(werte, "MACD") == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter
 															// Signallinie?
-				if ((werte.macd - werte.macdTriggert) >= 0) { // 3. ist der aktuelle MACD auf oder über 0?
+				if ((werte.macd - werte.macdTriggert) >= 0) {
+					if(werte.prozent>0.10)
+					{
+					// 3. ist der aktuelle MACD auf oder über 0?
 					// for (int i = 0; i < 2; i++) { //4. Schleifendurchlauf für nächste Bedingung
 					if (pruefePSAR(werte) == 1) { // 5. ist der PSAR-Wert unter dem Kurs?
 						// long //Long-Position
@@ -134,10 +139,14 @@ public class Signals {
 					// }
 				}
 			}
-			} else if (pruefeEMA200(werte) == -1) { // 1. liegt Trend unter Kurs?
+			}
+		}else if (pruefeEMA200(werte) == -1) { // 1. liegt Trend unter Kurs?
 				if (pruefeVorperioden(werte, "MACD") == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über
 																// Signallinie?
-					if ((werte.macd - werte.macdTriggert) <= 0) { // 3. ist der aktuelle MACD auf oder unter 0?
+					if ((werte.macd - werte.macdTriggert) <= 0) { 
+						if(werte.prozent<-0.10)
+						{// 3. ist der aktuelle MACD auf oder unter 0?
+					
 						// 4. Schleifendurchlauf für nächste Bedingung
 						if (pruefePSAR(werte) == -1) {
 							// 5. ist der PSAR-Wert über dem Kurs?
@@ -146,7 +155,7 @@ public class Signals {
 
 					}
 				}
-				
+				}
 			}
 			return rueckgabewert;
 		}
