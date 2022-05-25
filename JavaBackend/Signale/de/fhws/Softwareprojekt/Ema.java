@@ -164,6 +164,8 @@ if(count>0)
 		Kpi kpi2 = getKpi(instrument, y, granularity,jcr);
 		Kpi md = getKpi(instrument, z, granularity,jcr);
 	double ergebnis = 0;
+	double maxDifferenz=0;
+	double minDifferenz=0;
  //   double Vorergebnis=0;
 /*    for(int i=md.periods;i<md.emas.size()+1;i++)
     {
@@ -183,7 +185,8 @@ if(count>0)
     }*/
 	for(int i=0;i<md.emas.size();i++)
 	{
-		md.macds.add(kpi1.emas.get(i)-kpi2.emas.get(i));
+		md.macd=(kpi1.emas.get(i)-kpi2.emas.get(i));
+		md.macds.add(md.macd);
 		if(i>=z-1)
 		{
 		for(int j=i-z+1;j<=i;j++)
@@ -191,13 +194,27 @@ if(count>0)
 			
 			ergebnis+=md.macds.get(j);
 		}
-		md.macdsTriggert.add(ergebnis/z);
+		md.macdTriggert=ergebnis/z;
+		md.macdsTriggert.add(md.macdTriggert);
+		//Differnz zwischen Macd und MacdTriggert
+		double differenz=md.macd-md.macdTriggert;
+		//Maximale Diffenenz zwischen macd und macdTriggert
+		maxDifferenz=differenz>maxDifferenz?differenz:maxDifferenz;
+		//Minimale Differenz zwischen macd und macdTriggert
+		minDifferenz=differenz<minDifferenz?differenz:minDifferenz;
+		//Wert für Array List bei negativer Differnz muss der Wert *(-1=) genommen werden, da -*- + ergibt und das Ergenis negativ sein soll zur Unterscheidung
+		double wert=differenz==0?0:differenz>0?differenz/maxDifferenz:differenz/minDifferenz*(-1);
+		md.Prozent.add(wert);
+		md.prozent=wert;
+		//md.Prozent.add((md.macdTriggert>md.macdTriggert)?((md.macd-md.macdTriggert)/md.maxProzent)):md.macd>md.macdTriggert?;
+		
 		}
+		
 			ergebnis=0;
 	}
  
-    md.macd=md.macds.get(md.macds.size()-1);
-    md.macdTriggert=md.macdsTriggert.get(md.macdsTriggert.size()-1);
+   // md.macd=md.macds.get(md.macds.size()-1);
+   // md.macdTriggert=md.macdsTriggert.get(md.macdsTriggert.size()-1);
 		/*for(int i= md.emas.size()-md.periods-1;i<md.emas.size();i++)
 		{
 		ergebnis=(i>=(md.emas.size()-md.periods))?ergebnis+(kpi1.emas.get(i)-kpi2.emas.get(i)):ergebnis;
@@ -303,6 +320,8 @@ if(count>0)
 		kpi.macds=kpi3.macds;
 		kpi.macdsTriggert=kpi3.macdsTriggert;
 		kpi.macdTriggert=kpi3.macdTriggert;
+		kpi.prozent=kpi3.prozent;
+		kpi.Prozent=kpi3.Prozent;
 		kpi.parabolicSAR=kpi2.parabolicSAR;
 		kpi.parabolicSARs=kpi2.parabolicSARs;
 		kpi.rsi=kpi4.rsi;

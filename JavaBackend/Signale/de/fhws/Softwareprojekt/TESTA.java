@@ -21,7 +21,7 @@ public static void main(String[] args) {
 		;*/
 	//	kombiniereMACDEMAPSAR(connection,"USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 		Ema e = new Ema(connection);
-		
+		int zaehler;
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
 		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) 
 		{
@@ -32,8 +32,10 @@ public static void main(String[] args) {
 		if(pruefeMACD(kpi)!=0)
 			{
 			ausgabe("alles",kpi,instrument);
+			System.out.println(kpi.prozent);
+			
 			System.out.println(pruefeMACD(kpi));
-			}
+		}
 		}
 		
 }
@@ -43,6 +45,7 @@ public static void ausgabe(String emaName, Kpi kpi, JsonInstrumentsInstrument in
 			+ kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: " + kpi.avg + "  " + kpi.firstTime
 			+ " - " + kpi.lastTime + ")");
 }
+
 public static int pruefeMACD(Kpi werte) {
 	// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
 	int zaehlerNegativ=0;

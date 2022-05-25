@@ -19,6 +19,10 @@ public class Kpi{
 	ArrayList<Double>macds=new ArrayList<>();
     ArrayList<Double> macdsTriggert=new ArrayList<>();
 	double macdTriggert=0;
+
+	//Differnenz/max/min
+	ArrayList<Double>Prozent=new ArrayList<Double>();
+	double prozent=0;
 	double sma=0;
 	ArrayList<Double>smaList =new ArrayList<>();
 ArrayList<Double> superTrends=new ArrayList<>();
