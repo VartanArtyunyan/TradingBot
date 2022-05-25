@@ -73,7 +73,7 @@ public class JsonParser {
 
 	public trade convertApiStringToTradeModel(String json) {
 		return new trade(Integer.parseInt(getVarFromJson(json, "id")),
-				Instrumente.valueOf(getVarFromJson(json, "instrument")),
+				getVarFromJson(json, "instrument"),
 				Double.parseDouble(getVarFromJson(json, "price")), getVarFromJson(json, "openTime"),
 				Integer.parseInt(getVarFromJson(json, "initialUnits")), getVarFromJson(json, "initialMarginRequired"),
 				Integer.parseInt(getVarFromJson(json, "currentUnits")), getVarFromJson(json, "realizedPL"),

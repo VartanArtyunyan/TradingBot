@@ -17,6 +17,8 @@ public class Main {
 		
 		LogFileWriter logFileWriter = new LogFileWriter();
 		Verwaltung verwaltung = new Verwaltung(connection);
+		
+		verwaltung.aktualisierePosition();
 
 		Signals testN = new Signals(connection, verwaltung, logFileWriter);
 
@@ -28,7 +30,7 @@ public class Main {
 		mainThread.addThread(signalThread);
 		mainThread.addThread(timerThread);
 		
-		mainThread.start();
+	//	mainThread.start();
 
 	}
 }
