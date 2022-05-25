@@ -5,5 +5,5 @@ import apii.plotss as pltt
 
 
 def index(request):
-    chart = pltt.get_plot(dat.balance, 3)
+    chart = pltt.get_plot(77, 3)
     return render(request, 'trading_B/hello.html', {'chart': chart})
