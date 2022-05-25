@@ -3,7 +3,7 @@ package de.fhws.Softwareprojekt;
 import API.ApiConnection;
 import API.Connection;
 
-public class TestN {
+public class TESTA {
 public static void main(String[] args) {
 		
 		
@@ -29,7 +29,7 @@ public static void main(String[] args) {
 		//	{
 			Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9, 0, 0);
 			//String c="";
-			if(pruefeMACD(kpi)!=0)
+		if(pruefeMACD(kpi)!=0)
 			{
 			ausgabe("alles",kpi,instrument);
 			System.out.println(pruefeMACD(kpi));
@@ -51,7 +51,7 @@ public static int pruefeMACD(Kpi werte) {
 	boolean Positiv=true;
 	int rueckgabewert = 99;
 	int aktuellerWert=0;
-	for (int i = 1; i < 7; i++) {
+	for (int i = 1; i < 11; i++) {
 	
 		double macd = werte.macds.get(werte.macds.size() - i);
 		double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
@@ -80,8 +80,9 @@ public static int pruefeMACD(Kpi werte) {
 		// wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben
 		// und dann das Vorzeichen sich ändert, gilt die Bedingung als erfüllt
 	
-	rueckgabewert=zaehlerNegativ==5&&Positiv==true?-1:zaehlerPositiv==5&&Negativ==true?1:0;
-
+//rueckgabewert=(zaehlerNegativ==5&&Positiv==true&&werte.ema>werte.lastPrice&&werte.lastPrice>werte.parabolicSAR)?-1:(zaehlerPositiv==5&&Negativ==true&&werte.lastPrice>werte.ema&&werte.parabolicSAR>werte.lastPrice)?1:0;
+ rueckgabewert=(zaehlerNegativ==9&&Positiv==true)?-1:(zaehlerPositiv==9&&Negativ==true)?1:0;
+// rueckgabewert=(rueckgabewert==1&&werte.ema>werte.lastPrice&&werte.lastPrice>werte.parabolicSAR)?-1:(rueckgabewert==1&&werte.lastPrice>werte.ema&&werte.parabolicSAR>werte.lastPrice)?1:0;
 	return rueckgabewert;
 }
 }

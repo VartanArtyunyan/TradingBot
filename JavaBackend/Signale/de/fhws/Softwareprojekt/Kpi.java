@@ -59,11 +59,11 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 	
 	public double getShortStopLoss() {
-		return parabolicSAR;
+		return lastPrice - (parabolicSAR - lastPrice)*2;
 	}
 	
 	public double getShortTakeProfit() {
-		return lastPrice - (parabolicSAR - lastPrice)*2;
+		return parabolicSAR;
 	}
 	
 	@Override
