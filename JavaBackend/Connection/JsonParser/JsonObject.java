@@ -5,13 +5,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JsonObject {
-
+	
 	HashMap<String,String> content;
 
 	public JsonObject() {
 		content = new HashMap<>();
 	}
 
+	public void addVar(String name, String inhalt) {
+		content.put(name, inhalt);
+	}
+	
+	
+	
+	
+	
+	
 	 public JsonObject(String Json) {
 		
 		content = new HashMap<>();
@@ -104,14 +113,21 @@ public class JsonObject {
 
 
 
-	public String toString() {
-		String output = "";
-
+public String toString() {
+		
+		StringWriter cache = new StringWriter();
+		cache.append("{");
 		for (Map.Entry<String,String> e : content.entrySet()) {
-			output += jv.toString() + "\n";
+			cache.append('"');
+			cache.append(e.getKey());
+			cache.append("\":\"");
+			cache.append(e.getValue());
+			cache.append("\",");
+			
 		}
-
-		return output;
+		cache.append("}");
+		
+		return cache.toString();
 	}
 
 }

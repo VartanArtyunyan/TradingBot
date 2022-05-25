@@ -4,17 +4,20 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeSet;
 
 import API.ApiConnection;
 import API.Connection;
 import LogFileWriter.LogFileWriter;
 import positionen.Verwaltung;
 
-public class Signals {
+public class Signals implements Comparator<Kpi>{
 
 	ApiConnection connection;
 	Verwaltung verwaltung;
@@ -72,8 +75,10 @@ public class Signals {
 	}
 
 	public void endPeriod() {
-
-		for (Kpi s : signale) {
+//Hier an dieser Stelle soll das Hash Set gem‰ﬂ der compareTo Methode sortiert werden
+	//	Collections.sort(signale,  Signals.class);
+TreeSet<Kpi> sorted=new TreeSet<>(signale);
+		for (Kpi s : sorted) {
 			if (s.longShort) {
 				verwaltung.placeLongOrder(s.instrument, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 
@@ -495,4 +500,48 @@ public class Signals {
 
 	}
 
+	@Override
+	public int compare(Kpi wert1, Kpi wert2) {
+		//Beide long Positionen
+	if ((wert1.prozent>0&&wert2.prozent>0))
+			{
+		if(wert1.prozent>wert2.prozent)return 1;
+	else if(wert1.prozent<wert2.prozent) return -1;
+	
+			}
+	//Beide short Positionen
+		if ((wert1.prozent<0&&wert2.prozent<0))
+	{
+if(wert1.prozent<wert2.prozent)return 1;
+else if(wert1.prozent>wert2.prozent) return -1;
+
+	}
+	
+	//wert 1 long und wert 2 short
+	if	(wert1.prozent>0&&wert2.prozent<0)
+	{
+	 if((wert1.prozent>wert2.prozent*(-1)))return 1;
+	 else if((wert1.prozent<wert2.prozent*(-1)))return -1;
+	 //Wenn gleich:Dann nehme long Position da seltener
+	 else return 1;
+	}
+	//wert 1 short und wert2 long
+	if((wert1.prozent<0&&wert2.prozent>0))
+	{
+	 if((wert1.prozent*(-1)>wert2.prozent))return 1;
+	 else if((wert1.prozent*(-1)<wert2.prozent))return -1;
+	 //Wenn gleich:Dann nehme long Position da seltener
+	 else return 1;
+	}
+if(Math.abs(wert1.prozent)==Math.abs(wert2.prozent))
+{
+	//Auch hier im Zweifel long
+	if(wert1.prozent>wert2.prozent)
+return 1;
+	else if(wert1.prozent<wert2.prozent)
+		return -1;
+	else return 0;
+}
+return 0;
+}
 }

@@ -37,7 +37,7 @@ public class Verwaltung {
 
 		connection.placeOrder(instrument, units, takeProfit, stopLoss);
 		
-		
+		aktualisierePosition();
 	}
 
 	public void placeLongOrder(String instrument, double takeProfit, double stopLoss, double kurs) {
@@ -49,12 +49,19 @@ public class Verwaltung {
 		connection.placeOrder(instrument, units, takeProfit, stopLoss);
 		
 		
-
+		aktualisierePosition();
 	}
 	
-	public void addManualPosition() { //GAANZ WICHTIG! in der finalen Version nicht mehr verwenden
+	public void addManualPosition(String instrument) { //GAANZ WICHTIG! in der finalen Version nicht mehr verwenden
+		position position1 = new position(instrument);
+		addPosition(position1);
 		
 	}
+	private void addPosition(position a) {
+		positionen.add(a);
+	}
+	
+	
 
 	public void closeWholePosition(String i) {
 
@@ -79,7 +86,7 @@ public class Verwaltung {
 				position p = new position(trades.get(i).getInstrument());
 				erstelltePosition.add(trades.get(i).getInstrument());
 				p.addID(trades.get(i).getId());
-				positionen.add(p);
+				addPosition(p);;
 			}
 
 		}
@@ -106,7 +113,13 @@ public class Verwaltung {
 	}
 
 	public void putTrade(trade t, String b) {
-
+		for(position p : positionen) {
+            System.out.println(p.instrument);
+        }
+		
+		
+		if(positionen == null) return;
+		
 		for (int i = 0; i < positionen.size(); i++) {
 			if (positionen.get(i).getInstrument().equals(b)) {
 				positionen.get(i).addID(t.getId());
@@ -115,6 +128,7 @@ public class Verwaltung {
 	}
 	
 	public boolean containsPosition(String instrument) {
+		aktualisierePosition();
 		
 		boolean output = false;
 		for (position p : positionen) {
