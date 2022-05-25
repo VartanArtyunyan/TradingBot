@@ -1,4 +1,6 @@
 import base64
+import numpy as np
+from matplotlib import style
 import matplotlib.pyplot as plt
 from matplotlib import style
 from io import BytesIO
@@ -20,8 +22,6 @@ def get_plot(x, y):
     plt.figure(figsize=(10, 5))
     plt.plot(x, y)
     plt.xticks(rotation=45)
-    plt.xlabel('item')
-    plt.ylabel('price')
     plt.tight_layout()
 
     graph = get_graph()
