@@ -47,8 +47,8 @@ public class ApiConnection {
         return 1.09;
     }
 	
-	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
-		
+	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {    //limitPreis ist der lastPreis (Limit Preis =lastPrice +0,0005) aus kpi
+																									//
     }
 	
 	public double getBalance() {
