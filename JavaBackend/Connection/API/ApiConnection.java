@@ -21,61 +21,41 @@ public class ApiConnection {
 
 	public ArrayList<trade> getTrades() {
 		ArrayList<trade> output = new ArrayList<>();
-		String apiResponseString = connection.getApiResponseGET("trades");
+		String apiResponseString = connection.getTrades();
 
 		if (jsonParser.isValidTradeJson(apiResponseString)) 
 			output = jsonParser.convertApiStringToTradesArray(apiResponseString);
 		return output;
 	}
 	
-	public JsonCandlesRoot getJsonCandlesRoot(int count,String instrument,String from, String to, String price, String granularity) {
-		String apiResponseString = connection.getCandleStickData(count,instrument, from, to, price ,granularity);
+	public JsonCandlesRoot getJsonCandlesRoot(int count, String instrument, String from, String to, String price, String granularity) {
+		String apiResponseString = connection.getCandleStickData(count, instrument, from, to, price ,granularity);
 		
 		return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
 	}
 	
 	public JsonInstrumentsRoot getJsonInstrumentsRoot(){
-		String apiResponseString = connection.getApiResponseGET("instruments");
+		String apiResponseString = connection.getInstruments();
 		
 		
 		return jsonParser.convertAPiStringToInstrumentsRootModel(apiResponseString);
 	}
 
-	public void cd() {
-		String apiResponseString = connection.getCandleStickData(-1,"EUR_JPY", null, null, "M","D5");
-		
-		//String[] sArray = apiResponseString.split(",");
-		//System.out.println(sArray.length + " test");
-		//for(int i = 0; i < sArray.length; i++) {
-		//System.out.println(sArray[i]);
-		//}
-		//System.out.println("testP2");
-		////for (String s : mid) {
-			//System.out.println(s);
-		//}
-		
-		
-		
-		JsonCandlesRoot jcr = jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
-		
-		System.out.println(jcr.instrument);
-		System.out.println(jcr.granularity);
-		for(JsonCandlesCandle jcc : jcr.candles) {
-			System.out.println(jcc.complete);
-			System.out.println(jcc.mid.o);
-		}
-		
-		
-		//System.out.println(jsonParser.getVarFromJson(mid.get(0), "o"));
-	}
+	
 	
 	public double getKurs(String instrument) {
         return 1.09;
     }
 	
-	public void placeOrder(String instrument, int units) {
+	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
 		
     }
+	
+	public double getBalance() {
+		
+		return 0;
+		
+	}
 	
 	public void closePosition(String instrument, int anzahl) {
 

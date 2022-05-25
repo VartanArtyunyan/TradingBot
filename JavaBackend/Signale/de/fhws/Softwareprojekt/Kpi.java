@@ -3,7 +3,10 @@ package de.fhws.Softwareprojekt;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Kpi {
+public class Kpi{
+	
+	boolean longShort;   //false = short, long = true
+	
 	JsonCandlesRoot root;
 	public String instrument;
 	public String granularity;
@@ -24,6 +27,9 @@ double superTrend=0;
 double rsi=0;
 ArrayList<Double>rsiListe=new ArrayList<>();	
 	double lastPrice = 0;
+	ArrayList<Double>lastPrices=new ArrayList<>();
+	double lastHighestPrice=0;
+	double lastLowestPrice=0;
 	String firstTime = "";
 	String lastTime = "";
 	double min = 0;
@@ -39,4 +45,41 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 		this.granularity=granularity;
 		this.periods=periods;
 	}
+	
+	public double getKaufpreis() {
+		return 0.0;  // müsste eigentlich 0,02*kontostand zurückgeben
+	}
+	
+	public double getLongStopLoss() {
+		return parabolicSAR;
+	}
+	
+	public double getLongTakeProfit() {
+		return lastPrice + (lastPrice - parabolicSAR)*2;
+	}
+	
+	public double getShortStopLoss() {
+		return parabolicSAR;
+	}
+	
+	public double getShortTakeProfit() {
+		return lastPrice - (parabolicSAR - lastPrice)*2;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		
+		Kpi input = (Kpi) o;
+		return this.instrument.equals(input.instrument);
+		
+	}
+	@Override
+	public int hashCode() {
+		
+		return this.instrument.hashCode();
+	}
+
+	
+
+	
 }
