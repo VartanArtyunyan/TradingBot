@@ -1,12 +1,19 @@
 package de.fhws.Softwareprojekt;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+
+
 
 import API.ApiConnection;
 import API.Connection;
 
 public class EmaListe {
+	JsonInstrumentsRoot instrumentsRoot;
+
 	
+	//public Map<instrument, isUsed> instrumentenliste = new HashMap<>();
 	
 	
 	public static void main(String[] args) {
@@ -24,14 +31,15 @@ public class EmaListe {
 			filter = "";
 		}
 		;*/
-		kombiniereMACDEMAPSAR(connection,"USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+		//kombiniereMACDEMAPSAR(connection,"USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 		Ema e = new Ema(connection);
 		
 		
-		
-		
+		//boolean isUsed = false;
+		Map<String, Boolean> instrumentenVerfügbarkeit = new HashMap<>();
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
 		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
+
 			/*if (instrument.type.compareTo("CURRENCY")==0) {
 			if (instrument.name.toUpperCase().contains(filter) || instrument.displayName.toUpperCase().contains(filter)
 					|| instrument.type.toUpperCase().contains(filter)) {*/
@@ -57,13 +65,23 @@ public class EmaListe {
 		//Kpi kpi2=e.parabolicSar(instrument.name, "M15", 0.02, 0.02, 0.2);
 	//System.out.println(e.getATR(instrument.name, 14, "M15"));
 				//neu22222
-				
 				//ausgabe("test", testausgabe, instrument);
-				//ausgabe("Test", kombiniereMACDEMAPSAR(connection), instrument);
-				
+				//ausgabe("Test", kombiniereMACDEMAPSAR(connection), instrument);}}
+			
+			//Sind offene Positionen vorhanden (vom letzten Login?)
+			instrumentenVerfügbarkeit.put(instrument.name.toString(), false);
 		}
-		//}}
-		
+		for(String k : instrumentenVerfügbarkeit.keySet()) {
+			System.out.println(k);
+			//kombiniereMACDEMAPSAR(connection,k, 200, 14, "S5",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+			boolean isUsed = instrumentenVerfügbarkeit.get(k);
+			if(isUsed = false) {
+				kombiniereMACDEMAPSAR(connection,k, 200, 14, "S5",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+			}
+			else
+				continue;
+		}
+
 		
 		
 	}
@@ -98,14 +116,15 @@ public class EmaListe {
 		//System.out.println(pruefeMACD(werte));
 		//System.out.println(pruefeEMA200(werte));
 		//System.out.println(pruefePSAR(werte));
-		System.out.println(pruefeVorperioden(werte, "RSI"));
-		System.out.println(pruefeRSI(werte));
+		//System.out.println(pruefeVorperioden(werte, "RSI"));
+		//System.out.println(pruefeRSI(werte));
 		
 		
 		//ToDo: Doppelten Code vermeiden -> Funktionen zusammenlegen
 		//		Ermitteln welche Rückgabewerte zu einer Kaufentscheidung führt
 		//		Kaufposition aufrufen
-
+		//		MACD Periodencheck mit aktuellem MACD kombinieren?
+		//		Verfügbarkeit prüfen -> Wird der
 		
 		try {
 			if(pruefeEMA200(werte) == 1) {						//1. liegt Trend (= 200 EMA) über Kurs?
@@ -115,11 +134,15 @@ public class EmaListe {
 							if(pruefePSAR(werte) == 1) {		//5. ist der PSAR-Wert unter dem Kurs?
 								//long							//Long-Position
 								//return werte;	
+								System.out.println("long");
+								break;
 							}
 							else if (pruefePSAR(werte) != 1 && i <1) {//5.1 PSAR ist über dem Kurs -> eine Periode warten
-									Thread.sleep(berechneMillisekunden(granularity));
+								System.out.println("warten long");
+								Thread.sleep(berechneMillisekunden(granularity));
 							}
 							else if (pruefePSAR(werte) != 1 && i == 1) {//5.2 PSAR ist über dem Kurs nach der nächsten Periode -> abbruch
+								System.out.println("abbruch long");
 								break;
 							}
 						}
@@ -135,12 +158,17 @@ public class EmaListe {
 								//Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze, double untergrenze);
 								//Verwaltung.placeOrder(instrument, double wer, double kurs, double obergrenze, double untergrenze);
 								//return werte;
+								System.out.println("short");
+								break;
 							}
 							else if (pruefePSAR(werte) != -1 && i <1) {//5.1 PSAR ist unter dem Kurs -> eine Periode warten
-									Thread.sleep(berechneMillisekunden(granularity));
-									i++;
+								System.out.println("warten short");
+								Thread.sleep(berechneMillisekunden(granularity));
+									
+									
 							}
 							else if (pruefePSAR(werte) != -1 && i == 1) {//5.2 PSAR ist unter dem Kurs nach der nächsten Periode -> abbruch
+								System.out.println("abbruch short");
 								break;
 							}
 						}
@@ -173,7 +201,7 @@ public class EmaListe {
 			double macd = werte.macds.get(werte.macds.size()-i);
 			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
 			double macdVerhaeltnis = macd-trigger;
-			System.out.println(werte.rsiListe.get(werte.rsiListe.size()-i));
+			//System.out.println(werte.rsiListe.get(werte.rsiListe.size()-i));
 			if(macdVerhaeltnis < 0) {
 				verhaeltnisVorzeichenNegativ = true;
 			}
