@@ -2,6 +2,7 @@ package JsonParser;
 
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 public class JsonObject {
 
@@ -106,9 +107,9 @@ public class JsonObject {
 	public String toString() {
 		String output = "";
 
-	//	for (String s1; String s2 : content.entrySet()) {
-	//		output += jv.toString() + "\n";
-	//	}
+		for (Map.Entry<String,String> e : content.entrySet()) {
+			output += jv.toString() + "\n";
+		}
 
 		return output;
 	}
