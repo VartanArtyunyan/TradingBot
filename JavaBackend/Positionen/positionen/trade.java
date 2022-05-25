@@ -25,6 +25,7 @@ public class trade {
 
 	int id;
 	Instrumente währung;
+	String instrument;
 	double price; //kaufpreis
 	String openTime;
 	
@@ -46,8 +47,8 @@ public class trade {
 		return id;
 	}
 	
-	public Instrumente getInstrument() {
-		return währung;
+	public String getInstrument() {
+		return instrument;
 	}
 	
 	

@@ -1,8 +1,6 @@
 package positionen;
 
 import java.util.ArrayList;
-
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import API.ApiConnection;
@@ -38,7 +36,8 @@ public class Verwaltung {
 		double units = (curBalance * (-0.02)) / kurs;
 
 		connection.placeOrder(instrument, units, takeProfit, stopLoss);
-
+		
+		
 	}
 
 	public void placeLongOrder(String instrument, double takeProfit, double stopLoss, double kurs) {
@@ -48,7 +47,13 @@ public class Verwaltung {
 		double units = (curBalance * 0.02) / kurs;
 
 		connection.placeOrder(instrument, units, takeProfit, stopLoss);
+		
+		
 
+	}
+	
+	public void addManualPosition() { //GAANZ WICHTIG! in der finalen Version nicht mehr verwenden
+		
 	}
 
 	public void closeWholePosition(String i) {
@@ -66,7 +71,7 @@ public class Verwaltung {
 
 	public void aktualisierePosition() {
 		trades = connection.getTrades();
-		HashSet<Instrumente> erstelltePosition = new HashSet<>();
+		HashSet<String> erstelltePosition = new HashSet<>();
 		for (int i = 0; i < trades.size(); i++) {
 			if (erstelltePosition.contains(trades.get(i).getInstrument())) {
 				putTrade(trades.get(i), trades.get(i).getInstrument());
@@ -100,13 +105,22 @@ public class Verwaltung {
 
 	}
 
-	public void putTrade(trade t, Instrumente b) {
+	public void putTrade(trade t, String b) {
 
 		for (int i = 0; i < positionen.size(); i++) {
-			if (positionen.get(i).getInstrument() == b) {
+			if (positionen.get(i).getInstrument().equals(b)) {
 				positionen.get(i).addID(t.getId());
 			}
 		}
+	}
+	
+	public boolean containsPosition(String instrument) {
+		
+		boolean output = false;
+		for (position p : positionen) {
+			if (p.getInstrument().equals(instrument)) output = true;
+		}
+		return output;
 	}
 
 	public boolean enthalten(trade t) {
