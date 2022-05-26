@@ -37,14 +37,15 @@ public class Connection {
 	}
 
 	public String getAccountIDs() {
-
 		return GET(urlString + "/accounts");
 
 	}
-	public String getAccount() {
-        return GET(urlString + "/accounts/" + accId);
-    }
 	
+	
+	public String getAccount() {
+		return GET(urlString + "/accounts/" + accId);
+	}
+
 	public String getTrades() {
 		return GET(urlString + "/accounts/" + accId + "/" + "trades");
 	}

@@ -61,7 +61,7 @@ public class JsonBuilder {
         pushObject();
     }
 
-    public void closeObject(String name) {
+    public void closeObject() {
         if(popObject()) json += "},";
         else throw new invalidJsonOperation("can not close Object");
     }
@@ -71,14 +71,15 @@ public class JsonBuilder {
         pushArray();
     }
 
-    public void closeArray(String name) {
+    public void closeArray() {
         if(popArray()) json += "],";
         else throw new invalidJsonOperation("can not close Array");
     }
+    
 
     public String build() {
         if (stack.size() == 0) {
-            return json;
+            return json + '}';
         } else
             throw new invalidJsonOperation("can not build Json, check if all Objects and Arrays have been closed");
 
