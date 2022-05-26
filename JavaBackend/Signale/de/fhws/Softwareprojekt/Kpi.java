@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class Kpi implements Comparator<Kpi>{
+public class Kpi implements Comparable<Kpi>{
 	
 	boolean longShort;   //false = short, long = true
 	
@@ -83,50 +83,52 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 		
 		return this.instrument.hashCode();
 	}
-	@Override
-	public int compare(Kpi wert1, Kpi wert2) {
-		//Beide long Positionen
-	if ((wert1.prozent>0&&wert2.prozent>0))
-			{
-		if(wert1.prozent>wert2.prozent)return 1;
-	else if(wert1.prozent<wert2.prozent) return -1;
-	
-			}
-	//Beide short Positionen
-		if ((wert1.prozent<0&&wert2.prozent<0))
-	{
-if(wert1.prozent<wert2.prozent)return 1;
-else if(wert1.prozent>wert2.prozent) return -1;
 
-	}
-	
-	//wert 1 long und wert 2 short
-	if	(wert1.prozent>0&&wert2.prozent<0)
+
+	@Override
+	public int compareTo(Kpi wert2) {
+		//Beide long Positionen
+		if ((this.prozent>0&&wert2.prozent>0))
+				{
+			if(this.prozent>wert2.prozent)return 1;
+		else if(this.prozent<wert2.prozent) return -1;
+		
+				}
+		//Beide short Positionen
+			if ((this.prozent<0&&wert2.prozent<0))
+		{
+	if(this.prozent<wert2.prozent)return 1;
+	else if(this.prozent>wert2.prozent) return -1;
+
+		}
+		
+		//wert 1 long und wert 2 short
+		if	(this.prozent>0&&wert2.prozent<0)
+		{
+		 if((this.prozent>wert2.prozent*(-1)))return 1;
+		 else if((this.prozent<wert2.prozent*(-1)))return -1;
+		 //Wenn gleich:Dann nehme long Position da seltener
+		 else return 1;
+		}
+		//wert 1 short und wert2 long
+		if((this.prozent<0&&wert2.prozent>0))
+		{
+		 if((this.prozent*(-1)>wert2.prozent))return 1;
+		 else if((this.prozent*(-1)<wert2.prozent))return -1;
+		 //Wenn gleich:Dann nehme long Position da seltener
+		 else return 1;
+		}
+	if(Math.abs(this.prozent)==Math.abs(wert2.prozent))
 	{
-	 if((wert1.prozent>wert2.prozent*(-1)))return 1;
-	 else if((wert1.prozent<wert2.prozent*(-1)))return -1;
-	 //Wenn gleich:Dann nehme long Position da seltener
-	 else return 1;
+		//Auch hier im Zweifel long
+		if(this.prozent>wert2.prozent)
+	return 1;
+		else if(this.prozent<wert2.prozent)
+			return -1;
+		else return 0;
 	}
-	//wert 1 short und wert2 long
-	if((wert1.prozent<0&&wert2.prozent>0))
-	{
-	 if((wert1.prozent*(-1)>wert2.prozent))return 1;
-	 else if((wert1.prozent*(-1)<wert2.prozent))return -1;
-	 //Wenn gleich:Dann nehme long Position da seltener
-	 else return 1;
+	return 0;
 	}
-if(Math.abs(wert1.prozent)==Math.abs(wert2.prozent))
-{
-	//Auch hier im Zweifel long
-	if(wert1.prozent>wert2.prozent)
-return 1;
-	else if(wert1.prozent<wert2.prozent)
-		return -1;
-	else return 0;
-}
-return 0;
-}
 	
 
 	

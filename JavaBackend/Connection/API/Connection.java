@@ -22,35 +22,35 @@ public class Connection {
 	HttpURLConnection connection;
 	URL url;
 	String token;
-	String urlString;
+	String urlPrefix;
 	String accId;
 
 	public Connection() {
-		urlString = standartUrlString;
+		urlPrefix = standartUrlString;
 		token = standartToken;
 		accId = standartAccId;
 	}
 
 	public Connection(String token) {
 		this.token = token;
-		urlString = standartUrlString;
+		urlPrefix = standartUrlString;
 	}
 
 	public String getAccountIDs() {
-		return GET(urlString + "/accounts");
+		return GET(urlPrefix + "/accounts");
 
 	}
 
 	public String getAccount() {
-		return GET(urlString + "/accounts/" + accId);
+		return GET(urlPrefix + "/accounts/" + accId);
 	}
 
 	public String getTrades() {
-		return GET(urlString + "/accounts/" + accId + "/" + "trades");
+		return GET(urlPrefix + "/accounts/" + accId + "/" + "trades");
 	}
 
 	public String getInstruments() {
-		return GET(urlString + "/accounts/" + accId + "/" + "instruments");
+		return GET(urlPrefix + "/accounts/" + accId + "/" + "instruments");
 	}
 
 	public String getCandleStickData(int count, String instrument, String from, String to, String price,
@@ -83,7 +83,7 @@ public class Connection {
 			}
 		}
 
-		String url = urlString + "/instruments/" + instrument + "/" + "candles" + query;
+		String url = urlPrefix + "/instruments/" + instrument + "/" + "candles" + query;
 
 		return GET(url);
 
@@ -91,7 +91,7 @@ public class Connection {
 
 	public void placeLimitOrder(String requestJson) {
 		System.out.println(requestJson);
-
+	
 		// POST((urlString + "/accounts/" + accId + "/orders"), requestJson);
 	}
 
@@ -142,6 +142,8 @@ public class Connection {
 
 	public String getResponse() throws IOException {
 		String jsonString = "";
+		
+		//System.out.println("Response wurde gstartet mit url: " + url.getPath());
 
 		BufferedReader br;
 		String line;
@@ -162,14 +164,14 @@ public class Connection {
 				jsonString += line;
 			}
 			br.close();
+			System.out.println("Fhelercode mit url: " + url.getPath() + "ResponseCode: " + status);
 			String[] sArray = jsonString.split(",");
-			for(int i = 0; i < sArray.length; i++) {
+			for (int i = 0; i < sArray.length; i++) {
 				System.out.println(sArray[i]);
 			}
 		}
 		
 		
-		System.out.println("getResponse wurde aktiviert mit url: " + url.getPath() + "ResponseCode: " + status);
 		return jsonString;
 
 	}

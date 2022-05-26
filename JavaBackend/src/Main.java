@@ -10,7 +10,7 @@ import positionen.Verwaltung;
 
 public class Main {
 
-	static String granularity = "M15";
+	static String granularity = "M1";
 
 	public static void main(String[] args) {
 		Connection con = new Connection();
@@ -19,6 +19,7 @@ public class Main {
 		LogFileWriter logFileWriter = new LogFileWriter();
 		Verwaltung verwaltung = new Verwaltung(connection);
 		
+		//verwaltung.placeShortOrder("TRY_JPY", 30, 22, 44, 55);
 		
 		Signals testN = new Signals(connection, verwaltung, logFileWriter);
 

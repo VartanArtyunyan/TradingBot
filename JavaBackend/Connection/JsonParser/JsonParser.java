@@ -13,11 +13,15 @@ import positionen.trade;
 public class JsonParser {
 
 	public ArrayList<trade> convertApiStringToTradesArray(String json){
+		
 
         JsonArray input = new JsonObject(json).getArray("trades");
         ArrayList<trade> output = new ArrayList<>();
+        
+        if(input.get(0) == null || input.get(0).length() == 0) return new ArrayList<trade>();
 
         for(int i = 0; i < input.length(); i++) {
+        	
 
             JsonObject jo = new JsonObject(input.get(i));
 

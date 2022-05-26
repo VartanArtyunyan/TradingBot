@@ -51,7 +51,7 @@ public class Signals {
 		for (JsonInstrumentsInstrument instrument : instrumentsList) {
 			// Kpi kpi=e.getKpi(instrument.name, 14, "M15");
 			// kpi=e.getATR(instrument.name,14 , "M15");
-
+			
 			Kpi kpi = e.aufrufAlles(instrument.name, 200, 14, granularity, 0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 			// nach kauf für 6 x granularität insturment sperren
 			int r = kombiniereMACDEMAPSAR(connection, kpi);
@@ -81,15 +81,16 @@ public class Signals {
 		
 		for (Kpi s : signale) {
 			if (s.longShort) {
-				verwaltung.placeLongOrder(s.instrument,s.lastPrice+0,0005, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
+				verwaltung.placeLongOrder(s.instrument,s.lastPrice+0.0005, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 
 				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getLongTakeProfit(),
 						s.getLongStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
-
+				System.out.println("long");
 			} else if (!s.longShort) {
-				verwaltung.placeShortOrder(s.instrument,lastPrice+0,0005, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
+				verwaltung.placeShortOrder(s.instrument,s.lastPrice+0.0005, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
 				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getShortTakeProfit(),
 						s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
+				System.out.println("short");
 			}
 		}
 
@@ -105,6 +106,7 @@ public class Signals {
 				+ " SMA: " + kpi.sma + " (" + kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: "
 				+ kpi.avg + "  " + kpi.firstTime + " - " + kpi.lastTime + ")");
 	}
+	
 
 	public static int kombiniereMACDEMAPSAR(ApiConnection connection, Kpi werte) {
 		
@@ -133,7 +135,7 @@ public class Signals {
 			if (pruefeVorperioden(werte, "MACD") == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter
 															// Signallinie?
 				if ((werte.macd - werte.macdTriggert) >= 0) {
-					if(werte.prozent>0.10)
+					if(werte.prozent>0.20)
 					{
 					// 3. ist der aktuelle MACD auf oder über 0?
 					// for (int i = 0; i < 2; i++) { //4. Schleifendurchlauf für nächste Bedingung
@@ -150,7 +152,7 @@ public class Signals {
 				if (pruefeVorperioden(werte, "MACD") == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über
 																// Signallinie?
 					if ((werte.macd - werte.macdTriggert) <= 0) { 
-						if(werte.prozent<-0.20)
+						if(werte.prozent<-0.25)
 						{// 3. ist der aktuelle MACD auf oder unter 0?
 					
 						// 4. Schleifendurchlauf für nächste Bedingung
@@ -319,8 +321,8 @@ public class Signals {
 		// Ausgabewerte: 1 -> Kurs über Trend; -1 -> Kurs unter Trend; 0 -> Kurs gleich
 		// Preis
 		int rueckgabewert = 99;
-		double faktorRundung = 1.001;
-		double ema200 = werte.ema * faktorRundung;
+		//double faktorRundung = 1.001;
+		double ema200 = werte.ema;// * faktorRundung;
 
 		double aktuellerKurs = werte.lastPrice;
 
@@ -401,7 +403,7 @@ public class Signals {
 			double macd = werte.macds.get(werte.macds.size() - i);
 			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
 			double macdVerhaeltnis = macd - trigger;
-			System.out.println(werte.rsiListe.get(werte.rsiListe.size() - i));
+			//System.out.println(werte.rsiListe.get(werte.rsiListe.size() - i));
 			if (macdVerhaeltnis < 0) {
 				verhaeltnisVorzeichenNegativ = true;
 			} else if (macdVerhaeltnis > 0) {
