@@ -62,7 +62,9 @@ public class JsonBuilder {
     }
 
     public void closeObject() {
-        if(popObject()) json += "},";
+        if(popObject()) {
+        	removeLastChar();
+        	json += "},";}
         else throw new invalidJsonOperation("can not close Object");
     }
 
@@ -72,13 +74,20 @@ public class JsonBuilder {
     }
 
     public void closeArray() {
-        if(popArray()) json += "],";
+    	
+        if(popArray()) {
+        	removeLastChar();
+        	json += "],";}
+        
         else throw new invalidJsonOperation("can not close Array");
     }
-    
+    public void removeLastChar(){
+        json = json.substring(0, json.length()-1);
+    }
 
     public String build() {
         if (stack.size() == 0) {
+        	removeLastChar();
             return json + '}';
         } else
             throw new invalidJsonOperation("can not build Json, check if all Objects and Arrays have been closed");
