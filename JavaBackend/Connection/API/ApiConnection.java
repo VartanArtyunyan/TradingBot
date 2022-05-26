@@ -23,14 +23,8 @@ public class ApiConnection {
 		ArrayList<trade> output = new ArrayList<>();
 		String apiResponseString = connection.getTrades();
 		
-		System.out.println(apiResponseString);
-
-		
 			output = jsonParser.convertApiStringToTradesArray(apiResponseString);
 		
-		for(trade t : output) {
-			System.out.println(t.getInstrument()+ " <--");
-		}
 		return output;
 	}
 	

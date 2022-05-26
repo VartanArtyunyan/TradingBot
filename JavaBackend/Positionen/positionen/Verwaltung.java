@@ -113,16 +113,6 @@ public class Verwaltung {
 	}
 
 	public void putTrade(trade t, String b) {
-		//for(position p : positionen) {
-       //     System.out.println(p.instrument);
-          
-       // }
-		
-		for(trade p : trades) {
-            System.out.println(p.instrument);
-          
-        }
-		
 		
 		if(positionen == null) return;
 		
