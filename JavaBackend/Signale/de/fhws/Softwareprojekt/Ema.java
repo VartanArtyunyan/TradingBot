@@ -334,7 +334,7 @@ if(count>0)
 		
 	} 
 
-	//Tom 
+	
 	public Kpi getATR(String instrument,int periods,String granularity, JsonCandlesRoot jcr)
 
 	{

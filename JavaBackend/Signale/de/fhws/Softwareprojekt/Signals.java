@@ -17,7 +17,7 @@ import API.Connection;
 import LogFileWriter.LogFileWriter;
 import positionen.Verwaltung;
 
-public class Signals implements Comparator<Kpi>{
+public class Signals {
 
 	ApiConnection connection;
 	Verwaltung verwaltung;
@@ -25,7 +25,7 @@ public class Signals implements Comparator<Kpi>{
 	Ema e;
 	ArrayList<JsonInstrumentsInstrument> instrumentsList;
 	JsonInstrumentsRoot instrumentsRoot;
-	HashSet<Kpi> signale;
+	TreeSet<Kpi> signale;
 
 	public Signals(ApiConnection connection, Verwaltung verwaltung, LogFileWriter logFileWriter) {
 
@@ -37,7 +37,7 @@ public class Signals implements Comparator<Kpi>{
 		this.instrumentsList = new ArrayList<>();
 		this.instrumentsRoot = e.getInstruments();
 
-		this.signale = new HashSet<>();
+		this.signale = new TreeSet<>();
 
 		for (JsonInstrumentsInstrument i : instrumentsRoot.instruments) {
 			if (i.type.compareTo("CURRENCY") == 0)
@@ -77,8 +77,9 @@ public class Signals implements Comparator<Kpi>{
 	public void endPeriod() {
 //Hier an dieser Stelle soll das Hash Set gemäß der compareTo Methode sortiert werden
 	//	Collections.sort(signale,  Signals.class);
-TreeSet<Kpi> sorted=new TreeSet<>(signale);
-		for (Kpi s : sorted) {
+//TreeSet<Kpi> sorted=new TreeSet<>(signale);
+		
+		for (Kpi s : signale) {
 			if (s.longShort) {
 				verwaltung.placeLongOrder(s.instrument, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 
@@ -92,7 +93,7 @@ TreeSet<Kpi> sorted=new TreeSet<>(signale);
 			}
 		}
 
-		signale = new HashSet<>();
+		signale = new TreeSet<>();
 
 	}
 
@@ -149,7 +150,7 @@ TreeSet<Kpi> sorted=new TreeSet<>(signale);
 				if (pruefeVorperioden(werte, "MACD") == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über
 																// Signallinie?
 					if ((werte.macd - werte.macdTriggert) <= 0) { 
-						if(werte.prozent<-0.10)
+						if(werte.prozent<-0.20)
 						{// 3. ist der aktuelle MACD auf oder unter 0?
 					
 						// 4. Schleifendurchlauf für nächste Bedingung
@@ -500,48 +501,5 @@ TreeSet<Kpi> sorted=new TreeSet<>(signale);
 
 	}
 
-	@Override
-	public int compare(Kpi wert1, Kpi wert2) {
-		//Beide long Positionen
-	if ((wert1.prozent>0&&wert2.prozent>0))
-			{
-		if(wert1.prozent>wert2.prozent)return 1;
-	else if(wert1.prozent<wert2.prozent) return -1;
 	
-			}
-	//Beide short Positionen
-		if ((wert1.prozent<0&&wert2.prozent<0))
-	{
-if(wert1.prozent<wert2.prozent)return 1;
-else if(wert1.prozent>wert2.prozent) return -1;
-
-	}
-	
-	//wert 1 long und wert 2 short
-	if	(wert1.prozent>0&&wert2.prozent<0)
-	{
-	 if((wert1.prozent>wert2.prozent*(-1)))return 1;
-	 else if((wert1.prozent<wert2.prozent*(-1)))return -1;
-	 //Wenn gleich:Dann nehme long Position da seltener
-	 else return 1;
-	}
-	//wert 1 short und wert2 long
-	if((wert1.prozent<0&&wert2.prozent>0))
-	{
-	 if((wert1.prozent*(-1)>wert2.prozent))return 1;
-	 else if((wert1.prozent*(-1)<wert2.prozent))return -1;
-	 //Wenn gleich:Dann nehme long Position da seltener
-	 else return 1;
-	}
-if(Math.abs(wert1.prozent)==Math.abs(wert2.prozent))
-{
-	//Auch hier im Zweifel long
-	if(wert1.prozent>wert2.prozent)
-return 1;
-	else if(wert1.prozent<wert2.prozent)
-		return -1;
-	else return 0;
-}
-return 0;
-}
 }
