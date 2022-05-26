@@ -40,6 +40,46 @@ public class JsonParser {
         return output;
     }
 	
+	public String makeLimitOrederRequestJson(String instrument,double price, double units, double takeProfit, double stopLoss) {
+		JsonBuilder output = new JsonBuilder();
+		
+		output.openObject("order");
+		output.addString("type", "LIMIT");
+		output.addString("instrument", instrument);
+		
+		
+		
+		
+		output.addString("units", Double.toString( round(units, 0)));
+		output.addString("price", Double.toString(price));
+		output.addString("TimeInForce", "GTC");
+		output.openObject("takeProfitOnFill");
+		output.addString("price", Double.toString(takeProfit));
+		output.closeObject();
+		output.openObject("stopLossOnFill");
+		output.addString("price", Double.toString(stopLoss));
+		output.closeObject();
+		output.closeObject();
+		
+		
+		return output.build();
+	}
+	
+	public double round(double input, double places) {
+		
+		double multiplicant = Math.pow(10, places);
+		
+		int i = (int) (input * multiplicant);
+		return ((double)i)/multiplicant;
+	}
+	
+	public double getBalanceFromAccountJson(String json) {
+		JsonObject input = new JsonObject(json);
+		JsonObject account = input.getObject("account");
+		
+		return Double.parseDouble(account.getValue("balance"));
+	}
+	
 	//Methoden für die Signale
 	
 	public JsonCandlesRoot convertAPiStringToCandlesRootModel(String json) {

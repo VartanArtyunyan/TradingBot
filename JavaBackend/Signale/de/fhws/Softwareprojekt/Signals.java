@@ -81,13 +81,13 @@ public class Signals {
 		
 		for (Kpi s : signale) {
 			if (s.longShort) {
-				verwaltung.placeLongOrder(s.instrument, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
+				verwaltung.placeLongOrder(s.instrument,s.lastPrice+0,0005, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 
 				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getLongTakeProfit(),
 						s.getLongStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
 
 			} else if (!s.longShort) {
-				verwaltung.placeShortOrder(s.instrument, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
+				verwaltung.placeShortOrder(s.instrument,lastPrice+0,0005, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
 				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getShortTakeProfit(),
 						s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
 			}

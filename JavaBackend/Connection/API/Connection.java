@@ -40,8 +40,7 @@ public class Connection {
 		return GET(urlString + "/accounts");
 
 	}
-	
-	
+
 	public String getAccount() {
 		return GET(urlString + "/accounts/" + accId);
 	}
@@ -89,13 +88,14 @@ public class Connection {
 		return GET(url);
 
 	}
-	
-	public void placeOrder() {
-		
+
+	public void placeLimitOrder(String requestJson) {
+		System.out.println(requestJson);
+
+		// POST((urlString + "/accounts/" + accId + "/orders"), requestJson);
 	}
 
 	private void setConnection(String urlString, String requestMethod) throws IOException {
-		
 
 		url = new URL(urlString);
 		connection = (HttpURLConnection) url.openConnection();
@@ -120,7 +120,6 @@ public class Connection {
 	}
 
 	private String POST(String urlString, String requestJson) {
-		
 		try {
 
 			setConnection(urlString, "POST");
@@ -129,7 +128,7 @@ public class Connection {
 
 			connection.getOutputStream().write(requestJson.getBytes(), 0, requestJson.length());
 			connection.getOutputStream().close();
-			
+
 			String output = getResponse();
 			connection.disconnect();
 			return output;
@@ -151,7 +150,6 @@ public class Connection {
 
 		status = connection.getResponseCode();
 
-		
 		if (status < 299) {
 			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			while ((line = br.readLine()) != null) {
@@ -164,8 +162,14 @@ public class Connection {
 				jsonString += line;
 			}
 			br.close();
+			String[] sArray = jsonString.split(",");
+			for(int i = 0; i < sArray.length; i++) {
+				System.out.println(sArray[i]);
+			}
 		}
-
+		
+		
+		System.out.println("getResponse wurde aktiviert mit url: " + url.getPath() + "ResponseCode: " + status);
 		return jsonString;
 
 	}

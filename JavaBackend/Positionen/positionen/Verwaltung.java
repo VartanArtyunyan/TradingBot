@@ -28,26 +28,42 @@ public class Verwaltung {
 
 	// aktualisierePosition();
 	// }
+	
+	public boolean eneoughBalance() {
+		double curBalance = connection.getBalance();
+		
+		return curBalance > 100.0;
+	}
 
-	public void placeShortOrder(String instrument, double takeProfit, double stopLoss, double kurs) {
-
+	public void placeShortOrder(String instrument,double limitPrice, double takeProfit, double stopLoss, double kurs) {
+		
+		if(!eneoughBalance()) {
+			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			return;
+		}
+		
 		double curBalance = connection.getBalance();
 
 		double units = (curBalance * (-0.02)) / kurs;
 
-		connection.placeOrder(instrument, units, takeProfit, stopLoss);
+		connection.placeOrder(instrument, limitPrice, units, takeProfit, stopLoss);
 		
 		aktualisierePosition();
 	}
-
-	public void placeLongOrder(String instrument, double takeProfit, double stopLoss, double kurs) {
+	
+	
+	public void placeLongOrder(String instrument, double limitPrice, double takeProfit, double stopLoss, double kurs) {
+		
+		if(!eneoughBalance()) {
+			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			return;
+		}
 
 		double curBalance = connection.getBalance();
 
 		double units = (curBalance * 0.02) / kurs;
 
-		connection.placeOrder(instrument, units, takeProfit, stopLoss);
-		
+		connection.placeOrder(instrument,limitPrice, units, takeProfit, stopLoss);
 		
 		aktualisierePosition();
 	}

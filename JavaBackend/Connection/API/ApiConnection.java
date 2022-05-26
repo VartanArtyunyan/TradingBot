@@ -1,6 +1,5 @@
 package API;
 
-
 import java.util.ArrayList;
 
 import JsonParser.JsonParser;
@@ -14,7 +13,7 @@ public class ApiConnection {
 
 	JsonParser jsonParser = new JsonParser();
 	Connection connection = new Connection();
-	
+
 	public ApiConnection(Connection c) {
 		connection = c;
 	}
@@ -22,47 +21,51 @@ public class ApiConnection {
 	public ArrayList<trade> getTrades() {
 		ArrayList<trade> output = new ArrayList<>();
 		String apiResponseString = connection.getTrades();
-		
-			output = jsonParser.convertApiStringToTradesArray(apiResponseString);
-		
+
+		output = jsonParser.convertApiStringToTradesArray(apiResponseString);
+
 		return output;
 	}
-	
-	public JsonCandlesRoot getJsonCandlesRoot(int count, String instrument, String from, String to, String price, String granularity) {
-		String apiResponseString = connection.getCandleStickData(count, instrument, from, to, price ,granularity);
-		
+
+	public JsonCandlesRoot getJsonCandlesRoot(int count, String instrument, String from, String to, String price,
+			String granularity) {
+		String apiResponseString = connection.getCandleStickData(count, instrument, from, to, price, granularity);
+
 		return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
 	}
-	
-	public JsonInstrumentsRoot getJsonInstrumentsRoot(){
+
+	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
 		String apiResponseString = connection.getInstruments();
-		
-		
+
 		return jsonParser.convertAPiStringToInstrumentsRootModel(apiResponseString);
 	}
 
-	
-	
 	public double getKurs(String instrument) {
-        return 1.09;
-    }
-	
-	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {    //limitPreis ist der lastPreis (Limit Preis =lastPrice +0,0005) aus kpi
-																									//
-    }
-	
-	public double getBalance() {
-		
-		return 0;
-		
+		return 1.09;
 	}
-	
+
+	public void placeOrder(String instrument, double limitPrice, double units, double takeProfit, double stopLoss) { 
+
+		String limitOrderJson = jsonParser.makeLimitOrederRequestJson(instrument, limitPrice, units, takeProfit,
+				stopLoss); //
+
+		connection.placeLimitOrder(limitOrderJson);
+	}
+
+	public double getBalance() {
+
+		String accountJson = connection.getAccount();
+
+		return jsonParser.getBalanceFromAccountJson(accountJson);
+
+	}
+
 	public void closePosition(String instrument, int anzahl) {
 
-    }
-	
+	}
+
 	public void closeWholePosition(String instrument) {
 
-    }
+	}
 
 }
