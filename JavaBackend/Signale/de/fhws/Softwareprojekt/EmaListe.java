@@ -125,8 +125,9 @@ public class EmaListe {
 		
 		System.out.println("Letzter Preis " +werte.lastPrice);
 		System.out.println("SAR " +werte.parabolicSAR);
-		System.out.println("ema " +runden(werte.ema));
-		System.out.println("macd " +runden(werte.macd));
+		System.out.println("ema " +werte.ema);
+		System.out.println("macd " +werte.macd);
+		System.out.println("macd verhältnis " + (werte.macdTriggert-werte.macd));
 		System.out.println("macd trigger " +runden(werte.macdTriggert));
 		System.out.println("macd methode " +pruefeMACD(werte));
 		System.out.println("ema200 methode " +pruefeEMA200(werte));
@@ -285,6 +286,7 @@ public class EmaListe {
 			double macd = werte.macds.get(werte.macds.size()-i);
 			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
 			double macdVerhaeltnis = macd-trigger;
+			System.out.println("trigger "+trigger);
 			if(macdVerhaeltnis < 0) {
 				verhaeltnisVorzeichenNegativ = true;
 			}

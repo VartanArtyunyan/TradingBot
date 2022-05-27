@@ -329,7 +329,7 @@ public class Signals {
 		if (aktuellerKurs > ema200) {
 			rueckgabewert = 1;
 		}
-		if (aktuellerKurs < ema200) {
+		else if (aktuellerKurs < ema200) {
 			rueckgabewert = -1;
 		} else /* aktuellerKurs = ema200 */ {
 			rueckgabewert = 0;
@@ -378,7 +378,7 @@ public class Signals {
 		if (aktuellerKurs > PSAR) {
 			rueckgabewert = 1;
 		}
-		if (aktuellerKurs < PSAR) {
+		else if (aktuellerKurs < PSAR) {
 			rueckgabewert = -1;
 		} else /* aktuellerKurs = PSAR */ {
 			rueckgabewert = 0;
