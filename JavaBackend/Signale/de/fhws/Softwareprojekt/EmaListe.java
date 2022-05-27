@@ -123,15 +123,15 @@ public class EmaListe {
 		boolean kaufentscheidung = false;
 		JsonCandlesRoot h = werte.root;
 		
-		System.out.println("Letzter Preis " +werte.lastPrice);
-		System.out.println("SAR " +werte.parabolicSAR);
-		System.out.println("ema " +werte.ema);
+		//System.out.println("Letzter Preis " +werte.lastPrice);
+		//System.out.println("SAR " +werte.parabolicSAR);
+		//System.out.println("ema " +werte.ema);
 		System.out.println("macd " +werte.macd);
-		System.out.println("macd verhältnis " + (werte.macdTriggert-werte.macd));
-		System.out.println("macd trigger " +runden(werte.macdTriggert));
+		//System.out.println("macd verhältnis " + (werte.macdTriggert-werte.macd));
+		System.out.println("macd trigger " +werte.macdTriggert);
 		System.out.println("macd methode " +pruefeMACD(werte));
-		System.out.println("ema200 methode " +pruefeEMA200(werte));
-		System.out.println("psar methode " +pruefePSAR(werte));
+		//System.out.println("ema200 methode " +pruefeEMA200(werte));
+		//System.out.println("psar methode " +pruefePSAR(werte));
 		System.out.println("vorperioden methode " +pruefeVorperioden(werte, "RSI"));
 		System.out.println("rsi methode " +pruefeRSI(werte));
 		
@@ -358,7 +358,7 @@ public class EmaListe {
 		//double ema200 = werte.ema * faktorRundung;
 		double ema200 = werte.ema;
 		double aktuellerKurs = werte.lastPrice;
-		System.out.println("ema200 " +ema200);
+		//System.out.println("ema200 " +ema200);
 		
 		if (aktuellerKurs > ema200) {
 			rueckgabewert = 1;
