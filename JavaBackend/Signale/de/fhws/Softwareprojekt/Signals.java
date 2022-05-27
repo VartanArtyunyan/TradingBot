@@ -136,7 +136,7 @@ public class Signals {
 					} 
 				//}
 				}
-		} else if (pruefeEMA200(werte) == -1) { // 1. liegt Trend unter Kurs?
+		}} else if (pruefeEMA200(werte) == -1) { // 1. liegt Trend unter Kurs?
 			if (pruefeVorperioden(werte, "MACD")==1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
 				if ((werte.macd - werte.macdTriggert) <= 0) { // 3. ist der aktuelle MACD auf oder unter 0?
 					// 4. Schleifendurchlauf für nächste Bedingung
@@ -146,8 +146,8 @@ public class Signals {
 					} 
 
 			}
-		}
-		return rueckgabewert;
+		}}
+		return rueckgabewert;}
 		// short //Short-Position
 		// Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze,
 		// double untergrenze);
@@ -212,7 +212,7 @@ public class Signals {
 				zaehlerPositiv++;
 	//		} else /* macdVerhaeltnis = 0 */ //{
 		//		break;
-			}
+			//}
 		//}
 	//}	// System.out.println(macdVerhaeltnis);
 			// wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben

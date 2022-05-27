@@ -1,5 +1,7 @@
 package de.fhws.Softwareprojekt;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -8,6 +10,7 @@ import java.util.Scanner;
 
 import API.ApiConnection;
 import API.Connection;
+import positionen.Verwaltung;
 
 public class EmaListe {
 	JsonInstrumentsRoot instrumentsRoot;
@@ -31,12 +34,12 @@ public class EmaListe {
 			filter = "";
 		}
 		;*/
-		//kombiniereMACDEMAPSAR(connection,"USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+		kombiniereMACDEMAPSAR(connection,"EUR_USD", 200, 14, "M30",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 		Ema e = new Ema(connection);
 		
 		
 		//boolean isUsed = false;
-		Map<String, Boolean> instrumentenVerfügbarkeit = new HashMap<>();
+		Map<String, Boolean> instrumentenVerfuegbarkeit = new HashMap<>();
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
 		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
 
@@ -69,18 +72,21 @@ public class EmaListe {
 				//ausgabe("Test", kombiniereMACDEMAPSAR(connection), instrument);}}
 			
 			//Sind offene Positionen vorhanden (vom letzten Login?)
-			instrumentenVerfügbarkeit.put(instrument.name.toString(), false);
+			
+			instrumentenVerfuegbarkeit.put(instrument.name.toString(), false);
+			
 		}
-		for(String k : instrumentenVerfügbarkeit.keySet()) {
+		/*
+		for(String k : instrumentenVerfuegbarkeit.keySet()) {
 			System.out.println(k);
-			//kombiniereMACDEMAPSAR(connection,k, 200, 14, "S5",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
-			boolean isUsed = instrumentenVerfügbarkeit.get(k);
+			kombiniereMACDEMAPSAR(connection,k, 200, 14, "M30",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+			boolean isUsed = instrumentenVerfuegbarkeit.get(k);
 			if(isUsed = false) {
-				kombiniereMACDEMAPSAR(connection,k, 200, 14, "S5",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+				//kombiniereMACDEMAPSAR(connection,k, 200, 14, "S5",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 			}
 			else
 				continue;
-		}
+		}*/
 
 		
 		
@@ -92,6 +98,15 @@ public class EmaListe {
 				+ kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: " + kpi.avg + "  " + kpi.firstTime
 				+ " - " + kpi.lastTime + ")");
 	}
+	
+	  public static double runden(double x)
+	  {
+
+		  double gerundet = 0;
+	      BigDecimal bd = new BigDecimal(x).setScale(3, RoundingMode.HALF_UP);
+	      gerundet = bd.doubleValue();
+	      return gerundet;
+	  }
 
 	
 	public static void kombiniereMACDEMAPSAR(ApiConnection connection, String instrument, int emaperiods,int periods, String granularity,double startBF, double inkrementBF, double maxBF,int x, int y, int z,int multiplicatorUpper,int multiplicatorLower) {
@@ -107,17 +122,17 @@ public class EmaListe {
 		
 		boolean kaufentscheidung = false;
 		JsonCandlesRoot h = werte.root;
-
-		//System.out.println(werte.lastPrice);
-		//System.out.println(werte.parabolicSAR);
-		//System.out.println(werte.ema);
-		//System.out.println(werte.macd);
-		//System.out.println(werte.macdTrigger);
-		//System.out.println(pruefeMACD(werte));
-		//System.out.println(pruefeEMA200(werte));
-		//System.out.println(pruefePSAR(werte));
-		//System.out.println(pruefeVorperioden(werte, "RSI"));
-		//System.out.println(pruefeRSI(werte));
+		
+		System.out.println("Letzter Preis " +werte.lastPrice);
+		System.out.println("SAR " +werte.parabolicSAR);
+		System.out.println("ema " +runden(werte.ema));
+		System.out.println("macd " +runden(werte.macd));
+		System.out.println("macd trigger " +runden(werte.macdTriggert));
+		System.out.println("macd methode " +pruefeMACD(werte));
+		System.out.println("ema200 methode " +pruefeEMA200(werte));
+		System.out.println("psar methode " +pruefePSAR(werte));
+		System.out.println("vorperioden methode " +pruefeVorperioden(werte, "RSI"));
+		System.out.println("rsi methode " +pruefeRSI(werte));
 		
 		
 		//ToDo: Doppelten Code vermeiden -> Funktionen zusammenlegen
@@ -125,6 +140,7 @@ public class EmaListe {
 		//		Kaufposition aufrufen
 		//		MACD Periodencheck mit aktuellem MACD kombinieren?
 		//		Verfügbarkeit prüfen -> Wird der
+		//		pruefeVorperioden mit aktuellem MACD
 		
 		try {
 			if(pruefeEMA200(werte) == 1) {						//1. liegt Trend (= 200 EMA) über Kurs?
@@ -139,7 +155,7 @@ public class EmaListe {
 							}
 							else if (pruefePSAR(werte) != 1 && i <1) {//5.1 PSAR ist über dem Kurs -> eine Periode warten
 								System.out.println("warten long");
-								Thread.sleep(berechneMillisekunden(granularity));
+								//Thread.sleep(berechneMillisekunden(granularity)); wird zu kompliziert
 							}
 							else if (pruefePSAR(werte) != 1 && i == 1) {//5.2 PSAR ist über dem Kurs nach der nächsten Periode -> abbruch
 								System.out.println("abbruch long");
@@ -163,7 +179,7 @@ public class EmaListe {
 							}
 							else if (pruefePSAR(werte) != -1 && i <1) {//5.1 PSAR ist unter dem Kurs -> eine Periode warten
 								System.out.println("warten short");
-								Thread.sleep(berechneMillisekunden(granularity));
+								//Thread.sleep(berechneMillisekunden(granularity));
 									
 									
 							}
@@ -337,14 +353,15 @@ public class EmaListe {
 		//Ausgabewerte: 1 -> Kurs über Trend; -1 -> Kurs unter Trend; 0 -> Kurs gleich Preis
 		int rueckgabewert = 99;
 		double faktorRundung = 1.001;
-		double ema200 = werte.ema * faktorRundung;
-		
+		//double ema200 = werte.ema * faktorRundung;
+		double ema200 = werte.ema;
 		double aktuellerKurs = werte.lastPrice;
+		System.out.println("ema200 " +ema200);
 		
 		if (aktuellerKurs > ema200) {
 			rueckgabewert = 1;
 		}
-		if (aktuellerKurs < ema200) {
+		else if (aktuellerKurs < ema200) {
 			rueckgabewert = -1;
 		}
 		else /*aktuellerKurs = ema200*/{
@@ -363,7 +380,7 @@ public class EmaListe {
 		if (aktuellerKurs > PSAR) {
 			rueckgabewert = 1;
 		}
-		if (aktuellerKurs < PSAR) {
+		else if (aktuellerKurs < PSAR) {
 			rueckgabewert = -1;
 		}
 		else /*aktuellerKurs = PSAR*/{
