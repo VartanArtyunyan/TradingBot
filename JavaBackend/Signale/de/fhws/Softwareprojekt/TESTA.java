@@ -23,19 +23,20 @@ public static void main(String[] args) {
 		Ema e = new Ema(connection);
 		int zaehler;
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
-		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) 
+	for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) 
 		{
 			if(instrument.type.compareTo("CURRENCY")==0)
 			{
-				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M1", 0.02, 0.02, 0.02, 12,26,9, 0, 0);
+				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9, 0, 0);
 			//String c="";
-		if((pruefeVorperioden(kpi, "MACD")!=0)&&(kpi.prozent>0.2))
+		if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
 			{
-			
+			System.out.println(kpi.granularity);
 			System.out.println("OK");
+			System.out.println(kpi.instrument);
 			ausgabe("alles",kpi,instrument);
 			System.out.println(kpi.prozent);
-			
+		
 			System.out.println(pruefeVorperioden(kpi,"MACD"));
 			}
 		}
@@ -120,7 +121,7 @@ public static int pruefeVorperioden(Kpi werte, String entscheideSignal) {
 		double macd = werte.macds.get(werte.macds.size() - i);
 		double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
 		double macdVerhaeltnis = macd - trigger;
-		System.out.println(werte.rsiListe.get(werte.rsiListe.size() - i));
+		//System.out.println(werte.rsiListe.get(werte.rsiListe.size() - i));
 		if (macdVerhaeltnis < 0) {
 			verhaeltnisVorzeichenNegativ = true;
 		} else if (macdVerhaeltnis > 0) {
