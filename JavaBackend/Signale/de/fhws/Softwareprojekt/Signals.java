@@ -146,20 +146,6 @@ public class Signals {
 					}
 					// }
 				}
-<<<<<<< HEAD
-		}} else if (pruefeEMA200(werte) == -1) { // 1. liegt Trend unter Kurs?
-			if (pruefeVorperioden(werte, "MACD")==1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
-				if ((werte.macd - werte.macdTriggert) <= 0) { // 3. ist der aktuelle MACD auf oder unter 0?
-					// 4. Schleifendurchlauf für nächste Bedingung
-					if (pruefePSAR(werte) == -1) {
-						// 5. ist der PSAR-Wert über dem Kurs?
-						rueckgabewert = -1;
-					} 
-
-			}
-		}}
-		return rueckgabewert;}
-=======
 			}
 			}
 		}else if (pruefeEMA200(werte) == -1) { // 1. liegt Trend unter Kurs?
@@ -181,7 +167,6 @@ public class Signals {
 			}
 			return rueckgabewert;
 		}
->>>>>>> 219e630a825816eafb9a75d696308de3be182fb6
 		// short //Short-Position
 		// Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze,
 		// double untergrenze);
@@ -253,21 +238,12 @@ public class Signals {
 			if (macdVerhaeltnis < 0) {
 				verhaeltnisVorzeichenNegativ = true;
 			} else if (macdVerhaeltnis > 0) {
-<<<<<<< HEAD
-				zaehlerPositiv++;
-	//		} else /* macdVerhaeltnis = 0 */ //{
-		//		break;
-			//}
-		//}
-	//}	// System.out.println(macdVerhaeltnis);
-=======
 				verhaeltnisVorzeichenPositiv = true;
 			} else /* macdVerhaeltnis = 0 */ {
 				break;
 			}
 
 			// System.out.println(macdVerhaeltnis);
->>>>>>> 219e630a825816eafb9a75d696308de3be182fb6
 			// wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben
 			// und dann das Vorzeichen sich ändert, gilt die Bedingung als erfüllt
 		}

@@ -55,13 +55,13 @@ public class JsonParser {
 		
 		
 		output.addString("units", Double.toString( round(units, 0)));
-		output.addString("price", Double.toString(price));
+		output.addString("price", Double.toString(round(price, 2)));
 		output.addString("TimeInForce", "GTC");
 		output.openObject("takeProfitOnFill");
-		output.addString("price", Double.toString(takeProfit));
+		output.addString("price", Double.toString(round(takeProfit, 2)));
 		output.closeObject();
 		output.openObject("stopLossOnFill");
-		output.addString("price", Double.toString(stopLoss));
+		output.addString("price", Double.toString(round(stopLoss, 0)));
 		output.closeObject();
 		output.closeObject();
 		

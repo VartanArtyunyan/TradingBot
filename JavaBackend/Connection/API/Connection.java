@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import AccountMng.Account;
 import JsonParser.JsonObject;
 
@@ -19,8 +21,8 @@ public class Connection {
 	private static String standartUrlString = "https://api-fxpractice.oanda.com/v3";
 	private static String standartAccId = "101-012-22085247-001";
 
-	HttpURLConnection connection;
-	URL url;
+	//HttpURLConnection connection;
+	//URL url;
 	String token;
 	String urlPrefix;
 	String accId;
@@ -92,23 +94,26 @@ public class Connection {
 	public void placeLimitOrder(String requestJson) {
 		System.out.println(requestJson);
 	
-		// POST((urlString + "/accounts/" + accId + "/orders"), requestJson);
+		 POST((urlPrefix + "/accounts/" + accId + "/orders"), requestJson);
 	}
 
-	private void setConnection(String urlString, String requestMethod) throws IOException {
+	private HttpURLConnection makeConnection(String urlString, String requestMethod) throws IOException {
+		
 
-		url = new URL(urlString);
-		connection = (HttpURLConnection) url.openConnection();
+		URL url = new URL(urlString);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod(requestMethod);
 		connection.setRequestProperty("Authorization", "Bearer " + token);
+		
+		return  connection;
 	}
 
 	private String GET(String urlString) {
 
 		try {
-			setConnection(urlString, "GET");
+			HttpURLConnection connection = makeConnection(urlString, "GET");
 
-			String output = getResponse();
+			String output = getResponse(connection);
 			connection.disconnect();
 			return output;
 		} catch (IOException e) {
@@ -122,14 +127,14 @@ public class Connection {
 	private String POST(String urlString, String requestJson) {
 		try {
 
-			setConnection(urlString, "POST");
+			HttpURLConnection connection = makeConnection(urlString, "POST");
 			connection.setDoOutput(true);
 			connection.setRequestProperty("Content-Type", "application/json");
 
 			connection.getOutputStream().write(requestJson.getBytes(), 0, requestJson.length());
 			connection.getOutputStream().close();
 
-			String output = getResponse();
+			String output = getResponse(connection);
 			connection.disconnect();
 			return output;
 		} catch (IOException e) {
@@ -140,7 +145,7 @@ public class Connection {
 
 	}
 
-	public String getResponse() throws IOException {
+	public String getResponse(HttpURLConnection connection) throws IOException {
 		String jsonString = "";
 		
 		//System.out.println("Response wurde gstartet mit url: " + url.getPath());
@@ -164,7 +169,7 @@ public class Connection {
 				jsonString += line;
 			}
 			br.close();
-			System.out.println("Fhelercode mit url: " + url.getPath() + "ResponseCode: " + status);
+			System.out.println("Fhelercode mit url: " + connection.getURL().getPath() + "ResponseCode: " + status);
 			String[] sArray = jsonString.split(",");
 			for (int i = 0; i < sArray.length; i++) {
 				System.out.println(sArray[i]);
