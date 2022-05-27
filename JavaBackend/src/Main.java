@@ -1,5 +1,6 @@
 import API.ApiConnection;
 import API.Connection;
+import JsonParser.JsonBuilder;
 import LogFileWriter.LogFileWriter;
 import Threads.MainThread;
 import Threads.SignalThread;
@@ -17,7 +18,9 @@ public class Main {
 		
 		LogFileWriter logFileWriter = new LogFileWriter();
 		Verwaltung verwaltung = new Verwaltung(connection);
-
+		
+		//verwaltung.placeShortOrder("TRY_JPY", 30, 22, 44, 55);
+		
 		Signals testN = new Signals(connection, verwaltung, logFileWriter);
 
 		MainThread mainThread = new MainThread();

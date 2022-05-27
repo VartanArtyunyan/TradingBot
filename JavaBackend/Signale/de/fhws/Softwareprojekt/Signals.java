@@ -4,10 +4,13 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeSet;
 
 import API.ApiConnection;
 import API.Connection;
@@ -22,7 +25,7 @@ public class Signals {
 	Ema e;
 	ArrayList<JsonInstrumentsInstrument> instrumentsList;
 	JsonInstrumentsRoot instrumentsRoot;
-	HashSet<Kpi> signale;
+	TreeSet<Kpi> signale;
 
 	public Signals(ApiConnection connection, Verwaltung verwaltung, LogFileWriter logFileWriter) {
 
@@ -34,7 +37,7 @@ public class Signals {
 		this.instrumentsList = new ArrayList<>();
 		this.instrumentsRoot = e.getInstruments();
 
-		this.signale = new HashSet<>();
+		this.signale = new TreeSet<>();
 
 		for (JsonInstrumentsInstrument i : instrumentsRoot.instruments) {
 			if (i.type.compareTo("CURRENCY") == 0)
@@ -48,12 +51,12 @@ public class Signals {
 		for (JsonInstrumentsInstrument instrument : instrumentsList) {
 			// Kpi kpi=e.getKpi(instrument.name, 14, "M15");
 			// kpi=e.getATR(instrument.name,14 , "M15");
-
+			
 			Kpi kpi = e.aufrufAlles(instrument.name, 200, 14, granularity, 0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
-			//nach kauf für 6 x granularität insturment sperren
+			// nach kauf für 6 x granularität insturment sperren
 			int r = kombiniereMACDEMAPSAR(connection, kpi);
 
-			if (r != 0 ) {
+			if (r != 0) {
 				System.out.println(r);
 				kpi.longShort = (r == 1) ? true : false;
 				ausgabe("alles", kpi, instrument);
@@ -62,7 +65,7 @@ public class Signals {
 			}
 
 		}
-		
+
 		System.out.println("\n\nSIGNALE\n");
 		for (Kpi s : signale) {
 			System.out.println(s.instrument);
@@ -72,28 +75,28 @@ public class Signals {
 	}
 
 	public void endPeriod() {
+//Hier an dieser Stelle soll das Hash Set gemäß der compareTo Methode sortiert werden
+	//	Collections.sort(signale,  Signals.class);
+//TreeSet<Kpi> sorted=new TreeSet<>(signale);
 		
-		
-
 		for (Kpi s : signale) {
-			if (s.longShort ) {
-				verwaltung.placeLongOrder(s.instrument, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
+			if (s.longShort) {
+				verwaltung.placeLongOrder(s.instrument,s.lastPrice+0.0005, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 
 				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getLongTakeProfit(),
 						s.getLongStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
-
-			} else if (!s.longShort ) {
-				verwaltung.placeShortOrder(s.instrument, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
+				System.out.println("long");
+			} else if (!s.longShort) {
+				verwaltung.placeShortOrder(s.instrument,s.lastPrice+0.0005, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
 				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getShortTakeProfit(),
 						s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
+				System.out.println("short");
 			}
 		}
 
-		signale = new HashSet<>();
+		signale = new TreeSet<>();
 
 	}
-
-	
 
 	public static void ausgabe(String emaName, Kpi kpi, JsonInstrumentsInstrument instrument) {
 
@@ -103,8 +106,11 @@ public class Signals {
 				+ " SMA: " + kpi.sma + " (" + kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: "
 				+ kpi.avg + "  " + kpi.firstTime + " - " + kpi.lastTime + ")");
 	}
+	
 
 	public static int kombiniereMACDEMAPSAR(ApiConnection connection, Kpi werte) {
+		
+	
 		// public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
 		// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte:
 		// 12,26,9)
@@ -126,16 +132,21 @@ public class Signals {
 		int rueckgabewert = 0;
 
 		if (pruefeEMA200(werte) == 1) { // 1. liegt Trend (= 200 EMA) über Kurs?
-			if (pruefeVorperioden(werte, "MACD") == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter Signallinie?
-				if ((werte.macd - werte.macdTriggert) >= 0) { // 3. ist der aktuelle MACD auf oder über 0?
+			if (pruefeVorperioden(werte, "MACD") == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter
+															// Signallinie?
+				if ((werte.macd - werte.macdTriggert) >= 0) {
+					if(werte.prozent>0.20)
+					{
+					// 3. ist der aktuelle MACD auf oder über 0?
 					// for (int i = 0; i < 2; i++) { //4. Schleifendurchlauf für nächste Bedingung
 					if (pruefePSAR(werte) == 1) { // 5. ist der PSAR-Wert unter dem Kurs?
 						// long //Long-Position
 						// return werte;
 						rueckgabewert = 1;
-					} 
-				//}
+					}
+					// }
 				}
+<<<<<<< HEAD
 		}} else if (pruefeEMA200(werte) == -1) { // 1. liegt Trend unter Kurs?
 			if (pruefeVorperioden(werte, "MACD")==1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
 				if ((werte.macd - werte.macdTriggert) <= 0) { // 3. ist der aktuelle MACD auf oder unter 0?
@@ -148,6 +159,29 @@ public class Signals {
 			}
 		}}
 		return rueckgabewert;}
+=======
+			}
+			}
+		}else if (pruefeEMA200(werte) == -1) { // 1. liegt Trend unter Kurs?
+				if (pruefeVorperioden(werte, "MACD") == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über
+																// Signallinie?
+					if ((werte.macd - werte.macdTriggert) <= 0) { 
+						if(werte.prozent<-0.25)
+						{// 3. ist der aktuelle MACD auf oder unter 0?
+					
+						// 4. Schleifendurchlauf für nächste Bedingung
+						if (pruefePSAR(werte) == -1) {
+							// 5. ist der PSAR-Wert über dem Kurs?
+							rueckgabewert = -1;
+						}
+
+					}
+				}
+				}
+			}
+			return rueckgabewert;
+		}
+>>>>>>> 219e630a825816eafb9a75d696308de3be182fb6
 		// short //Short-Position
 		// Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze,
 		// double untergrenze);
@@ -179,87 +213,78 @@ public class Signals {
 		 * }
 		 */
 
-	//}
+		// }
 
-	/*public static int pruefeMACD(Kpi werte) {
+		/*
+		 * public static int pruefeMACD(Kpi werte) { // Optionale Prüfung, ob MACD-Trend
+		 * in den Vorperioden optimal ist int zaehlerNegativ=0; int zaehlerPositiv=0;
+		 * boolean Negativ=false; boolean Positiv=true; int rueckgabewert = 99; int
+		 * aktuellerWert=0; for (int i = 1; i < 7; i++) {
+		 * 
+		 * double macd = werte.macds.get(werte.macds.size() - i); double trigger =
+		 * werte.macdsTriggert.get(werte.macdsTriggert.size() - i); double
+		 * macdVerhaeltnis = macd - trigger; if(i==1) { if(macdVerhaeltnis<0)
+		 * Negativ=true; } if(macdVerhaeltnis>0) { Positiv=true; }
+		 * 
+		 * else { if (macdVerhaeltnis < 0) { zaehlerNegativ++; } else if
+		 * (macdVerhaeltnis > 0) { zaehlerPositiv++; // } else /* macdVerhaeltnis = 0
+		 */ // {
+		// break;
+
+	// }
+	// } // System.out.println(macdVerhaeltnis);
+	// wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben
+	// und dann das Vorzeichen sich ändert, gilt die Bedingung als erfüllt
+
+	// rueckgabewert=zaehlerNegativ==5&&Positiv==true?-1:zaehlerPositiv==5&&Negativ==true?1:0;
+
+	// return rueckgabewert;
+	// }
+	public static int pruefeMACD(Kpi werte) {
 		// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
-		int zaehlerNegativ=0;
-		int zaehlerPositiv=0;
-		boolean Negativ=false;
-		boolean Positiv=true;
+
+		boolean verhaeltnisVorzeichenNegativ = false;
+		boolean verhaeltnisVorzeichenPositiv = false;
 		int rueckgabewert = 99;
-		int aktuellerWert=0;
-		for (int i = 1; i < 7; i++) {
-		
+		for (int i = 2; i < 7; i++) {
 			double macd = werte.macds.get(werte.macds.size() - i);
 			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
 			double macdVerhaeltnis = macd - trigger;
-			if(i==1)
-			{
-				if(macdVerhaeltnis<0)
-					Negativ=true;
-			}
-			if(macdVerhaeltnis>0)
-			{
-				Positiv=true;
-		}
-		
-		else
-		{
 			if (macdVerhaeltnis < 0) {
-				zaehlerNegativ++;
+				verhaeltnisVorzeichenNegativ = true;
 			} else if (macdVerhaeltnis > 0) {
+<<<<<<< HEAD
 				zaehlerPositiv++;
 	//		} else /* macdVerhaeltnis = 0 */ //{
 		//		break;
 			//}
 		//}
 	//}	// System.out.println(macdVerhaeltnis);
+=======
+				verhaeltnisVorzeichenPositiv = true;
+			} else /* macdVerhaeltnis = 0 */ {
+				break;
+			}
+
+			// System.out.println(macdVerhaeltnis);
+>>>>>>> 219e630a825816eafb9a75d696308de3be182fb6
 			// wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben
 			// und dann das Vorzeichen sich ändert, gilt die Bedingung als erfüllt
-		
-		//rueckgabewert=zaehlerNegativ==5&&Positiv==true?-1:zaehlerPositiv==5&&Negativ==true?1:0;
+		}
+		if (verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false) {
+			// die letzten 5 MACDs sind negativ
+			rueckgabewert = -1;
+		} else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true) {
+			// die letzten 5 MACDs sind positiv
+			rueckgabewert = 1;
+		} else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true)
+				|| (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)) {
+			// die letzten 5 MACDs haben nicht das gleiche Vorzeichen
+			rueckgabewert = 0;
+		}
+		return rueckgabewert;
+	}
 
-	//	return rueckgabewert;
-	//}
-			public static int pruefeMACD(Kpi werte) {
-				// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
-						
-				boolean verhaeltnisVorzeichenNegativ = false;
-				boolean verhaeltnisVorzeichenPositiv = false;
-				int rueckgabewert = 99;
-				for (int i = 2; i<7; i++) {
-					double macd = werte.macds.get(werte.macds.size()-i);
-					double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
-					double macdVerhaeltnis = macd-trigger;
-					if(macdVerhaeltnis < 0) {
-						verhaeltnisVorzeichenNegativ = true;
-					}
-					else if (macdVerhaeltnis > 0) {
-						verhaeltnisVorzeichenPositiv = true;
-					}
-					else /*macdVerhaeltnis = 0*/ {
-						break;
-					}
-					
-					//System.out.println(macdVerhaeltnis);
-					//wenn das Verhältnis die letzten 5 Perioden das gleiche Vorzeichen haben
-					//und dann das Vorzeichen sich ändert, gilt die Bedingung als erfüllt
-				}
-				if(verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false) {
-					//die letzten 5 MACDs sind negativ
-					rueckgabewert = -1;
-				}
-				else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true) {
-					//die letzten 5 MACDs sind positiv
-					rueckgabewert = 1;
-				}
-				else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true) || (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)){
-					//die letzten 5 MACDs haben nicht das gleiche Vorzeichen
-					rueckgabewert = 0;
-				}
-				return rueckgabewert;
-			}
 	public static int VergleicheWerte(Kpi werte) {
 		// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
 		boolean verhaeltnisVorzeichenNegativ = false;
@@ -313,68 +338,64 @@ public class Signals {
 	public static int pruefeSMA(Kpi werte) {
 		return werte.sma > werte.lastHighestPrice ? 1 : werte.sma < werte.lastLowestPrice ? -1 : 0;
 	}
+
 	public static int pruefeEMA200(Kpi werte) {
-		//Prüfe, ob der aktuelle Preis unter oder über des Langzeittrends (EMA200) liegt
-		//Ausgabewerte: 1 -> Kurs über Trend; -1 -> Kurs unter Trend; 0 -> Kurs gleich Preis
-		int rueckgabewert = 99;
-		double faktorRundung = 1.001;
-		double ema200 = werte.ema * faktorRundung;
-		
-		double aktuellerKurs = werte.lastPrice;
-		
-		if (aktuellerKurs > ema200) {
-			rueckgabewert = 1;
-		}
-		if (aktuellerKurs < ema200) {
-			rueckgabewert = -1;
-		}
-		else /*aktuellerKurs = ema200*/{
-			rueckgabewert = 0;
-		}
-		
-		return rueckgabewert;
-	}
-	// richtig
-/*	public static int pruefeEMA200(Kpi werte) {
 		// Prüfe, ob der aktuelle Preis unter oder über des Langzeittrends (EMA200)
 		// liegt
 		// Ausgabewerte: 1 -> Kurs über Trend; -1 -> Kurs unter Trend; 0 -> Kurs gleich
 		// Preis
 		int rueckgabewert = 99;
-		double ema200 = werte.ema;
+		//double faktorRundung = 1.001;
+		double ema200 = werte.ema;// * faktorRundung;
+
 		double aktuellerKurs = werte.lastPrice;
-		/*
-		 * if (aktuellerKurs > ema200) { rueckgabewert = 1; } if (aktuellerKurs <
-		 * ema200) { rueckgabewert = -1; } else /*aktuellerKurs = ema200{ rueckgabewert
-		 * = 0; }
-		 */
-		// Beide Schreibweisen gleich
-	//	rueckgabewert = aktuellerKurs > ema200 ? 1 : aktuellerKurs < ema200 ? -1 : 0;
-	//	return rueckgabewert;
+
+		if (aktuellerKurs > ema200) {
+			rueckgabewert = 1;
+		}
+		if (aktuellerKurs < ema200) {
+			rueckgabewert = -1;
+		} else /* aktuellerKurs = ema200 */ {
+			rueckgabewert = 0;
+		}
+
+		return rueckgabewert;
+	}
+	// richtig
+	/*
+	 * public static int pruefeEMA200(Kpi werte) { // Prüfe, ob der aktuelle Preis
+	 * unter oder über des Langzeittrends (EMA200) // liegt // Ausgabewerte: 1 ->
+	 * Kurs über Trend; -1 -> Kurs unter Trend; 0 -> Kurs gleich // Preis int
+	 * rueckgabewert = 99; double ema200 = werte.ema; double aktuellerKurs =
+	 * werte.lastPrice; /* if (aktuellerKurs > ema200) { rueckgabewert = 1; } if
+	 * (aktuellerKurs < ema200) { rueckgabewert = -1; } else /*aktuellerKurs =
+	 * ema200{ rueckgabewert = 0; }
+	 */
+	// Beide Schreibweisen gleich
+	// rueckgabewert = aktuellerKurs > ema200 ? 1 : aktuellerKurs < ema200 ? -1 : 0;
+	// return rueckgabewert;
 //	}
 
 //richtig
-	/*public static int pruefePSAR(Kpi werte) {
+	/*
+	 * public static int pruefePSAR(Kpi werte) { // Prüfue, ob der aktuelle Preis
+	 * unter oder über dem Parabolic SAR liegt // Ausgabewerte: 1 -> PSAR-Punkt
+	 * unter Preis; -1 -> PSAR-Punkt über Preis; 0 -> // PSAR-Punkt gleich Preis int
+	 * rueckgabewert = 99; double aktuellerKurs = werte.lastPrice; double PSAR =
+	 * werte.parabolicSAR; // Kannst du selber entscheiden welche Schreibweise dir
+	 * lieber ist. /* if (aktuellerKurs > PSAR) { rueckgabewert = 1; } if
+	 * (aktuellerKurs < PSAR) { rueckgabewert = -1; } else /*aktuellerKurs = PSAR
+	 */
+	// rueckgabewert = 0;
+
+	// rueckgabewert = aktuellerKurs > PSAR ? 1 : aktuellerKurs < PSAR ? -1 : 0;
+	// return rueckgabewert;
+
+	// }
+	public static int pruefePSAR(Kpi werte) {
 		// Prüfue, ob der aktuelle Preis unter oder über dem Parabolic SAR liegt
 		// Ausgabewerte: 1 -> PSAR-Punkt unter Preis; -1 -> PSAR-Punkt über Preis; 0 ->
 		// PSAR-Punkt gleich Preis
-		int rueckgabewert = 99;
-		double aktuellerKurs = werte.lastPrice;
-		double PSAR = werte.parabolicSAR;
-		// Kannst du selber entscheiden welche Schreibweise dir lieber ist.
-		/*
-		 * if (aktuellerKurs > PSAR) { rueckgabewert = 1; } if (aktuellerKurs < PSAR) {
-		 * rueckgabewert = -1; } else /*aktuellerKurs = PSAR
-		 */
-	//	rueckgabewert = 0;
-
-		//rueckgabewert = aktuellerKurs > PSAR ? 1 : aktuellerKurs < PSAR ? -1 : 0;
-	//	return rueckgabewert;
-
-	//}
-	public static int pruefePSAR(Kpi werte) {
-		//Prüfue, ob der aktuelle Preis unter oder über dem Parabolic SAR liegt
-		//Ausgabewerte: 1 -> PSAR-Punkt unter Preis; -1 -> PSAR-Punkt über Preis; 0 -> PSAR-Punkt gleich Preis
 		int rueckgabewert = 99;
 		double aktuellerKurs = werte.lastPrice;
 		double PSAR = werte.parabolicSAR;
@@ -383,84 +404,77 @@ public class Signals {
 		}
 		if (aktuellerKurs < PSAR) {
 			rueckgabewert = -1;
-		}
-		else /*aktuellerKurs = PSAR*/{
+		} else /* aktuellerKurs = PSAR */ {
 			rueckgabewert = 0;
 		}
 		return rueckgabewert;
-		
+
 	}
+
 	public static int pruefeVorperioden(Kpi werte, String entscheideSignal) {
-		//Die Methode, soll die Vorperiode prüfen, ob bestimmte Ereignisse vorgefallen sind oder nicht
-		//Dabei werden die Methoden pruefeMACD() und pruefeRSI() zusammengelegt
+		// Die Methode, soll die Vorperiode prüfen, ob bestimmte Ereignisse vorgefallen
+		// sind oder nicht
+		// Dabei werden die Methoden pruefeMACD() und pruefeRSI() zusammengelegt
 		int ausgabe = 99;
 		int MACDRueckgabewert = 99;
 		int RSIRueckgabewert = 99;
-		boolean verhaeltnisVorzeichenNegativ = false;	
+		boolean verhaeltnisVorzeichenNegativ = false;
 		boolean verhaeltnisVorzeichenPositiv = false;
-		boolean RSIOverbought = false;	//RSI über 70% 
-		boolean RSIOversold = false; 	//RSI unter 30%
-		
-		for(int i = 2; i<7; i++) {
-			double macd = werte.macds.get(werte.macds.size()-i);
-			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
-			double macdVerhaeltnis = macd-trigger;
-			System.out.println(werte.rsiListe.get(werte.rsiListe.size()-i));
-			if(macdVerhaeltnis < 0) {
+		boolean RSIOverbought = false; // RSI über 70%
+		boolean RSIOversold = false; // RSI unter 30%
+
+		for (int i = 2; i < 7; i++) {
+			double macd = werte.macds.get(werte.macds.size() - i);
+			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
+			double macdVerhaeltnis = macd - trigger;
+			//System.out.println(werte.rsiListe.get(werte.rsiListe.size() - i));
+			if (macdVerhaeltnis < 0) {
 				verhaeltnisVorzeichenNegativ = true;
-			}
-			else if (macdVerhaeltnis > 0) {
+			} else if (macdVerhaeltnis > 0) {
 				verhaeltnisVorzeichenPositiv = true;
-			}
-			else { //macdVerhaeltnis == 0   
+			} else { // macdVerhaeltnis == 0
 				break;
 			}
-			if (werte.rsiListe.get(werte.rsiListe.size()-i) > 70) {
+			if (werte.rsiListe.get(werte.rsiListe.size() - i) > 70) {
 				RSIOverbought = true;
-			}
-			else if (werte.rsiListe.get(werte.rsiListe.size()-i) < 30) {
+			} else if (werte.rsiListe.get(werte.rsiListe.size() - i) < 30) {
 				RSIOversold = true;
-			}
-			else { //"70 >= werte.rsiListe.get(werte.rsiListe.size()-i) >=30"
+			} else { // "70 >= werte.rsiListe.get(werte.rsiListe.size()-i) >=30"
 				break;
 			}
 		}
-		if(verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false) {
-			//die letzten 5 MACDs sind negativ
+		if (verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false) {
+			// die letzten 5 MACDs sind negativ
 			MACDRueckgabewert = -1;
-		}
-		else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true) {
-			//die letzten 5 MACDs sind positiv oder 
+		} else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true) {
+			// die letzten 5 MACDs sind positiv oder
 			MACDRueckgabewert = 1;
-		}
-		else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true) || (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)){
-			//die letzten 5 MACDs haben nicht das gleiche Vorzeichen 
+		} else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true)
+				|| (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)) {
+			// die letzten 5 MACDs haben nicht das gleiche Vorzeichen
 			MACDRueckgabewert = 0;
 		}
 		if (RSIOversold == true && RSIOverbought == false) {
-			//die letzten 5 RSIs sind Oversold, also unter 30%
+			// die letzten 5 RSIs sind Oversold, also unter 30%
 			RSIRueckgabewert = -1;
-		}
-		else if (RSIOversold == false && RSIOverbought == true) {
-			//die letzten 5 RSIs sind Overbought, also über 70%
+		} else if (RSIOversold == false && RSIOverbought == true) {
+			// die letzten 5 RSIs sind Overbought, also über 70%
 			RSIRueckgabewert = 1;
-		}
-		else if ((RSIOversold == true && RSIOverbought == true) || (RSIOversold == false && RSIOverbought == false)) {
-			//die letzten 5 RSIs schwanken oder liegen alle zwischen 30 und 70 Prozent
+		} else if ((RSIOversold == true && RSIOverbought == true) || (RSIOversold == false && RSIOverbought == false)) {
+			// die letzten 5 RSIs schwanken oder liegen alle zwischen 30 und 70 Prozent
 			RSIRueckgabewert = 0;
 		}
 		if (entscheideSignal == "MACD") {
 			ausgabe = MACDRueckgabewert;
-		}
-		else if (entscheideSignal =="RSI") {
+		} else if (entscheideSignal == "RSI") {
 			ausgabe = RSIRueckgabewert;
-		}
-		else if (entscheideSignal != "MACD" && entscheideSignal != "RSI") {
-			//keine Änderung von ausgabe
+		} else if (entscheideSignal != "MACD" && entscheideSignal != "RSI") {
+			// keine Änderung von ausgabe
 			ausgabe = 99;
 		}
 		return ausgabe;
 	}
+
 	public static int berechneMillisekunden(String granularity) {
 		int millisekunden = 0;
 
@@ -513,4 +527,5 @@ public class Signals {
 
 	}
 
+	
 }

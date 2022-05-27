@@ -22,32 +22,35 @@ public class Connection {
 	HttpURLConnection connection;
 	URL url;
 	String token;
-	String urlString;
+	String urlPrefix;
 	String accId;
 
 	public Connection() {
-		urlString = standartUrlString;
+		urlPrefix = standartUrlString;
 		token = standartToken;
 		accId = standartAccId;
 	}
 
 	public Connection(String token) {
 		this.token = token;
-		urlString = standartUrlString;
+		urlPrefix = standartUrlString;
 	}
 
 	public String getAccountIDs() {
-
-		return getApiResponse(urlString + "/accounts", "GET");
+		return GET(urlPrefix + "/accounts");
 
 	}
-	
+
+	public String getAccount() {
+		return GET(urlPrefix + "/accounts/" + accId);
+	}
+
 	public String getTrades() {
-		return getApiResponse(urlString + "/accounts/" + accId + "/" + "trades", "GET");
+		return GET(urlPrefix + "/accounts/" + accId + "/" + "trades");
 	}
-	
+
 	public String getInstruments() {
-		return getApiResponse(urlString + "/accounts/" + accId + "/" + "instruments", "GET");
+		return GET(urlPrefix + "/accounts/" + accId + "/" + "instruments");
 	}
 
 	public String getCandleStickData(int count, String instrument, String from, String to, String price,
@@ -80,57 +83,97 @@ public class Connection {
 			}
 		}
 
-		String url = urlString + "/instruments/" + instrument + "/" + "candles" + query;
+		String url = urlPrefix + "/instruments/" + instrument + "/" + "candles" + query;
 
-		return getApiResponse(url, "GET");
+		return GET(url);
 
 	}
 
-	public String getApiResponse(String urlString, String requestMethod) {
-		String jsonString = "";
+	public void placeLimitOrder(String requestJson) {
+		System.out.println(requestJson);
+	
+		// POST((urlString + "/accounts/" + accId + "/orders"), requestJson);
+	}
+
+	private void setConnection(String urlString, String requestMethod) throws IOException {
+
+		url = new URL(urlString);
+		connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestMethod(requestMethod);
+		connection.setRequestProperty("Authorization", "Bearer " + token);
+	}
+
+	private String GET(String urlString) {
 
 		try {
+			setConnection(urlString, "GET");
 
-			url = new URL(urlString);
-			connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod(requestMethod);
-			connection.setRequestProperty("Authorization", "Bearer " + token);
-
-			BufferedReader br;
-			String line;
-
-			int status;
-
-			status = connection.getResponseCode();
-
-			// System.out.println(status + " " + connection.getResponseMessage());
-
-			if (status < 299) {
-				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-				while ((line = br.readLine()) != null) {
-					jsonString += line;
-				}
-				br.close();
-			} else {
-				br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-				while ((line = br.readLine()) != null) {
-					jsonString += line;
-				}
-				br.close();
-			}
+			String output = getResponse();
 			connection.disconnect();
-		} catch (MalformedURLException e) {
-			System.out.println("MalformedURLException");
-			e.printStackTrace();
-		} catch (ProtocolException e) {
-			System.out.println("ProtocolException");
-			e.printStackTrace();
+			return output;
 		} catch (IOException e) {
-			System.out.println("IOException");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return "";
 		}
 
+	}
+
+	private String POST(String urlString, String requestJson) {
+		try {
+
+			setConnection(urlString, "POST");
+			connection.setDoOutput(true);
+			connection.setRequestProperty("Content-Type", "application/json");
+
+			connection.getOutputStream().write(requestJson.getBytes(), 0, requestJson.length());
+			connection.getOutputStream().close();
+
+			String output = getResponse();
+			connection.disconnect();
+			return output;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "";
+		}
+
+	}
+
+	public String getResponse() throws IOException {
+		String jsonString = "";
+		
+		//System.out.println("Response wurde gstartet mit url: " + url.getPath());
+
+		BufferedReader br;
+		String line;
+
+		int status;
+
+		status = connection.getResponseCode();
+
+		if (status < 299) {
+			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			while ((line = br.readLine()) != null) {
+				jsonString += line;
+			}
+			br.close();
+		} else {
+			br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+			while ((line = br.readLine()) != null) {
+				jsonString += line;
+			}
+			br.close();
+			System.out.println("Fhelercode mit url: " + url.getPath() + "ResponseCode: " + status);
+			String[] sArray = jsonString.split(",");
+			for (int i = 0; i < sArray.length; i++) {
+				System.out.println(sArray[i]);
+			}
+		}
+		
+		
 		return jsonString;
+
 	}
 
 }
