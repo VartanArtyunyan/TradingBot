@@ -76,17 +76,19 @@ public class EmaListe {
 			instrumentenVerfuegbarkeit.put(instrument.name.toString(), false);
 			
 		}
-		/*
+		
 		for(String k : instrumentenVerfuegbarkeit.keySet()) {
 			System.out.println(k);
-			kombiniereMACDEMAPSAR(connection,k, 200, 14, "M30",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+			kombiniereMACDEMAPSAR(connection,k, 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+			//Kpi werte = e.aufrufAlles(k, 200, 14, "M30",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+			//System.out.println(pruefeEMA200(werte));
 			boolean isUsed = instrumentenVerfuegbarkeit.get(k);
 			if(isUsed = false) {
 				//kombiniereMACDEMAPSAR(connection,k, 200, 14, "S5",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 			}
 			else
 				continue;
-		}*/
+		}
 
 		
 		
@@ -122,7 +124,7 @@ public class EmaListe {
 		
 		boolean kaufentscheidung = false;
 		JsonCandlesRoot h = werte.root;
-		
+		/*
 		//System.out.println("Letzter Preis " +werte.lastPrice);
 		//System.out.println("SAR " +werte.parabolicSAR);
 		//System.out.println("ema " +werte.ema);
@@ -134,7 +136,7 @@ public class EmaListe {
 		//System.out.println("psar methode " +pruefePSAR(werte));
 		System.out.println("vorperioden methode " +pruefeVorperioden(werte, "RSI"));
 		System.out.println("rsi methode " +pruefeRSI(werte));
-		
+		*/
 		
 		//ToDo: Doppelten Code vermeiden -> Funktionen zusammenlegen
 		//		Ermitteln welche Rückgabewerte zu einer Kaufentscheidung führt
@@ -145,53 +147,29 @@ public class EmaListe {
 		
 		try {
 			if(pruefeEMA200(werte) == 1) {						//1. liegt Trend (= 200 EMA) über Kurs?
-				if(pruefeVorperioden(werte, "MACD") == -1) {	//2. liegt MACD-Linie in den letzten 5 Perioden unter Signallinie?
-					if ((werte.macd-werte.macdTriggert) >= 0) {	//3. ist der aktuelle MACD auf oder über 0?
-						for (int i = 0; i < 2; i++) {			//4. Schleifendurchlauf für nächste Bedingung
+				if(pruefePerioden(werte, "MACD") == -1) {		//2. liegt MACD-Linie in den letzten 5 Perioden unter Signallinie?
 							if(pruefePSAR(werte) == 1) {		//5. ist der PSAR-Wert unter dem Kurs?
 								//long							//Long-Position
 								//return werte;	
 								System.out.println("long");
-								break;
-							}
-							else if (pruefePSAR(werte) != 1 && i <1) {//5.1 PSAR ist über dem Kurs -> eine Periode warten
-								System.out.println("warten long");
-								//Thread.sleep(berechneMillisekunden(granularity)); wird zu kompliziert
-							}
-							else if (pruefePSAR(werte) != 1 && i == 1) {//5.2 PSAR ist über dem Kurs nach der nächsten Periode -> abbruch
-								System.out.println("abbruch long");
-								break;
 							}
 						}
 					}
-				}
-			}
+				
+			
 			else if (pruefeEMA200(werte) == -1){				//1. liegt Trend unter Kurs?
-				if(pruefeVorperioden(werte, "MACD") == 1) {		//2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
-					if((werte.macd-werte.macdTriggert) <= 0) {	//3. ist der aktuelle MACD auf oder unter 0?
-						for (int i = 0; i < 2; i++) {			//4. Schleifendurchlauf für nächste Bedingung
+				if(pruefePerioden(werte, "MACD") == 1) {		//2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
 							if(pruefePSAR(werte) == -1) {		//5. ist der PSAR-Wert über dem Kurs?
 								//short							//Short-Position 
 								//Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze, double untergrenze);
 								//Verwaltung.placeOrder(instrument, double wer, double kurs, double obergrenze, double untergrenze);
 								//return werte;
 								System.out.println("short");
-								break;
-							}
-							else if (pruefePSAR(werte) != -1 && i <1) {//5.1 PSAR ist unter dem Kurs -> eine Periode warten
-								System.out.println("warten short");
-								//Thread.sleep(berechneMillisekunden(granularity));
-									
-									
-							}
-							else if (pruefePSAR(werte) != -1 && i == 1) {//5.2 PSAR ist unter dem Kurs nach der nächsten Periode -> abbruch
-								System.out.println("abbruch short");
-								break;
 							}
 						}
 					}
-				}
-			}
+				
+			
 			//wenn 0?
 			
 				
@@ -203,7 +181,7 @@ public class EmaListe {
 		
 	}
 	
-	public static int pruefeVorperioden(Kpi werte, String entscheideSignal) {
+	public static int pruefePerioden(Kpi werte, String entscheideSignal) {
 		//Die Methode, soll die Vorperiode prüfen, ob bestimmte Ereignisse vorgefallen sind oder nicht
 		//Dabei werden die Methoden pruefeMACD() und pruefeRSI() zusammengelegt
 		int ausgabe = 99;
@@ -213,37 +191,52 @@ public class EmaListe {
 		boolean verhaeltnisVorzeichenPositiv = false;
 		boolean RSIOverbought = false;	//RSI über 70% 
 		boolean RSIOversold = false; 	//RSI unter 30%
+		int MACDAktuell = 99;
 		
 		for(int i = 2; i<7; i++) {
 			double macd = werte.macds.get(werte.macds.size()-i);
 			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
 			double macdVerhaeltnis = macd-trigger;
 			//System.out.println(werte.rsiListe.get(werte.rsiListe.size()-i));
-			if(macdVerhaeltnis < 0) {
-				verhaeltnisVorzeichenNegativ = true;
+			//Wie ist das aktuelle Verhältnis?:
+			if (i ==1) {
+				if(macdVerhaeltnis <=0) {
+					MACDAktuell = -1;
+				}
+				else if (macdVerhaeltnis >= 0) {
+					MACDAktuell = 1;
+				}
+
 			}
-			else if (macdVerhaeltnis > 0) {
-				verhaeltnisVorzeichenPositiv = true;
-			}
-			else { //macdVerhaeltnis == 0   
-				break;
-			}
-			if (werte.rsiListe.get(werte.rsiListe.size()-i) > 70) {
-				RSIOverbought = true;
-			}
-			else if (werte.rsiListe.get(werte.rsiListe.size()-i) < 30) {
-				RSIOversold = true;
-			}
-			else { //"70 >= werte.rsiListe.get(werte.rsiListe.size()-i) >=30"
-				break;
+			//Vorperioden
+			else {
+				if(macdVerhaeltnis < 0) {
+					verhaeltnisVorzeichenNegativ = true;
+				}
+				else if (macdVerhaeltnis > 0) {
+					verhaeltnisVorzeichenPositiv = true;
+				}
+				else { //macdVerhaeltnis == 0   
+					break;
+				}
+				if (werte.rsiListe.get(werte.rsiListe.size()-i) > 70) {
+					RSIOverbought = true;
+				}
+				else if (werte.rsiListe.get(werte.rsiListe.size()-i) < 30) {
+					RSIOversold = true;
+				}
+				else { //"70 >= werte.rsiListe.get(werte.rsiListe.size()-i) >=30"
+					break;
+				}
 			}
 		}
-		if(verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false) {
-			//die letzten 5 MACDs sind negativ
+		if(verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false && MACDAktuell ==1) {
+			//die letzten 5 MACDs sind negativ und der Aktuelle positiv oder null
 			MACDRueckgabewert = -1;
+			
 		}
-		else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true) {
-			//die letzten 5 MACDs sind positiv oder 
+		else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true && MACDAktuell == -1) {
+			//die letzten 5 MACDs sind positiv und der Aktuelle negativ oder null
 			MACDRueckgabewert = 1;
 		}
 		else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true) || (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)){
@@ -358,7 +351,9 @@ public class EmaListe {
 		//double ema200 = werte.ema * faktorRundung;
 		double ema200 = werte.ema;
 		double aktuellerKurs = werte.lastPrice;
-		//System.out.println("ema200 " +ema200);
+		System.out.println("ema200 " +ema200);
+		System.out.println("letzter preis " +aktuellerKurs);
+		
 		
 		if (aktuellerKurs > ema200) {
 			rueckgabewert = 1;
