@@ -342,6 +342,7 @@ if(count>0)
 			Kpi kpi=getKpi(instrument,periods,granularity,jcr);
 			double betrag=0;
 			double prev=0;
+			double wert=0;
 			for(int i=1;i<kpi.root.candles.size();i++)
 			{
 				prev=i>periods?0:prev;
@@ -351,15 +352,17 @@ if(count>0)
 				    
 				if(i>periods)
 				{
-					kpi.atr=((kpi.atr*(periods-1)+betrag)/periods);
+					wert=(((wert*(periods-1)+betrag)/periods));
+					kpi.atr=(int)(wert*10000);
 					kpi.atrListe.add(kpi.atr);
+					
 				}
 				
 			}
 			return kpi;
 		}
 
-	//Tom
+	
 
 	public Kpi getRSI(String instrument, int periods, String granularity,JsonCandlesRoot jcr) {
 		Kpi kpi=getKpi(instrument,periods,granularity,jcr);

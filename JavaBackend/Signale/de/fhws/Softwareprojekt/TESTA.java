@@ -23,21 +23,26 @@ public static void main(String[] args) {
 		Ema e = new Ema(connection);
 		int zaehler;
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
+
 	for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) 
 		{
+	
 			if(instrument.type.compareTo("CURRENCY")==0)
 			{
 				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9, 0, 0);
 			//String c="";
-		if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
+	//	if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
 			{
-			System.out.println(kpi.granularity);
-			System.out.println("OK");
-			System.out.println(kpi.instrument);
+				System.out.println(kpi.instrument);
+				System.out.println(kpi.atr);
+				//System.out.println("macdTriggert " + kpi.atr +" "+kpi.macds.get(kpi.macds.size()-1));
+		//	System.out.println("macd " +kpi.macd);
+	//		System.out.println("OK");
+			
 			ausgabe("alles",kpi,instrument);
-			System.out.println(kpi.prozent);
+ 			System.out.println(kpi.prozent);
 		
-			System.out.println(pruefeVorperioden(kpi,"MACD"));
+			//System.out.println(pruefeVorperioden(kpi,"MACD"));
 			}
 		}
 		}
