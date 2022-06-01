@@ -12,8 +12,10 @@ public class Kpi implements Comparable<Kpi>{
 	public String instrument;
 	public String granularity;
 	public int periods;
-	int atr=0;
-	ArrayList<Integer> atrListe=new ArrayList<>();
+	int IntegerAtr=0;
+	ArrayList<Integer> IntegerAtrListe=new ArrayList<>();
+ double atr=0;
+ ArrayList<Double>atrListe=new ArrayList<Double>();
 	double ema = 0;
 	double vorema=0;
 	double macd=0;
