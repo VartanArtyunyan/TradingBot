@@ -56,21 +56,37 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	public double getKaufpreis() {
 		return 0.0;  // müsste eigentlich 0,02*kontostand zurückgeben
 	}
+	public double runden(double wert,int n)
+	{
+		return ((Math.round(wert* Math.pow(10, n))/ Math.pow(10, n)));
+	}
+	public double aufrunden(double wert,int n)
+	{
+		return runden(wert,n)>wert?runden(wert,n):runden(wert,n)+1/Math.pow(10, n);
+	}
+	public double abrunden(double wert,int n)
+	{
+		return runden(wert,n)<wert?runden(wert,n):runden(wert,n)-1/Math.pow(10, n);
+	}
 	
 	public double getLongStopLoss() {
-		return parabolicSAR;
+		
+		return abrunden( parabolicSAR,3);
 	}
 	
 	public double getLongTakeProfit() {
-		return lastPrice + (lastPrice - parabolicSAR)*2;
+	double wert= lastPrice + (lastPrice - parabolicSAR)*2;
+	return aufrunden(wert,3);
 	}
 	
 	public double getShortStopLoss() {
-		return lastPrice - (parabolicSAR - lastPrice)*2;
+		 double wert=lastPrice - (parabolicSAR - lastPrice)*2;
+		 return aufrunden(wert,3);
+		 
 	}
 	
 	public double getShortTakeProfit() {
-		return parabolicSAR;
+		return abrunden(parabolicSAR,3);
 	}
 	
 	@Override
