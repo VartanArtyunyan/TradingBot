@@ -39,14 +39,24 @@ def start():
     conn.request("GET", URL, payload, headers)
     #conn.request("GET", "/en/api/v1/eventDates/2022-05-04", payload, headers)
 
-    res = conn.getresponse()    #responseCode / HTTP status < 400 anlegen + Exception schmeißen
-    print(res)
-    data = res.read()
-    x = gzip_decode(data)
-    s = x.decode('utf-8')
-    f = open("jsonCalender2.json", "w")
-    f.write(s)
-    f.close
+        
+    res = conn.getresponse()
+
+    if res.status == 200:       #responseCode / HTTP status < 400 anlegen + Exception schmeißen
+        print(res)
+        data = res.read()
+        x = gzip_decode(data)
+        s = x.decode('utf-8')
+        f = open("jsonCalender4.json", "w")
+        f.write(s)
+        f.close
+    else:
+        print("no connection")
+
+
+
+
+    
 
 start()
 
