@@ -316,6 +316,8 @@ if(count>0)
 		kpi.smaList=kpi7.smaList;
 		kpi.atr=kpi5.atr;
 		kpi.atrListe=kpi5.atrListe;
+		kpi.IntegerAtr=kpi5.IntegerAtr;
+		kpi.IntegerAtrListe=kpi5.IntegerAtrListe;
 		kpi.macd=kpi3.macd;
 		kpi.macds=kpi3.macds;
 		kpi.macdsTriggert=kpi3.macdsTriggert;
@@ -353,8 +355,10 @@ if(count>0)
 				if(i>periods)
 				{
 					wert=(((wert*(periods-1)+betrag)/periods));
-					kpi.atr=(int)(wert*10000);
+					kpi.atr=wert;
 					kpi.atrListe.add(kpi.atr);
+					kpi.IntegerAtr=(int)(wert*10000);
+					kpi.IntegerAtrListe.add(kpi.IntegerAtr);
 					
 				}
 				
