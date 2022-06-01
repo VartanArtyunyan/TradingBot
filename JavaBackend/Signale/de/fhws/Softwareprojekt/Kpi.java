@@ -1,9 +1,10 @@
 package de.fhws.Softwareprojekt;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class Kpi{
+public class Kpi implements Comparable<Kpi>{
 	
 	boolean longShort;   //false = short, long = true
 	
@@ -11,14 +12,18 @@ public class Kpi{
 	public String instrument;
 	public String granularity;
 	public int periods;
-	double atr=0;
-	ArrayList<Double> atrListe=new ArrayList<>();
+	int atr=0;
+	ArrayList<Integer> atrListe=new ArrayList<>();
 	double ema = 0;
 	double vorema=0;
 	double macd=0;
 	ArrayList<Double>macds=new ArrayList<>();
     ArrayList<Double> macdsTriggert=new ArrayList<>();
 	double macdTriggert=0;
+
+	//Differnenz/max/min
+	ArrayList<Double>Prozent=new ArrayList<Double>();
+	double prozent=0;
 	double sma=0;
 	ArrayList<Double>smaList =new ArrayList<>();
 ArrayList<Double> superTrends=new ArrayList<>();
@@ -59,11 +64,11 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 	
 	public double getShortStopLoss() {
-		return parabolicSAR;
+		return lastPrice - (parabolicSAR - lastPrice)*2;
 	}
 	
 	public double getShortTakeProfit() {
-		return lastPrice - (parabolicSAR - lastPrice)*2;
+		return parabolicSAR;
 	}
 	
 	@Override
@@ -79,6 +84,51 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 		return this.instrument.hashCode();
 	}
 
+
+	@Override
+	public int compareTo(Kpi wert2) {
+		//Beide long Positionen
+		if ((this.prozent>0&&wert2.prozent>0))
+				{
+			if(this.prozent>wert2.prozent)return 1;
+		else if(this.prozent<wert2.prozent) return -1;
+		
+				}
+		//Beide short Positionen
+			if ((this.prozent<0&&wert2.prozent<0))
+		{
+	if(this.prozent<wert2.prozent)return 1;
+	else if(this.prozent>wert2.prozent) return -1;
+
+		}
+		
+		//wert 1 long und wert 2 short
+		if	(this.prozent>0&&wert2.prozent<0)
+		{
+		 if((this.prozent>wert2.prozent*(-1)))return 1;
+		 else if((this.prozent<wert2.prozent*(-1)))return -1;
+		 //Wenn gleich:Dann nehme long Position da seltener
+		 else return 1;
+		}
+		//wert 1 short und wert2 long
+		if((this.prozent<0&&wert2.prozent>0))
+		{
+		 if((this.prozent*(-1)>wert2.prozent))return 1;
+		 else if((this.prozent*(-1)<wert2.prozent))return -1;
+		 //Wenn gleich:Dann nehme long Position da seltener
+		 else return 1;
+		}
+	if(Math.abs(this.prozent)==Math.abs(wert2.prozent))
+	{
+		//Auch hier im Zweifel long
+		if(this.prozent>wert2.prozent)
+	return 1;
+		else if(this.prozent<wert2.prozent)
+			return -1;
+		else return 0;
+	}
+	return 0;
+	}
 	
 
 	

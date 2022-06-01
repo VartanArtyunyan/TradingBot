@@ -7,6 +7,7 @@ public class position {
 
 	HashSet<Integer> tradeId;
 	Instrumente währung;
+	String instrument;
 	double gesamtsumme;
 	double einsatz;
 	double aktuellerkurs;
@@ -14,8 +15,8 @@ public class position {
 	int anzahlaktie;
 	
 	
-	public position(Instrumente währung) {
-		this.währung = währung;
+	public position(String instrument) {
+		this.instrument = instrument;
 		this.tradeId = new HashSet<Integer>();
 		
 	}
@@ -24,8 +25,8 @@ public class position {
 		tradeId.add(Id);
 		
 	}
-	public Instrumente getInstrument() {
-		return währung;
+	public String getInstrument() {
+		return instrument;
 }
 	
 	public boolean contains(trade t) {

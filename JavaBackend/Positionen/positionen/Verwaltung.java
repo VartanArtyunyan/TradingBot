@@ -1,8 +1,6 @@
 package positionen;
 
 import java.util.ArrayList;
-
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import API.ApiConnection;
@@ -30,26 +28,56 @@ public class Verwaltung {
 
 	// aktualisierePosition();
 	// }
+	
+	public boolean eneoughBalance() {
+		double curBalance = connection.getBalance();
+		
+		return curBalance > 100.0;
+	}
 
-	public void placeShortOrder(String instrument, double takeProfit, double stopLoss, double kurs) {
-
+	public void placeShortOrder(String instrument,double limitPrice, double takeProfit, double stopLoss, double kurs) {
+		
+		if(!eneoughBalance()) {
+			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			return;
+		}
+		
 		double curBalance = connection.getBalance();
 
 		double units = (curBalance * (-0.02)) / kurs;
 
-		connection.placeOrder(instrument, units, takeProfit, stopLoss);
-
+		connection.placeOrder(instrument, limitPrice, units, takeProfit, stopLoss);
+		
+		aktualisierePosition();
 	}
-
-	public void placeLongOrder(String instrument, double takeProfit, double stopLoss, double kurs) {
+	
+	
+	public void placeLongOrder(String instrument, double limitPrice, double takeProfit, double stopLoss, double kurs) {
+		
+		if(!eneoughBalance()) {
+			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			return;
+		}
 
 		double curBalance = connection.getBalance();
 
 		double units = (curBalance * 0.02) / kurs;
 
-		connection.placeOrder(instrument, units, takeProfit, stopLoss);
-
+		connection.placeOrder(instrument,limitPrice, units, takeProfit, stopLoss);
+		
+		aktualisierePosition();
 	}
+	
+	public void addManualPosition(String instrument) { //GAANZ WICHTIG! in der finalen Version nicht mehr verwenden
+		position position1 = new position(instrument);
+		addPosition(position1);
+		
+	}
+	private void addPosition(position a) {
+		positionen.add(a);
+	}
+	
+	
 
 	public void closeWholePosition(String i) {
 
@@ -66,7 +94,7 @@ public class Verwaltung {
 
 	public void aktualisierePosition() {
 		trades = connection.getTrades();
-		HashSet<Instrumente> erstelltePosition = new HashSet<>();
+		HashSet<String> erstelltePosition = new HashSet<>();
 		for (int i = 0; i < trades.size(); i++) {
 			if (erstelltePosition.contains(trades.get(i).getInstrument())) {
 				putTrade(trades.get(i), trades.get(i).getInstrument());
@@ -74,7 +102,7 @@ public class Verwaltung {
 				position p = new position(trades.get(i).getInstrument());
 				erstelltePosition.add(trades.get(i).getInstrument());
 				p.addID(trades.get(i).getId());
-				positionen.add(p);
+				addPosition(p);;
 			}
 
 		}
@@ -100,13 +128,25 @@ public class Verwaltung {
 
 	}
 
-	public void putTrade(trade t, Instrumente b) {
-
+	public void putTrade(trade t, String b) {
+		
+		if(positionen == null) return;
+		
 		for (int i = 0; i < positionen.size(); i++) {
-			if (positionen.get(i).getInstrument() == b) {
+			if (positionen.get(i).getInstrument().equals(b)) {
 				positionen.get(i).addID(t.getId());
 			}
 		}
+	}
+	
+	public boolean containsPosition(String instrument) {
+		aktualisierePosition();
+		
+		boolean output = false;
+		for (position p : positionen) {
+			if (p.getInstrument().equals(instrument)) output = true;
+		}
+		return output;
 	}
 
 	public boolean enthalten(trade t) {

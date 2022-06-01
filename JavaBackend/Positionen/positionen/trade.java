@@ -6,12 +6,12 @@ public class trade {
 	
 	
 	
-	public trade(int id, Instrumente währung, double price, String openTime, int initialUnits,
+	public trade(int id, String instrument, double price, String openTime, int initialUnits,
 			String initialMarginRequired, int currentunits, String realizedPL, String unrealizedPL, String marginUsed
 			) {
 		super();
 		this.id = id;
-		this.währung = währung;
+		this.instrument = instrument;
 		this.price = price;
 		this.openTime = openTime;
 		this.initialUnits = initialUnits;
@@ -25,6 +25,7 @@ public class trade {
 
 	int id;
 	Instrumente währung;
+	String instrument;
 	double price; //kaufpreis
 	String openTime;
 	
@@ -46,8 +47,8 @@ public class trade {
 		return id;
 	}
 	
-	public Instrumente getInstrument() {
-		return währung;
+	public String getInstrument() {
+		return instrument;
 	}
 	
 	
