@@ -33,12 +33,16 @@ public static void main(String[] args) {
 			//String c="";
 	//	if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
 			{
-				if((kpi.atr>0.0001)&&(!(instrument.name.contains("HUF"))))
+				if((kpi.atr>0.0001)&&kpi.instrument.compareTo("EUR_USD")==0)
 				{
-				System.out.println(kpi.instrument);
-				System.out.println(kpi.aufrunden(kpi.parabolicSAR, 3));
-				System.out.println(kpi.abrunden(kpi.parabolicSAR,3));
-				System.out.println(kpi.runden(kpi.parabolicSAR, 3));
+					
+					System.out.println(kpi.parabolicSAR);
+			//	System.out.println(	kpi.runden(kpi.parabolicSAR,3)+1/Math.pow(10, 3));
+				//System.out.println(kpi.instrument);
+				/*System.out.println("aufrunden: "+kpi.aufrunden(kpi.parabolicSAR, 3));
+				System.out.println("abrunden " +kpi.abrunden(kpi.parabolicSAR,3));
+				System.out.println("runden" +kpi.runden(kpi.parabolicSAR, 3));
+				System.out.println(kpi.runden(kpi.parabolicSAR,3)+1/Math.pow(10, 3));*/
 				zaehler++;
 				}
 				//System.out.println("macdTriggert " + kpi.atr +" "+kpi.macds.get(kpi.macds.size()-1));
