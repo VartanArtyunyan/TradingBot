@@ -36,12 +36,12 @@ public class EmaListe {
 		;*/
 		
 		Ema e = new Ema(connection);
-		Kpi test = e.aufrufAlles("EUR_USD", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+		Kpi test = e.aufrufAlles("USD_JPY", 200, 14, "H1",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 		//Kpi test2 = e.aufrufAlles("USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
-		//kombiniereMACDEMAPSAR(connection,test);
+		//System.out.println(pruefePerioden(test, "MACD", 5));
 		//kombiniereMACDEMAPSAR(connection,test2);
-		
 		//boolean isUsed = false;
+		pruefeATR(test);
 		Map<String, Boolean> instrumentenVerfuegbarkeit = new HashMap<>();
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
 		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
@@ -53,25 +53,18 @@ public class EmaListe {
 			//Sind offene Positionen vorhanden (vom letzten Login?)
 			//boolean isUsed = positionen.Verwaltung.containsPosition(instrument.name.toString());
 			//instrumentenVerfuegbarkeit.put(instrument.name.toString(), false);
-			System.out.println(instrument.name);
-			kombiniereMACD_PSAR(test);
+			//System.out.println(instrument.name);
+			//kombiniereMACD_PSAR(test);
 		}
 		/*
 		for(String k : instrumentenVerfuegbarkeit.keySet()) {
 			System.out.println(k);
-			Kpi werte = e.aufrufAlles(k, 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+			Kpi werte = e.aufrufAlles(k, 200, 14, "M30",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 			kombiniereMACDEMAPSAR(connection,werte);
 	
-			//System.out.println(pruefeEMA200(werte));
-			boolean isUsed = instrumentenVerfuegbarkeit.get(k);
-			if(isUsed = false) {
-				//kombiniereMACDEMAPSAR(connection,k, 200, 14, "S5",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
-			}
-			else
-				continue;
-		}
+		}*/
 
-		*/
+		
 		
 	}
 
@@ -104,13 +97,15 @@ public class EmaListe {
 			}
 		}
 	}
-	public static void kombiniereATR_MACD(ApiConnection connection, Kpi werte) {
-		//
+	public static void kombiniereATR_MACD_EMA200(ApiConnection connection, Kpi werte) {
+		if(pruefeEMA200(werte) ==1) {
+			//if (pruefePerioden)
+		}
 	}
 	  
 	  
 	  
-	public static void kombiniereMACDEMAPSAR(ApiConnection connection, Kpi werte) {
+	public static void kombiniereMACDEMAPSAR(Kpi werte) {
 	//public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
 		// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte: 12,26,9)
 
@@ -121,7 +116,7 @@ public class EmaListe {
 		
 		//Kpi werte = ema.aufrufAlles(instrument, emaperiods, periods,  granularity, startBF,  inkrementBF,  maxBF, x,  y,  z, multiplicatorUpper, multiplicatorLower);
 		
-		System.out.println(pruefeATR(werte));
+		//System.out.println(pruefeATR(werte));
 		//System.out.println("Letzter Preis " +werte.lastPrice);
 		//System.out.println("SAR " +werte.parabolicSAR);
 		//System.out.println("ema " +werte.ema);
@@ -196,19 +191,22 @@ public class EmaListe {
 		//anzahl Vorperioden falscher Übergabewert
 		if(anzahlVorperioden<2) return ausgabe;
 		
-		for(int i = 1; i<anzahlVorperioden+1; i++) {
+		for(int i = 1; i<anzahlVorperioden+2; i++) {
 			double macd = werte.macds.get(werte.macds.size()-i);
 			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
-			//double macdVerhaeltnis = macd-trigger;
-			double macdVerhaeltnis = trigger-macd;
-			//System.out.println(werte.rsiListe.get(werte.rsiListe.size()-i));
+
+			double macdVerhaeltnis = macd-trigger;
+			System.out.println(i+". Durchlauf: Verhältnis "+macdVerhaeltnis);
+			//System.out.println(MACDAktuell);
 			//Wie ist das aktuelle Verhältnis?:
 			if (i ==1) {
 				if(macdVerhaeltnis <=0) {
 					MACDAktuell = -1;
+					//System.out.println("kleinergleich "+MACDAktuell);
 				}
 				else if (macdVerhaeltnis >= 0) {
 					MACDAktuell = 1;
+					//System.out.println("größergleich "+MACDAktuell);
 				}
 
 			}
@@ -280,11 +278,10 @@ public class EmaListe {
 		boolean verhaeltnisVorzeichenNegativ = false;
 		boolean verhaeltnisVorzeichenPositiv = false;
 		int rueckgabewert = 99;
-		for (int i = 2; i<7; i++) {
+		for (int i = 1; i<2; i++) {
 			double macd = werte.macds.get(werte.macds.size()-i);
 			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
 			double macdVerhaeltnis = macd-trigger;
-			System.out.println("trigger "+trigger);
 			if(macdVerhaeltnis < 0) {
 				verhaeltnisVorzeichenNegativ = true;
 			}
@@ -356,8 +353,8 @@ public class EmaListe {
 		//double ema200 = werte.ema * faktorRundung;
 		double ema200 = werte.ema;
 		double aktuellerKurs = werte.lastPrice;
-		System.out.println("*ema200 " +ema200);
-		System.out.println("*letzter preis " +aktuellerKurs);
+		//System.out.println("*ema200 " +ema200);
+		//System.out.println("*letzter preis " +aktuellerKurs);
 		
 		
 		if (aktuellerKurs > ema200) {
@@ -393,36 +390,54 @@ public class EmaListe {
 	}
 	
 	public static int pruefeATR(Kpi werte) {
-		//Wo ist der relativ niedrigste Punkt in den letzten ca 200 Candles?
+		//JPY und HUF sind die ATR-Werte zu hoch, um sie zum Stoploss zu verwenden !(instrument.name.contains("HUF")|| instrument.name.contains("JPY")
+		//Wo ist der niedrigste und Höchste ATR-Wert
 		//Dieser Wert ist der Vergleichspunkt mit dem aktuellen ATR Wert
-		//ATR gibt aus, wann der Markt seinen Wert extrem steigert oder fällt
+		//Jedoch soll der Wert nur ungefär gleich sein, weil eine genaue Übereinstimmung zu unrealistisch ist
+		//Und weil der Indikator nur ein Hilfsindikator ist
+		//der ATR gibt aus, wie oft das aktuelle Instrument in den letzten 14 Perioden den Wert geändert hat
+		//Wenn der ATR am niedrigsten Punkt ist, ist auszugehen, dass das Instrument in den nächsten Perioden stärker
+		//nachgefragt wird, jedoch gibt er keine Auskunft in welche Richtung
 		int rueckgabe = 0;
 		System.out.println("vanilla " + werte.atr);
-		double y = werte.atr*100000;
+		/*double y = werte.atr*100000;
 		System.out.println("test "+ runden(y));
 		
 		
 		double x = runden(werte.atr);
 		x *=1000;
-		System.out.println(x);
+		System.out.println(x);*/
 		
-		double relativesMinimum = 100;
-		for(int i = 2; i<200; i++) {
+		
+		
+		double relativesMinimum = 1000;
+		double relativesMaximum = 0;
+		for(int i = 2; i<werte.atrListe.size()+1; i++) {
 			double vergleich = werte.atrListe.get(werte.atrListe.size()-i); 
 			if (vergleich < relativesMinimum) {
 				relativesMinimum=vergleich;
 			}
+			if (vergleich > relativesMaximum) {
+				relativesMaximum = vergleich;
+			}
 		}
+		System.out.println("relativesMaximum "+relativesMaximum+"; relativesMinimum "+relativesMinimum);
+		double prozentsatz =  ((relativesMinimum*100/relativesMaximum)+1)/100;
+		System.out.println("prozentsatz "+prozentsatz);
+		double aktuellerATR = werte.atr+prozentsatz;
+		System.out.println("aktueller atr "+werte.atr+" neuer ATR "+aktuellerATR);
 		
-		if (relativesMinimum <= werte.atr) {
-			//aktueller ATR ist am niedrigsten Punkt
-			rueckgabe = 1;
-		}
-		else if (relativesMinimum> werte.atr) {
+		if (relativesMinimum < aktuellerATR) {
+			//aktueller ATR ist nicht am niedrigsten Punkt
 			rueckgabe = -1;
+		}
+		else if (relativesMinimum>= aktuellerATR) {
+			rueckgabe = 1;
 		} 
 		
 		return rueckgabe;
+		
+		
 		
 	}
 	

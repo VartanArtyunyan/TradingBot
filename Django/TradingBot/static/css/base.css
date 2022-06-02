@@ -28,7 +28,10 @@ body {
   scrollbar-width: none;
 }
 
-h2,
+h2 {
+  color: wheat;
+}
+
 h3,
 a {
   color: wheat;
@@ -63,7 +66,7 @@ h2 {
 .blurred-nav {
   position: fixed;
   width: 110vw;
-  height: 100px;
+  height: 60px;
   -webkit-filter: blur(15px 15px);
           filter: blur(15px 15px);
   background-color: rgba(0, 0, 0, 0.9);
@@ -91,7 +94,7 @@ h2 {
 .heade {
   z-index: 99;
   position: fixed;
-  height: 100px;
+  height: 60px;
   width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -99,7 +102,7 @@ h2 {
 }
 
 .inner-header {
-  height: 100px;
+  height: 60px;
   width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -115,22 +118,45 @@ h2 {
           backdrop-filter: blur(8px);
 }
 
-/* =================================
-  Media Queries
-==================================== */
+/* Lower  */
+.outside {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.lower {
+  margin: 50px 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  background-color: grey;
+  -webkit-box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048), 0 12.5px 10px rgba(0, 0, 0, 0.06), 0 22.3px 17.9px rgba(0, 0, 0, 0.072), 0 41.8px 33.4px rgba(0, 0, 0, 0.086), 0 100px 80px rgba(0, 0, 0, 0.12);
+          box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048), 0 12.5px 10px rgba(0, 0, 0, 0.06), 0 22.3px 17.9px rgba(0, 0, 0, 0.072), 0 41.8px 33.4px rgba(0, 0, 0, 0.086), 0 100px 80px rgba(0, 0, 0, 0.12);
+}
+
 /* Home Section */
 .back-img {
   z-index: 1;
   width: 100%;
-  opacity: 0.9;
+  opacity: 0.8;
   max-height: 100vh;
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
-  -webkit-filter: blur(15px);
-          filter: blur(15px);
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .text-pic {
@@ -142,7 +168,7 @@ h2 {
 }
 
 .text-pic h1 {
-  color: #a79b7b;
+  color: wheat;
   font-size: 50px;
 }
 
@@ -153,10 +179,52 @@ h2 {
 
 /* Sections General */
 .sections {
-  padding: 5% 20% 0% 20%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 0% 5%;
 }
 
-.last {
-  padding-bottom: 5%;
+.personen {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: green;
+}
+
+.personen-liste {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin: 5px 0px;
+}
+
+hr {
+  border: 0;
+  clear: both;
+  display: block;
+  width: 96%;
+  background-color: #4b4b48;
+  height: 1px;
 }
 /*# sourceMappingURL=base.css.map */
