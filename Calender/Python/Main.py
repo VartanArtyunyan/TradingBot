@@ -20,18 +20,30 @@ def handleNextEvent(event):
     """erfolgreich = FALSE
             print("Hey") """
 
-#Connection.start()
+Connection.start()
 JsonArray = JsonReader.read()
+AktiveEvents = []
+
+
+
+
+
+
+
 #del JsonArray[0]
 #print(JsonArray)
 
 for nextEvent in JsonArray:
     nextEventTime = DateStringToObject(nextEvent["dateUtc"])
+    
+    #time.sleep(breakTimer(nextEventTime))
+
     timedelta = breakTimer(nextEventTime)
+    print(timedelta.total_seconds()<0)
     print(f"{timedelta} :" + nextEvent["name"])
     handleNextEvent(nextEvent)
 
-#time.sleep(breakTimer(nextEventTime))
+
 """ while True:
     if nextEvent[1] == datetime.Datetime.now():
     calculate(nextEvent) """
