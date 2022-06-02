@@ -1,3 +1,5 @@
-list = []
+import JsonReader
 
-print(bool(list))
+Array = JsonReader.read()
+
+print(Array[8]["actual"])

@@ -25,7 +25,7 @@ def checkEvent(event):
         'Pragma': "no-cache",
         'Cache-Control': "no-cache"
         }
-    id = event["eventId"]
+    id = event["id"]
     #id = "f879e41a-12d2-4d35-8213-6fb9ebb207a0"
     #eventId = "39da71dd-6a75-4669-adbf-36819ba1089a"
     URL = f"https://calendar-api.fxstreet.com/de/api/v1/eventDates/{id}"
@@ -40,11 +40,11 @@ def checkEvent(event):
     x = gzip_decode(data)
     s = x.decode('utf-8')
     jsonEvent = json.loads(s)
-    print(jsonEvent["actual"])
+    return jsonEvent
     
-    if jsonEvent["actual"] != "null":
+    """ if jsonEvent["actual"] != "null":
         return jsonEvent
-    else: return FALSE
+    else: return FALSE """
 
     
     #aktuell = TRUE
