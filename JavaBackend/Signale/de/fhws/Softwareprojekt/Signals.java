@@ -83,12 +83,12 @@ public class Signals {
 			if (s.longShort) {
 				verwaltung.placeLongOrder(s.instrument,s.lastPrice+0.0005, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 
-				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getLongTakeProfit(),
+				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, (connection.getBalance()*0.02), s.getLongTakeProfit(),
 						s.getLongStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
 				System.out.println("long");
 			} else if (!s.longShort) {
 				verwaltung.placeShortOrder(s.instrument,s.lastPrice+0.0005, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
-				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getShortTakeProfit(),
+				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice,(connection.getBalance()*0.02), s.getShortTakeProfit(),
 						s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
 				System.out.println("short");
 			}

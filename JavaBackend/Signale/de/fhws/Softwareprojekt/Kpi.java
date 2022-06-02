@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Kpi implements Comparable<Kpi>{
 	
+	
 	boolean longShort;   //false = short, long = true
 	
 	JsonCandlesRoot root;
@@ -51,9 +52,6 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 		this.periods=periods;
 	}
 	
-	public double getKaufpreis() {
-		return 0.0;  // müsste eigentlich 0,02*kontostand zurückgeben
-	}
 	
 	public double getLongStopLoss() {
 		return parabolicSAR;

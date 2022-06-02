@@ -55,13 +55,13 @@ public class JsonParser {
 		
 		
 		output.addString("units", Double.toString( round(units, 0)));
-		output.addString("price", Double.toString(round(price, 2)));
+		output.addString("price", Double.toString(round(price, 3)));
 		output.addString("TimeInForce", "GTC");
 		output.openObject("takeProfitOnFill");
-		output.addString("price", Double.toString(round(takeProfit, 2)));
+		output.addString("price", Double.toString(round(takeProfit, 3)));
 		output.closeObject();
 		output.openObject("stopLossOnFill");
-		output.addString("price", Double.toString(round(stopLoss, 0)));
+		output.addString("price", Double.toString(round(stopLoss, 3)));
 		output.closeObject();
 		output.closeObject();
 		
@@ -134,6 +134,17 @@ public class JsonParser {
 		
 		
 		return output;
+	}
+	
+	public void parseLastCandleFromAPIString(String json) {
+		int length = json.length();
+		
+		
+		int end = json.length()-2;
+		int start = end - 136;
+		String s = json.substring(start,end);
+		
+		//System.out.println(s);
 	}
 	
 	public JsonInstrumentsRoot convertAPiStringToInstrumentsRootModel(String json){
