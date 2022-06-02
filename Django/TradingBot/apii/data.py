@@ -1,7 +1,7 @@
 
 from matplotlib.pyplot import close
 import requests
-import defs
+import apii.defs as defs
 import json
 
 
@@ -12,7 +12,7 @@ response = session.get(
 
 
 trades_response = session.get(
-    f"{defs.OANDA_URL}/accounts/{defs.ACCOUNT_ID}/transactions/idrange?from=4&to=68", headers=defs.SECURE_HEADER)
+    f"{defs.OANDA_URL}/accounts/{defs.ACCOUNT_ID}/transactions/idrange?from=4&to=120", headers=defs.SECURE_HEADER)
 
 
 account_data = json.loads(response.content)

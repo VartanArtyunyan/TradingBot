@@ -35,89 +35,97 @@
                 <p>Signalbasiert (ohne Machine Learning); signale Live berechnen</p>
             </div>
         </div>
-        <!-- About-the-Bot Section -->
-        <div class="sections" id="Bot-Beschreibung">
-            <h2>Trading Bot Beschreibung</h2>
-            <p>Signalbasiert (ohne Machine Learning); signale Live berechnen</p>
-            <div>
-                Der Trading Bot ist auf das Forex Trading ausgerichtet. Käufe und
-                Verkäufe werden automatisch getätigt, falls ein bestimmter Wert
-                überschritten oder unterschritten wird.
+        <div class="outside">
+            <div class="lower">
+                <!-- About-the-Bot Section -->
+                <div class="sections" id="Bot-Beschreibung">
+                    <h2>Trading Bot Beschreibung</h2>
+                    <p>Signalbasiert (ohne Machine Learning); signale Live berechnen</p>
+                    <div>
+                        Der Trading Bot ist auf das Forex Trading ausgerichtet. Käufe und
+                        Verkäufe werden automatisch getätigt, falls ein bestimmter Wert
+                        überschritten oder unterschritten wird.
+                    </div>
+                </div>
+                <hr>
+                <!-- Live-Demo Section -->
+                <div>
+                    <div class="sections" id="Live-Demo">
+                        {% block content %} {% if chart %}
+                        <h2>Live Demo</h2>
+                        <img src="data:image/png;base64,
+                              {{chart|safe}}" />
+                        <br />
+                        <br />
+                        <ul>
+                            <li>Veränderung letzte Woche:</li>
+                            <li>Höchster gesamter Wert:</li>
+                            <li>Niedrigster gesamter Wert:</li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                        {% endif %} {% endblock content %}
+                    </div>
+                </div>
+                <hr>
+                <!-- About-Us Section -->
+                <div class="sections last" id="Beteiligte-Personen">
+                    <h2>Beteiligte Personen</h2>
+                    <ul class="personen">
+                        <li class="personen-liste">
+                            <div>Daniel Harant</div>
+                            <div>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
+                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
+                                vero et sed dolore iure eaque? Dicta.
+                            </div>
+                        </li>
+                        <li class="personen-liste">
+                            <div>Niklas Meyer</div>
+                            <div>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
+                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
+                                vero et sed dolore iure eaque? Dicta.
+                            </div>
+                        </li>
+                        <li class="personen-liste">
+                            <div>Tim Heyder</div>
+                            <div>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
+                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
+                                vero et sed dolore iure eaque? Dicta.
+                            </div>
+                        </li>
+                        <li class="personen-liste">
+                            <div>Tom Schneider</div>
+                            <div>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
+                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
+                                vero et sed dolore iure eaque? Dicta.
+                            </div>
+                        </li>
+                        <li class="personen-liste">
+                            <div>Vartan Artyunyan</div>
+                            <div>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
+                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
+                                vero et sed dolore iure eaque? Dicta.
+                            </div>
+                        </li>
+                        <li class="personen-liste">
+                            <div>Samuel Rajabi</div>
+                            <div>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
+                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
+                                vero et sed dolore iure eaque? Dicta.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <!-- Live-Demo Section -->
-        <div>
-            <div class="sections" id="Live-Demo">
-                {% block content %} {% if chart %}
-                <h2>Live Demo</h2>
-                <img src="data:image/png;base64,
-          {{chart|safe}}" />
-                <br>
-                <br>
-                <ul>
-                    <li>Veränderung letzte Woche: </li>
-                    <li>Höchster gesamter Wert: </li>
-                    <li>Niedrigster gesamter Wert: </li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                </ul>{% endif %} {% endblock content %}
-            </div>
-        </div>
-        <!-- About-Us Section -->
-        <div class="sections last" id="Beteiligte-Personen">
-            <h2>Beteiligte Personen</h2>
-            <ul>
-                <li>
-                    <div>Daniel Harant</div>
-                    <div>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                        porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
-                        vero et sed dolore iure eaque? Dicta.
-                    </div>
-                </li>
-                <li>
-                    <div>Niklas Meyer</div>
-                    <div>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                        porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
-                        vero et sed dolore iure eaque? Dicta.
-                    </div>
-                </li>
-                <li>
-                    <div>Tim Heyder</div>
-                    <div>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                        porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
-                        vero et sed dolore iure eaque? Dicta.
-                    </div>
-                </li>
-                <li>
-                    <div>Tom Schneider</div>
-                    <div>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                        porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
-                        vero et sed dolore iure eaque? Dicta.
-                    </div>
-                </li>
-                <li>
-                    <div>Vartan Artyunyan</div>
-                    <div>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                        porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
-                        vero et sed dolore iure eaque? Dicta.
-                    </div>
-                </li>
-                <li>
-                    <div>Samuel Rajabi</div>
-                    <div>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                        porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam ad,
-                        vero et sed dolore iure eaque? Dicta.
-                    </div>
-                </li>
-            </ul>
-        </div>
+
     </main>
 </body>
 
