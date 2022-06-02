@@ -1,15 +1,17 @@
+from asyncore import write
 from encodings import utf_8
 import http.client
 import gzip
+import json
+from pickle import FALSE
 from xmlrpc.client import gzip_decode
 from datetime import date, timedelta
 import datetime
 
 
-def start():
-    conn = http.client.HTTPSConnection("calendar-api.fxstreet.com")
-    payload = ""
-    headers = {
+CONN = http.client.HTTPSConnection("calendar-api.fxstreet.com")
+PAYLOAD = ""
+HEADERS = {
     'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:99.0) Gecko/20100101 Firefox/99.0",
     'Accept': "application/json",
     'Accept-Language': "en-US,en;q=0.5",
@@ -25,36 +27,65 @@ def start():
     'Cache-Control': "no-cache"
     }
 
-    #URL = "/de/api/v1/eventDates/2022-05-09T10:02:42Z/2022-05-11T12:02:42Z"
-    #gerade = datetime.datetime.now()
-    #bis = (gerade - timedelta(hours=2)).strftime("%H:%M:%S") #Zeitverschiebung nach UTC
-    #von = (gerade - timedelta(hours=5)).strftime("%H:%M:%S")
-    #dat = "2022-05-09"
+
+def writeInDocument(data):
+    f = open("jsonCalender4.json", "w")
+    f.write(data)
+    f.close
+
+def handleConnection(URL):
+
+    #schleife fehlt noch
+    CONN.request("GET", URL, PAYLOAD, HEADERS)
+    res = CONN.getresponse()
+    if res.status == 200:       #responseCode / HTTP status < 400 anlegen + Exception schmeißen
+        data = res.read()
+        x = gzip_decode(data)
+        s = x.decode('utf-8')
+        return(s)
+    else:
+        print("no connection")
+
+
+def start():
+    
+
+    """ URL = "/de/api/v1/eventDates/2022-05-09T10:02:42Z/2022-05-11T12:02:42Z"
+    gerade = datetime.datetime.now()
+    bis = (gerade - timedelta(hours=2)).strftime("%H:%M:%S") #Zeitverschiebung nach UTC
+    von = (gerade - timedelta(hours=5)).strftime("%H:%M:%S")
+    dat = "2022-05-09" """
 
     dat = date.today()
     von = "00:00:00"
     bis = "23:59:59"
 
     URL = f"https://calendar-api.fxstreet.com/de/api/v1/eventDates/{dat}T{von}Z/{dat}T{bis}Z?=&volatilities=HIGH&volatilities=MEDIUM"
-    conn.request("GET", URL, payload, headers)
-    #conn.request("GET", "/en/api/v1/eventDates/2022-05-04", payload, headers)
 
-        
-    res = conn.getresponse()
+    writeInDocument(handleConnection(URL))
 
-    if res.status == 200:       #responseCode / HTTP status < 400 anlegen + Exception schmeißen
-        print(res)
-        data = res.read()
-        x = gzip_decode(data)
-        s = x.decode('utf-8')
-        f = open("jsonCalender4.json", "w")
-        f.write(s)
-        f.close
-    else:
-        print("no connection")
+    
 
 
+def checkEvent(event):
+    
+    id = event["eventId"]
+    #id = "f879e41a-12d2-4d35-8213-6fb9ebb207a0"
+    #eventId = "39da71dd-6a75-4669-adbf-36819ba1089a"
+    URL = f"https://calendar-api.fxstreet.com/de/api/v1/eventDates/{id}"
+    
 
+    #aktuell = FALSE
+    #while not aktuell:
+   
+    s = handleConnection(URL)
+    jsonEvent = json.loads(s)
+    print(jsonEvent["actual"])
+    
+    if jsonEvent["actual"] != "null":
+        return jsonEvent
+    else: 
+        return FALSE
 
 
 
