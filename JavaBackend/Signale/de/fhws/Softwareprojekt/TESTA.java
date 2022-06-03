@@ -37,7 +37,7 @@ public static void main(String[] args) {
 				if((kpi.atr>0.0001))
 				{
 					
-					System.out.println(kpi.parabolicSAR+" " +kpi.lastPrice+es.kombiniereMACDEMAPSAR (kpi));
+				//	System.out.println(kpi.parabolicSAR+" " +kpi.lastPrice+es.kombiniereMACDEMAPSAR (kpi));
 			//	System.out.println(	kpi.runden(kpi.parabolicSAR,3)+1/Math.pow(10, 3));
 				//System.out.println(kpi.instrument);
 				/*System.out.println("aufrunden: "+kpi.aufrunden(kpi.parabolicSAR, 3));

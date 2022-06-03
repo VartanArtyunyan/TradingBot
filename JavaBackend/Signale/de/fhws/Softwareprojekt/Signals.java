@@ -82,25 +82,46 @@ public class Signals {
 		
 		for (Kpi s : sortedSignals) {
 			if (s.longShort) {
-
+				System.out.println("long");
 			//	verwaltung.placeLongOrder(s.instrument,s.lastPrice+0.001, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
-
+				if((s.getLimitPrice()<s.getLongTakeProfit())&&(s.getLimitPrice()>s.getShortStopLoss()))
+				{
 				verwaltung.placeLongOrder(s.instrument,s.getLimitPrice(), s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 
 
 				logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice,  s.getLongTakeProfit(),
 						s.getLongStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
-				System.out.println("long");
+				}
+				else
+            	{
+					System.out.println("InvalidValues: ");
+					if(s.getLimitPrice()>=s.getLongTakeProfit())
+                		System.out.println("getLimitPrice>=getLongTakeProfit()"  +" :" +s.getLimitPrice()+">="+s.getLongTakeProfit() );
+                		else if(s.getLimitPrice()<=s.getLongStopLoss())
+                			System.out.println("getLimitPrice<=getLongStopLoss() :"   +s.getLimitPrice()+">="+s.getLongStopLoss() );
+            	}
+				
 			} else if (!s.longShort) {
-
+				System.out.println("short");
 		//		verwaltung.placeShortOrder(s.instrument,s.lastPrice-0.001, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
 			//	logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getShortTakeProfit());
-
+                    if((s.getLimitPrice()>s.getShortTakeProfit())&&(s.getLimitPrice()<s.getShortStopLoss()))
+                    {
 				verwaltung.placeShortOrder(s.instrument,s.getLimitPrice(), s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
 				logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice, s.getShortTakeProfit(),
 
 						s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
-				System.out.println("short");
+			
+                    }
+                	
+                	else
+                	{
+                		System.out.println("InvalidValues");
+                		if(s.getLimitPrice()<=s.getShortTakeProfit())
+                		System.out.println("getLimitPrice<=getShortTakeProfit()"  +" :" +s.getLimitPrice()+"<="+s.getShortTakeProfit() );
+                		else if(s.getLimitPrice()>=s.getShortStopLoss())
+                			System.out.println("getLimitPrice>=getShortStopLoss() :"   +s.getLimitPrice()+">="+s.getShortStopLoss() );
+                	}
 			}
 		}
 
