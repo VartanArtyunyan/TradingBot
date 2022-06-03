@@ -93,6 +93,7 @@ public class Ema {
 			double startBFAf = startBF;
 			double extrempunkt = 0;
 			double extrempunktAlt = 0;
+			double faktor=0;
 			double hAlt = 0;
 			double lAlt = 0;
 			double startBFAlt = 0;
@@ -106,8 +107,37 @@ public class Ema {
 					 extrempunkt = candle.mid.h;
 
 				} else {
+					//parabolicSAR Berechnung
+ faktor=(extrempunkt-kpi.parabolicSAR)*startBF;
+ if(kpi.trend.compareTo("bull")==0)
+ kpi.parabolicSAR=((kpi.parabolicSAR+=faktor)>candle.mid.l)?extrempunkt:kpi.parabolicSAR+faktor;
+ else
+	 kpi.parabolicSAR=((kpi.parabolicSAR+=faktor)<candle.mid.h)?extrempunkt:kpi.parabolicSAR+faktor;
+ //Bestimmung trend
+ kpi.trend=(kpi.parabolicSAR<candle.mid.h)?"bull":kpi.parabolicSAR>candle.mid.l?"bear":"";
+ //Bestimmung Extrempunkt
+ if(kpi.trend.compareTo("bull")==0)
+ extrempunkt=(candle.mid.h>extrempunkt)?candle.mid.h:extrempunkt;
+ else
+	 extrempunkt=candle.mid.l<extrempunkt?candle.mid.l:extrempunkt;
+ //
+ //AccelarationFaktor
 
-					if (kpi.trend.compareTo("bull") == 0) {
+	 if((kpi.trend.compareTo(vortrend)==0)&&(kpi.trend.compareTo("bull")==0))
+	 {
+	startBF=(extrempunkt<=extrempunktAlt)?startBF:(startBF!=maxBF)?startBF+inkrementBF:startBF;
+	 }
+	else if((kpi.trend.compareTo(vortrend)==0)&&(kpi.trend.compareTo("bear")==0))
+		startBF=(extrempunkt>=extrempunktAlt)?startBF:(startBF!=maxBF)?startBF+inkrementBF:startBF;
+	else startBF=startBFAf;
+	 //
+ 
+				}
+				count++;
+				vortrend=kpi.trend;
+				extrempunktAlt=extrempunkt;
+			}
+					/*if (kpi.trend.compareTo("bull") == 0) {
 						extrempunkt = candle.mid.h > extrempunkt ? candle.mid.h : extrempunkt;
 						if ((extrempunkt >extrempunktAlt) && (startBF != maxBF)&&(vortrend.compareTo(kpi.trend)==0) ){
 							startBF += inkrementBF;
@@ -155,8 +185,10 @@ if(count>0)
 			//	lAlt=candle.mid.l;
 				count++;
 				
-			}
+			}*/
+				
 			return kpi;
+				
 	}
 
 	public Kpi getMACD(String instrument, String granularity, int x, int y, int z, JsonCandlesRoot jcr) {
