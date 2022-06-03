@@ -48,15 +48,14 @@ public class JsonParser {
 		JsonBuilder output = new JsonBuilder();
 		
 		output.openObject("order");
-		output.addString("type", "LIMIT");
+		output.addString("type", "MARKET");
 		output.addString("instrument", instrument);
 		
 		
 		
 		
 		output.addString("units", Double.toString(round( units,0)));
-		output.addString("price", Double.toString(price));
-		output.addString("TimeInForce", "GTC");
+		//output.addString("price", Double.toString(price));
 		output.openObject("takeProfitOnFill");
 		output.addString("price", Double.toString(takeProfit));
 		output.closeObject();
