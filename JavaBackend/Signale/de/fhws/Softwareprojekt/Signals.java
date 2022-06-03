@@ -116,7 +116,7 @@ public class Signals {
                 	
                 	else
                 	{
-                		System.out.println("InvalidValues");
+                		System.out.println("InvalidValues: ");
                 		if(s.getLimitPrice()<=s.getShortTakeProfit())
                 		System.out.println("getLimitPrice<=getShortTakeProfit()"  +" :" +s.getLimitPrice()+"<="+s.getShortTakeProfit() );
                 		else if(s.getLimitPrice()>=s.getShortStopLoss())
