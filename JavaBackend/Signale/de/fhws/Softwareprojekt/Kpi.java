@@ -81,20 +81,31 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 
 	
 	public double getLongStopLoss() {
-		double wert=lastPrice*0.995;
+		double wert=lastPrice*0.9980;
 		return runden(wert,3);
 	}
 	
 	public double getLongTakeProfit() {
 	//double wert= lastPrice + (lastPrice - parabolicSAR)*2;
 	//return aufrunden(wert,3);
-		double wert=lastPrice*1.01;
+		double wert=lastPrice*1.004;
 	return	runden(wert,3);
 	}
 	
 	public double getShortStopLoss() {
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+		double wert=lastPrice*1.0020;
+=======
+<<<<<<< HEAD
+		 double wert=lastPrice + (parabolicSAR - lastPrice)*2;
+		 return aufrunden(wert,3);
+=======
+>>>>>>> f9c4480c2044a96dddc5ca745a0c28c4ebe90ebc
 		double wert=lastPrice*1.005;
+>>>>>>> 04ab6902e6ab67d3327e43282f685b3027cef445
 		return runden(wert,3);
 		// double wert=lastPrice - (parabolicSAR - lastPrice)*2;
 		// return aufrunden(wert,3);
@@ -103,7 +114,7 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 	
 	public double getShortTakeProfit() {
-		double wert=lastPrice*0.99;
+		double wert=lastPrice*0.996;
 		return runden(wert,3);
 	}
 	
