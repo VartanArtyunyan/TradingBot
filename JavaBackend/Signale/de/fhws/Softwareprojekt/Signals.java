@@ -60,8 +60,8 @@ public class Signals {
 				System.out.println(r);
 				kpi.longShort = (r == 1) ? true : false;
 				ausgabe("alles", kpi, instrument);
-				verwaltung.placeLongOrder(kpi.instrument,kpi.getLimitPrice(), 0.0, kpi.lastPrice+2, kpi.lastPrice);
-				//signale.add(kpi);
+				verwaltung.placeLongOrder(kpi.instrument,kpi.getLimitPrice(), kpi.getLongTakeProfit(), kpi.getLongStopLoss(),kpi.lastPrice);
+			//	signale.add(kpi);
 
 			}
 
