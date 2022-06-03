@@ -82,23 +82,23 @@ public class Signals {
 		
 		for (Kpi s : sortedSignals) {
 			if (s.longShort) {
-<<<<<<< HEAD
-				verwaltung.placeLongOrder(s.instrument,s.lastPrice+0.001, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
-=======
+
+			//	verwaltung.placeLongOrder(s.instrument,s.lastPrice+0.001, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
+
 				verwaltung.placeLongOrder(s.instrument,s.getLimitPrice(), s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
->>>>>>> 04ab6902e6ab67d3327e43282f685b3027cef445
+
 
 				logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice,  s.getLongTakeProfit(),
 						s.getLongStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
 				System.out.println("long");
 			} else if (!s.longShort) {
-<<<<<<< HEAD
-				verwaltung.placeShortOrder(s.instrument,s.lastPrice-0.001, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
-				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getShortTakeProfit(),
-=======
+
+		//		verwaltung.placeShortOrder(s.instrument,s.lastPrice-0.001, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
+			//	logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getShortTakeProfit());
+
 				verwaltung.placeShortOrder(s.instrument,s.getLimitPrice(), s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
 				logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice, s.getShortTakeProfit(),
->>>>>>> 04ab6902e6ab67d3327e43282f685b3027cef445
+
 						s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
 				System.out.println("short");
 			}
