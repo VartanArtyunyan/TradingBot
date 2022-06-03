@@ -47,6 +47,7 @@ ArrayList<Double>rsiListe=new ArrayList<>();
     ArrayList<Double>parabolicSARs=new ArrayList<>();
 	String trend="";
 	ArrayList<Double>emas=new ArrayList<>();
+	JsonInstrumentsInstrument i=new JsonInstrumentsInstrument();
 	public Kpi(String instrument,String granularity,int periods)
 	{
 		this.instrument=instrument;
@@ -64,24 +65,26 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 	public double aufrunden(double wert,int n)
 	{
-		double number = runden(wert,n)+1/Math.pow(10, n);
-		return runden(wert,n)>wert?runden(wert,n):(runden(number,3));
+		double number = runden(wert,n)+(1/Math.pow(10, n));
+		return runden(wert,n)>wert?runden(wert,n):(runden(number,n));
 	}
 	public double abrunden(double wert,int n)
 	{
-		double number = runden(wert,n)-1/Math.pow(10, n);
-		return runden(wert,n)<wert?runden(wert,n):runden(number,3);
+		double number = runden(wert,n)-(1/Math.pow(10, n));
+		return runden(wert,n)<wert?runden(wert,n):runden(number,n);
 	}
 	
 	public double getLimitPrice() {
+	
         if(longShort)return runden(lastPrice+0.001,3);
-        return runden(lastPrice-0.001,3);
+        return runden((lastPrice-0.001),3);
     }
 
 
 
 
     public double getLongStopLoss() {
+    	//Hier muss mit der DisplayPrecision 
         double wert= lastPrice * 0.9980;
         return abrunden(wert,3);
     }
