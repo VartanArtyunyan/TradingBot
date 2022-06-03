@@ -12,7 +12,7 @@ import positionen.Verwaltung;
 
 public class Main {
 		
-	static String granularity = "M1";
+	static String granularity = "M15";
 		
 	public static void main(String[] args) {
 	
@@ -25,6 +25,8 @@ public class Main {
 		//connection.placeLimitOrder("TRY_JPY", 30.1111111, 22.1111111, 44.1111111, 55.1111111);
 		//                        LimitPreis, units, takeProfit, stopLoss
 		
+		verwaltung.startTraiding();
+		
 		Signals testN = new Signals(connection, verwaltung, logFileWriter);
 		
 		MainThread mainThread = new MainThread();
@@ -35,7 +37,7 @@ public class Main {
 		mainThread.addThread(signalThread);
 		mainThread.addThread(timerThread);
 		
-		mainThread.start();
+		//mainThread.start();
 
 	}
 }

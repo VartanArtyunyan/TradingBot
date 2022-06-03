@@ -3,6 +3,9 @@ package positionen;
 import java.util.ArrayList;
 import GUI.GUI;
 import LogFileWriter.LogFileWriter;
+import Threads.MainRuntimeThread;
+import Threads.SignalThread;
+import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.Signals;
 
 import java.util.HashSet;
@@ -18,25 +21,45 @@ public class Verwaltung {
 	ArrayList<position> positionen;
 	ArrayList<trade> trades;
 	String granularity;
+	MainRuntimeThread mrt;
 
 	public Verwaltung(ApiConnection connection, String granularity) {
 		this.connection = connection;
-		//gui = new GUI();
+		gui = new GUI();
 		logFileWriter = new LogFileWriter();
 		signals = new Signals(connection, this, logFileWriter);
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
+		this.granularity = granularity;
+		mrt = new MainRuntimeThread(this);
 	}
 
 	
 	public void onTick(){
+		SignalThread signalThread = new SignalThread(signals, granularity);
+		signalThread.start();
 		
+		
+		try {
+			signalThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void startTraiding() {
+		mrt.start();
 	}
 	
 	public boolean eneoughBalance() {
 		double curBalance = connection.getBalance();
 		
 		return curBalance > 100.0;
+	}
+	
+	public void buySignal(Kpi kpi) {
+		
 	}
 
 	public void placeShortOrder(String instrument,double limitPrice, double takeProfit, double stopLoss, double kurs) {

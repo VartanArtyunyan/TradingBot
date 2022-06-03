@@ -52,7 +52,7 @@ public class Signals {
 			// Kpi kpi=e.getKpi(instrument.name, 14, "M15");
 			// kpi=e.getATR(instrument.name,14 , "M15");
 			
-			Kpi kpi = e.aufrufAlles(instrument.name, 200, 14, granularity, 0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+			Kpi kpi = e.aufrufAlles(instrument.name, 200, 14, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
 			// nach kauf für 6 x granularität insturment sperren
 			int r = kombiniereMACDEMAPSAR(connection, kpi);
 
@@ -60,8 +60,8 @@ public class Signals {
 				System.out.println(r);
 				kpi.longShort = (r == 1) ? true : false;
 				ausgabe("alles", kpi, instrument);
-				verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(), kpi.getShortTakeProfit(), kpi.getShortStopLoss(),kpi.lastPrice);
-			//	signale.add(kpi);
+			//	verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(), kpi.getShortTakeProfit(), kpi.getShortStopLoss(),kpi.lastPrice);
+				signale.add(kpi);
 
 			}
 
@@ -76,34 +76,58 @@ public class Signals {
 	}
 
 	public void endPeriod() {
-//Hier an dieser Stelle soll das Hash Set gemäß der compareTo Methode sortiert werden
-	//	Collections.sort(signale,  Signals.class);
-		TreeSet<Kpi> sortedSignals = new TreeSet<>(signale);
-		
-		for (Kpi s : sortedSignals) {
-			if (s.longShort) {
+		//Hier an dieser Stelle soll das Hash Set gemäß der compareTo Methode sortiert werden
+			//	Collections.sort(signale,  Signals.class);
+				TreeSet<Kpi> sortedSignals = new TreeSet<>(signale);
+				
+				for (Kpi s : sortedSignals) {
+					if (s.longShort) {
+						System.out.println("long");
+					//	verwaltung.placeLongOrder(s.instrument,s.lastPrice+0.001, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
+						if((s.getLimitPrice()<s.getLongTakeProfit())&&(s.getLimitPrice()>s.getShortStopLoss()))
+						{
+						verwaltung.placeLongOrder(s.instrument,s.getLimitPrice(), s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 
-			
-				verwaltung.placeLongOrder(s.instrument,s.getLimitPrice(), s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 
+						logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice,  s.getLongTakeProfit(),
+								s.getLongStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
+						}
+						else
+		            	{
+							System.out.println("InvalidValues: ");
+							if(s.getLimitPrice()>=s.getLongTakeProfit())
+		                		System.out.println("getLimitPrice>=getLongTakeProfit()"  +" :" +s.getLimitPrice()+">="+s.getLongTakeProfit() );
+		                		else if(s.getLimitPrice()<=s.getLongStopLoss())
+		                			System.out.println("getLimitPrice<=getLongStopLoss() :"   +s.getLimitPrice()+">="+s.getLongStopLoss() );
+		            	}
+						
+					} else if (!s.longShort) {
+						System.out.println("short");
+				//		verwaltung.placeShortOrder(s.instrument,s.lastPrice-0.001, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
+					//	logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getShortTakeProfit());
+		                    if((s.getLimitPrice()>s.getShortTakeProfit())&&(s.getLimitPrice()<s.getShortStopLoss()))
+		                    {
+						verwaltung.placeShortOrder(s.instrument,s.getLimitPrice(), s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
+						logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice, s.getShortTakeProfit(),
 
-				logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice,  s.getLongTakeProfit(),
-						s.getLongStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
-				System.out.println("long");
-			} else if (!s.longShort) {
+								s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
+					
+		                    }
+		                	
+		                	else
+		                	{
+		                		System.out.println("InvalidValues: ");
+		                		if(s.getLimitPrice()<=s.getShortTakeProfit())
+		                		System.out.println("getLimitPrice<=getShortTakeProfit()"  +" :" +s.getLimitPrice()+"<="+s.getShortTakeProfit() );
+		                		else if(s.getLimitPrice()>=s.getShortStopLoss())
+		                			System.out.println("getLimitPrice>=getShortStopLoss() :"   +s.getLimitPrice()+">="+s.getShortStopLoss() );
+		                	}
+					}
+				}
 
-				verwaltung.placeShortOrder(s.instrument,s.getLimitPrice(), s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
-				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getShortTakeProfit(),
+				signale = new HashSet<>();
 
-			
-						s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
-				System.out.println("short");
 			}
-		}
-
-		signale = new HashSet<>();
-
-	}
 
 	public static void ausgabe(String emaName, Kpi kpi, JsonInstrumentsInstrument instrument) {
 

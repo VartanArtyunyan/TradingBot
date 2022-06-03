@@ -332,7 +332,7 @@ if(count>0)
 	}
 
 	
-	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity, double startBF, double inkrementBF, double maxBF,int x, int y, int z,int multiplicatorUpper,int multiplicatorLower)
+	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity, double startBF, double inkrementBF, double maxBF,int x, int y, int z)
 	{
 		
 		JsonCandlesRoot jcr = extracted(instrument, granularity);
@@ -347,13 +347,13 @@ if(count>0)
 		
 		Kpi kpi5=getATR(instrument, periods, granularity,jcr);
 		
-		Kpi kpi6=getSupertrend(instrument, periods, granularity, jcr, multiplicatorUpper, multiplicatorLower);
+		//Kpi kpi6=getSupertrend(instrument, periods, granularity, jcr, multiplicatorUpper, multiplicatorLower);
 		
-		Kpi kpi7=getSMA(instrument, periods, granularity, jcr);
+		Kpi kpi6=getSMA(instrument, periods, granularity, jcr);
 		
 		
-		kpi.sma=kpi7.sma;
-		kpi.smaList=kpi7.smaList;
+		kpi.sma=kpi6.sma;
+		kpi.smaList=kpi6.smaList;
 		kpi.atr=kpi5.atr;
 		kpi.atrListe=kpi5.atrListe;
 		kpi.IntegerAtr=kpi5.IntegerAtr;
@@ -370,8 +370,8 @@ if(count>0)
 		kpi.rsiListe=kpi4.rsiListe;
 		kpi.trend=kpi2.trend;
 		kpi.trendWechsel=kpi2.trendWechsel;
-		kpi.superTrend=kpi6.superTrend;
-		kpi.superTrends=kpi6.superTrends;
+	//	kpi.superTrend=kpi6.superTrend;
+	//	kpi.superTrends=kpi6.superTrends;
 		return kpi;
 		
 	} 
@@ -465,7 +465,7 @@ if(count>0)
 		}
 		return kpi;
 	}
-	public Kpi getSupertrend(String instrument, int periods, String granularity,JsonCandlesRoot jcr,int multiplicatorUpper,int multiplicatorLower)
+	/*public Kpi getSupertrend(String instrument, int periods, String granularity,JsonCandlesRoot jcr,int multiplicatorUpper,int multiplicatorLower)
 	{
 		Kpi kpi=getATR(instrument, periods, granularity, jcr);
 		double upperband=0;
@@ -522,7 +522,7 @@ if(count>0)
 		}
 		}
 		return kpi;
-	}
+	} */
 
 }
 

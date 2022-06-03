@@ -64,7 +64,8 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 	public double aufrunden(double wert,int n)
 	{
-		return runden(wert,n)>wert?runden(wert,n):(runden(wert,n)+1/Math.pow(10, n));
+		double number = runden(wert,n)+1/Math.pow(10, n);
+		return runden(wert,n)>wert?runden(wert,n):(runden(number,3));
 	}
 	public double abrunden(double wert,int n)
 	{
@@ -73,38 +74,32 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 	
 	public double getLimitPrice() {
-		if(longShort)return runden(lastPrice+0.005,3);
-		return runden(lastPrice-0.005,3);
-	}
-	
-	
+        if(longShort)return runden(lastPrice+0.001,3);
+        return runden(lastPrice-0.001,3);
+    }
 
-	
-	public double getLongStopLoss() {
-		double wert=lastPrice*0.9980;
-		return runden(wert,3);
-	}
-	
-	public double getLongTakeProfit() {
-	//double wert= lastPrice + (lastPrice - parabolicSAR)*2;
-	//return aufrunden(wert,3);
-		double wert=lastPrice*1.004;
-	return	runden(wert,3);
-	}
-	
-	public double getShortStopLoss() {
-		double wert=lastPrice*1.0020;
-		return runden(wert,3);
-		// double wert=lastPrice - (parabolicSAR - lastPrice)*2;
-		// return aufrunden(wert,3);
 
-		 
-	}
-	
-	public double getShortTakeProfit() {
-		double wert=lastPrice*0.996;
-		return runden(wert,3);
-	}
+
+
+    public double getLongStopLoss() {
+        double wert= lastPrice * 0.9980;
+        return abrunden(wert,3);
+    }
+
+    public double getLongTakeProfit() {
+        double wert=lastPrice * 1.004;
+    return    runden(wert,3);
+    }
+
+    public double getShortStopLoss() {
+        double wert=lastPrice * 1.0020;
+        return aufrunden(wert,3);
+    }
+
+    public double getShortTakeProfit() {
+        double wert=lastPrice *0.996;
+        return runden(wert,3);
+    }
 	
 	@Override
 	public boolean equals(Object o) {
