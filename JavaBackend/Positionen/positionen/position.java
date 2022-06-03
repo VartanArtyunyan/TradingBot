@@ -36,7 +36,7 @@ public class position {
 	
 	public String toString() {
 		String output = "";
-		output+= "Instrument: " + währung;
+		output+= "Instrument: " + instrument;
 		output+= ", IDs: ";
 		
 		for(Integer i : tradeId) {

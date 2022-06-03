@@ -60,22 +60,22 @@ public class Signals {
 				System.out.println(r);
 				kpi.longShort = (r == 1) ? true : false;
 				ausgabe("alles", kpi, instrument);
-			//	verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(), kpi.getShortTakeProfit(), kpi.getShortStopLoss(),kpi.lastPrice);
+				verwaltung.pushSignal(kpi);
 				signale.add(kpi);
 
 			}
 
 		}
 
-		System.out.println("\n\nSIGNALE\n");
+		/*System.out.println("\n\nSIGNALE\n");
 		for (Kpi s : signale) {
 			System.out.println(s.instrument);
 		}
-		System.out.println("\nSIGNALE-ENDE\n\n");
+		System.out.println("\nSIGNALE-ENDE\n\n");*/
 
 	}
 
-	public void endPeriod() {
+	/*public void endPeriod() {
 		//Hier an dieser Stelle soll das Hash Set gem‰ﬂ der compareTo Methode sortiert werden
 			//	Collections.sort(signale,  Signals.class);
 				TreeSet<Kpi> sortedSignals = new TreeSet<>(signale);
@@ -127,7 +127,7 @@ public class Signals {
 
 				signale = new HashSet<>();
 
-			}
+			} */
 
 	public static void ausgabe(String emaName, Kpi kpi, JsonInstrumentsInstrument instrument) {
 

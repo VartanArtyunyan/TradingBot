@@ -23,6 +23,8 @@ public class ApiConnection {
 	public ArrayList<trade> getTrades() {
 		ArrayList<trade> output = new ArrayList<>();
 		String apiResponseString = connection.getTrades();
+		
+		//System.out.println(apiResponseString);
 
 		output = jsonParser.convertApiStringToTradesArray(apiResponseString);
 
@@ -51,12 +53,12 @@ public class ApiConnection {
 		return 1.09;
 	}
 
-	public void placeLimitOrder(String instrument, double limitPrice, double units, double takeProfit, double stopLoss) { 
+	public void placeLimitOrder(String instrument, double units, double takeProfit, double stopLoss) { 
 
-		String limitOrderJson = jsonParser.makeLimitOrederRequestJson(instrument, limitPrice, units, takeProfit,
+		String orderJson = jsonParser.makeOrederRequestJson(instrument, units, takeProfit,
 				stopLoss); //
 
-		connection.placeLimitOrder(limitOrderJson);
+		connection.placeLimitOrder(orderJson);
 	}
 
 	public double getBalance() {

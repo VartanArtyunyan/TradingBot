@@ -28,6 +28,55 @@ public class Kpi implements Comparable<Kpi>{
 	ArrayList<Double>Prozent=new ArrayList<Double>();
 	double prozent=0;
 	double sma=0;
+	public String getInstrument() {
+		return instrument;
+	}
+
+	public void setInstrument(String instrument) {
+		this.instrument = instrument;
+	}
+
+	public double getEma() {
+		return ema;
+	}
+
+	public void setEma(double ema) {
+		this.ema = ema;
+	}
+
+	public double getMacd() {
+		return macd;
+	}
+
+	public void setMacd(double macd) {
+		this.macd = macd;
+	}
+
+	public double getMacdTriggert() {
+		return macdTriggert;
+	}
+
+	public void setMacdTriggert(double macdTriggert) {
+		this.macdTriggert = macdTriggert;
+	}
+
+	public String getLastTime() {
+		return lastTime;
+	}
+
+	public void setLastTime(String lastTime) {
+		this.lastTime = lastTime;
+	}
+
+	public double getParabolicSAR() {
+		return parabolicSAR;
+	}
+
+	public void setParabolicSAR(double parabolicSAR) {
+		this.parabolicSAR = parabolicSAR;
+	}
+
+
 	ArrayList<Double>smaList =new ArrayList<>();
 ArrayList<Double> superTrends=new ArrayList<>();
 double superTrend=0;
@@ -54,6 +103,18 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 		this.periods=periods;
 	}
 	
+	public boolean isLong() {
+		return longShort;
+	}
+	
+	public boolean isShort(){
+		return !longShort;
+	}
+	
+	public double getLastPrice() {
+		return lastPrice;
+	}
+	
 
 	public double getKaufpreis() {
 		return 0.0;  // müsste eigentlich 0,02*kontostand zurückgeben
@@ -77,26 +138,34 @@ ArrayList<Double>rsiListe=new ArrayList<>();
         if(longShort)return runden(lastPrice+0.001,3);
         return runden(lastPrice-0.001,3);
     }
+	
+	public double getStopLoss() {
+		if(isLong()) return getLongStopLoss();
+		else return getShortStopLoss();
+	}
+	
+	public double getTakeProfit() {
+		if(isLong()) return getLongTakeProfit();
+		else return getShortTakeProfit();
+	}
 
 
-
-
-    public double getLongStopLoss() {
+    private double getLongStopLoss() {
         double wert= lastPrice * 0.9980;
         return abrunden(wert,3);
     }
 
-    public double getLongTakeProfit() {
+    private double getLongTakeProfit() {
         double wert=lastPrice * 1.004;
     return    runden(wert,3);
     }
 
-    public double getShortStopLoss() {
+    private double getShortStopLoss() {
         double wert=lastPrice * 1.0020;
         return aufrunden(wert,3);
     }
 
-    public double getShortTakeProfit() {
+    private double getShortTakeProfit() {
         double wert=lastPrice *0.996;
         return runden(wert,3);
     }

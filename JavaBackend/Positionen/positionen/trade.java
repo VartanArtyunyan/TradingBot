@@ -24,7 +24,7 @@ public class trade {
 	}
 
 	int id;
-	Instrumente währung;
+	
 	String instrument;
 	double price; //kaufpreis
 	String openTime;
@@ -65,7 +65,7 @@ public class trade {
 		
 		output+= "id: "+id;
 		output+= ", ";
-		output+= "instrument: "+währung;
+		output+= "instrument: "+ instrument;
 		output+= ", ";
 		output+= "price: " + price;
 		output+= ", ";

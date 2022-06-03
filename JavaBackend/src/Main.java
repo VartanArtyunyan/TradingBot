@@ -13,20 +13,18 @@ import positionen.Verwaltung;
 public class Main {
 		
 	static String granularity = "M15";
+	static double einsatz = 0.02;
 		
 	public static void main(String[] args) {
 	
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
 		
-		LogFileWriter logFileWriter = new LogFileWriter();
-		Verwaltung verwaltung = new Verwaltung(connection, granularity);
-		
-		//connection.placeLimitOrder("TRY_JPY", 30.1111111, 22.1111111, 44.1111111, 55.1111111);
-		//                        LimitPreis, units, takeProfit, stopLoss
+		Verwaltung verwaltung = new Verwaltung(connection, granularity, einsatz);
 		
 		verwaltung.startTraiding();
 		
+		/*
 		Signals testN = new Signals(connection, verwaltung, logFileWriter);
 		
 		MainThread mainThread = new MainThread();
@@ -37,7 +35,7 @@ public class Main {
 		mainThread.addThread(signalThread);
 		mainThread.addThread(timerThread);
 		
-		//mainThread.start();
+		mainThread.start();*/
 
 	}
 }

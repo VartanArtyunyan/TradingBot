@@ -44,7 +44,7 @@ public class JsonParser {
         return output;
     }
 	
-	public String makeLimitOrederRequestJson(String instrument,double price, double units, double takeProfit, double stopLoss) {
+	public String makeOrederRequestJson(String instrument, double units, double takeProfit, double stopLoss) {
 		JsonBuilder output = new JsonBuilder();
 		
 		output.openObject("order");

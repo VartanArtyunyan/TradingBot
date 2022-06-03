@@ -22,8 +22,13 @@ public class Verwaltung {
 	ArrayList<trade> trades;
 	String granularity;
 	MainRuntimeThread mrt;
+	
+	double einsatz;
 
-	public Verwaltung(ApiConnection connection, String granularity) {
+	public Verwaltung(ApiConnection connection, String granularity, double einsatz) {
+		
+		this.einsatz = einsatz;
+		
 		this.connection = connection;
 		gui = new GUI();
 		logFileWriter = new LogFileWriter();
@@ -58,7 +63,27 @@ public class Verwaltung {
 		return curBalance > 100.0;
 	}
 	
-	public void buySignal(Kpi kpi) {
+	public void pushSignal(Kpi kpi) {
+		if(containsPosition(kpi.getInstrument())) return;
+		
+		double factor = einsatz * (kpi.isLong()? 1 : -1);
+		
+		if(!eneoughBalance()) {
+			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			return;
+		}
+		
+		double curBalance = connection.getBalance();
+		double buyingPrice = curBalance * factor;
+		double units =  buyingPrice / kpi.getLastPrice();
+		
+		connection.placeLimitOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());	
+		logFileWriter.log(kpi.getInstrument(), kpi.getLastTime(),buyingPrice, kpi.getLastPrice(),  kpi.getTakeProfit(),
+				kpi.getStopLoss(), kpi.getMacd(), kpi.getMacdTriggert(), kpi.getParabolicSAR(), kpi.getEma());
+		
+		aktualisierePosition();
+		
+		
 		
 	}
 
@@ -73,9 +98,11 @@ public class Verwaltung {
 
 		double units = (curBalance * (-0.02)) / kurs;
 
-		connection.placeLimitOrder(instrument, limitPrice, units, takeProfit, stopLoss);
+		connection.placeLimitOrder(instrument,  units, takeProfit, stopLoss);
 		
 		aktualisierePosition();
+		
+		
 	}
 	
 	
@@ -90,7 +117,7 @@ public class Verwaltung {
 
 		double units = (curBalance * 0.02) / kurs;
 
-		connection.placeLimitOrder(instrument,limitPrice, units, takeProfit, stopLoss);
+		connection.placeLimitOrder(instrument,units, takeProfit, stopLoss);
 		
 		aktualisierePosition();
 	}
@@ -121,6 +148,7 @@ public class Verwaltung {
 
 	public void aktualisierePosition() {
 		trades = connection.getTrades();
+		
 		HashSet<String> erstelltePosition = new HashSet<>();
 		for (int i = 0; i < trades.size(); i++) {
 			if (erstelltePosition.contains(trades.get(i).getInstrument())) {
