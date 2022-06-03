@@ -1,3 +1,5 @@
+import java.util.Date;
+
 import API.ApiConnection;
 import API.Connection;
 import JsonParser.JsonBuilder;
@@ -9,22 +11,24 @@ import de.fhws.Softwareprojekt.Signals;
 import positionen.Verwaltung;
 
 public class Main {
-
-	static String granularity = "M15";
-
+		
+	static String granularity = "M1";
+		
 	public static void main(String[] args) {
+	
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
 		
 		LogFileWriter logFileWriter = new LogFileWriter();
-		Verwaltung verwaltung = new Verwaltung(connection);
+		Verwaltung verwaltung = new Verwaltung(connection, granularity);
 		
-		//verwaltung.placeShortOrder("TRY_JPY", 30, 22, 44, 55);
+		//connection.placeLimitOrder("TRY_JPY", 30.1111111, 22.1111111, 44.1111111, 55.1111111);
+		//                        LimitPreis, units, takeProfit, stopLoss
 		
 		Signals testN = new Signals(connection, verwaltung, logFileWriter);
-
+		
 		MainThread mainThread = new MainThread();
-
+		
 		SignalThread signalThread = new SignalThread(testN, granularity);
 		timerThread timerThread = new timerThread(testN, granularity);
 		

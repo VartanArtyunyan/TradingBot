@@ -1,6 +1,10 @@
 package positionen;
 
 import java.util.ArrayList;
+import GUI.GUI;
+import LogFileWriter.LogFileWriter;
+import de.fhws.Softwareprojekt.Signals;
+
 import java.util.HashSet;
 
 import API.ApiConnection;
@@ -8,26 +12,26 @@ import API.ApiConnection;
 public class Verwaltung {
 
 	ApiConnection connection;
+	GUI gui;
+	LogFileWriter logFileWriter;
+	Signals signals;
 	ArrayList<position> positionen;
 	ArrayList<trade> trades;
+	String granularity;
 
-	public Verwaltung(ApiConnection connection) {
+	public Verwaltung(ApiConnection connection, String granularity) {
 		this.connection = connection;
+		//gui = new GUI();
+		logFileWriter = new LogFileWriter();
+		signals = new Signals(connection, this, logFileWriter);
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
-
 	}
 
-	// public void placeOrder(String i, double wert, double kurs, double obergrenze,
-	// double untergrenze) {
-	// int anzahlAktien;
-
-	// anzahlAktien = (int) (wert / kurs);
-
-	// connection.placeOrder(i, anzahlAktien, obergrenze, untergrenze);
-
-	// aktualisierePosition();
-	// }
+	
+	public void onTick(){
+		
+	}
 	
 	public boolean eneoughBalance() {
 		double curBalance = connection.getBalance();
@@ -46,7 +50,7 @@ public class Verwaltung {
 
 		double units = (curBalance * (-0.02)) / kurs;
 
-		connection.placeOrder(instrument, limitPrice, units, takeProfit, stopLoss);
+		connection.placeLimitOrder(instrument, limitPrice, units, takeProfit, stopLoss);
 		
 		aktualisierePosition();
 	}
@@ -63,7 +67,7 @@ public class Verwaltung {
 
 		double units = (curBalance * 0.02) / kurs;
 
-		connection.placeOrder(instrument,limitPrice, units, takeProfit, stopLoss);
+		connection.placeLimitOrder(instrument,limitPrice, units, takeProfit, stopLoss);
 		
 		aktualisierePosition();
 	}

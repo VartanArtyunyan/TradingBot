@@ -338,12 +338,20 @@ if(count>0)
 		JsonCandlesRoot jcr = extracted(instrument, granularity);
 		
 		Kpi kpi=getKpi(instrument, emaperiods, granularity,jcr);
+		
 		Kpi kpi2=parabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
+		
 		Kpi kpi3=getMACD(instrument, granularity, x, y, z,jcr);
+	
 		Kpi kpi4=getRSI(instrument, periods, granularity,jcr);
+		
 		Kpi kpi5=getATR(instrument, periods, granularity,jcr);
+		
 		Kpi kpi6=getSupertrend(instrument, periods, granularity, jcr, multiplicatorUpper, multiplicatorLower);
+		
 		Kpi kpi7=getSMA(instrument, periods, granularity, jcr);
+		
+		
 		kpi.sma=kpi7.sma;
 		kpi.smaList=kpi7.smaList;
 		kpi.atr=kpi5.atr;

@@ -11,10 +11,12 @@ import positionen.trade;
 
 public class ApiConnection {
 
-	JsonParser jsonParser = new JsonParser();
-	Connection connection = new Connection();
+	JsonParser jsonParser;
+	Connection connection;
+	CandleCache candleCache;
 
 	public ApiConnection(Connection c) {
+		jsonParser = new JsonParser();
 		connection = c;
 	}
 
@@ -29,10 +31,15 @@ public class ApiConnection {
 
 	public JsonCandlesRoot getJsonCandlesRoot(int count, String instrument, String from, String to, String price,
 			String granularity) {
+		
+		
 		String apiResponseString = connection.getCandleStickData(count, instrument, from, to, price, granularity);
+		
+	//	jsonParser.parseLastCandleFromAPIString(apiResponseString);
 
 		return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
 	}
+	
 
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
 		String apiResponseString = connection.getInstruments();
@@ -44,7 +51,7 @@ public class ApiConnection {
 		return 1.09;
 	}
 
-	public void placeOrder(String instrument, double limitPrice, double units, double takeProfit, double stopLoss) { 
+	public void placeLimitOrder(String instrument, double limitPrice, double units, double takeProfit, double stopLoss) { 
 
 		String limitOrderJson = jsonParser.makeLimitOrederRequestJson(instrument, limitPrice, units, takeProfit,
 				stopLoss); //

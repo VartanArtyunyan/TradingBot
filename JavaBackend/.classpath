@@ -5,6 +5,7 @@
 	<classpathentry kind="src" path="Positionen"/>
 	<classpathentry kind="src" path="Signale"/>
 	<classpathentry kind="src" path="Threads"/>
+	<classpathentry kind="src" path="GUI"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

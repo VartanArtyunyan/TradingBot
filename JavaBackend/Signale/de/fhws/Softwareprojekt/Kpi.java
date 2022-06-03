@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Kpi implements Comparable<Kpi>{
 	
+	
 	boolean longShort;   //false = short, long = true
 	
 	JsonCandlesRoot root;
@@ -53,6 +54,7 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 		this.periods=periods;
 	}
 	
+
 	public double getKaufpreis() {
 		return 0.0;  // müsste eigentlich 0,02*kontostand zurückgeben
 	}
@@ -62,12 +64,26 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 	public double aufrunden(double wert,int n)
 	{
+<<<<<<< HEAD
+		double number = runden(wert,n)+1/Math.pow(10, n);
+		return runden(wert,n)>wert?runden(wert,n):runden(number,3);
+=======
 		return runden(wert,n)>wert?runden(wert,n):(runden(wert,n)+1/Math.pow(10, n));
+>>>>>>> 84ec5d4533e3afc5fd926e2b421008590d573811
 	}
 	public double abrunden(double wert,int n)
 	{
-		return runden(wert,n)<wert?runden(wert,n):runden(wert,n)-1/Math.pow(10, n);
+		double number = runden(wert,n)-1/Math.pow(10, n);
+		return runden(wert,n)<wert?runden(wert,n):runden(number,3);
 	}
+	
+	public double getLimitPrice() {
+		if(longShort)return runden(lastPrice+0.005,3);
+		return runden(lastPrice-0.005,3);
+	}
+	
+	
+
 	
 	public double getLongStopLoss() {
 		double wert=lastPrice*0.9980;
@@ -82,10 +98,19 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 	
 	public double getShortStopLoss() {
+<<<<<<< HEAD
 		double wert=lastPrice*1.0020;
+=======
+<<<<<<< HEAD
+		 double wert=lastPrice + (parabolicSAR - lastPrice)*2;
+		 return aufrunden(wert,3);
+=======
+		double wert=lastPrice*1.005;
+>>>>>>> 04ab6902e6ab67d3327e43282f685b3027cef445
 		return runden(wert,3);
 		// double wert=lastPrice - (parabolicSAR - lastPrice)*2;
 		// return aufrunden(wert,3);
+>>>>>>> 84ec5d4533e3afc5fd926e2b421008590d573811
 		 
 	}
 	
@@ -150,7 +175,7 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 			return -1;
 		else return 0;
 	}
-	return 0;
+	return 1;
 	}
 	
 
