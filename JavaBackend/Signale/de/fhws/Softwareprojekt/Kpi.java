@@ -75,9 +75,16 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 	
 	public double getLimitPrice() {
-	
+		if(instrument.contains("USD_THB")||instrument.contains("USD_INR")||(instrument.contains("JPY")||instrument.contains("HUF")))
+		{
         if(longShort)return runden(lastPrice+0.001,3);
         return runden((lastPrice-0.001),3);
+		}
+		else
+		{
+			if(longShort)return runden(lastPrice+0.0005,4);
+					return runden(lastPrice-0.0005,4);
+		}
     }
 
 
@@ -85,23 +92,37 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 
     public double getLongStopLoss() {
     	//Hier muss mit der DisplayPrecision 
-        double wert= lastPrice * 0.9980;
-        return abrunden(wert,3);
+        double wert= lastPrice * 0.9990;
+        return checkPrecision(wert, false);
     }
 
     public double getLongTakeProfit() {
-        double wert=lastPrice * 1.004;
-    return    runden(wert,3);
+        double wert=lastPrice * 1.002;
+        return checkPrecision(wert, true);
     }
 
     public double getShortStopLoss() {
-        double wert=lastPrice * 1.0020;
-        return aufrunden(wert,3);
+        double wert=lastPrice * 1.0010;
+        return checkPrecision(wert, true);
     }
 
     public double getShortTakeProfit() {
-        double wert=lastPrice *0.996;
-        return runden(wert,3);
+        double wert=lastPrice *0.998;
+       
+   return checkPrecision(wert, false);
+    }
+    public double checkPrecision(double wert,boolean aufrunden)
+    {
+    	   
+    
+        	  if(instrument.contains("USD_THB")||instrument.contains("USD_INR")||(instrument.contains("JPY")||instrument.contains("HUF")))
+        	  {
+        		  if(aufrunden)
+        	  return aufrunden (wert,3);
+        		  else return abrunden(wert,3);
+        	  }
+        	  else return runden(wert,5);
+  
     }
 	
 	@Override
