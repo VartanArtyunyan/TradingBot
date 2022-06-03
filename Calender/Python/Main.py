@@ -3,44 +3,82 @@ from pickle import FALSE
 import Connection
 import JsonReader
 import time
+import EventRefresh
 
-
-def DateTimeSplitter(word):
-    word = word[0:len(word)-1]
-    word = word.split('T')
+def DateStringToObject(word):
+    word = datetime.datetime.strptime(word, "%Y-%m-%dT%H:%M:%SZ")
     return word
 
 def calculate(event):
-    return event
+    print("success")
 
-def breakTimer(event):
-    time_1 = datetime.datetime.strptime(event,"%H:%M:%S")
-    time_2 = datetime.datetime.strptime(datetime.datetime.now().strftime("%H:%M:%S"),"%H:%M:%S")
-    time_interval = time_1 - time_2
-    return time_interval
-
-def timeInSeconds(date):
-    arr = date.split(":")
-    return (arr[0] * 3600 + arr[1] * 60 + arr[2])
+def breakTimer(EventTime):
+    return EventTime - datetime.datetime.now()
+    
 
 def handleNextEvent(event):
-    erfolgreich = FALSE
-    while not erfolgreich:
+    return event
+
+def EventLoop(liste):
+    list1 = liste
+    for nextEvent in list1:
+        print(nextEvent["name"])
+        update = Connection.checkEvent(nextEvent)
+        print(update["actual"])
+        if update["actual"] is not None:
+            calculate(nextEvent)
+            list1.remove(nextEvent)
+        return list1
+
+        
+        """ nextEventTime = DateStringToObject(nextEvent["dateUtc"])
+        time.sleep(breakTimer(nextEventTime))
+        timedelta = breakTimer(nextEventTime)
+        print(timedelta.total_seconds()<0)
+        print(f"{timedelta} :" + nextEvent["name"]) """
+
+def filterSpeechAndReport(list):
+    for nextEvent in list:
+        if nextEvent["isSpeech"] or nextEvent["isReport"]:
+            list.remove(nextEvent)
+    return list
 
 
-
-
-#Connection.start()
+Connection.start()
 JsonArray = JsonReader.read()
+print(len(JsonArray))
+JsonArray = filterSpeechAndReport(JsonArray)
+print(len(JsonArray))
+
+out = EventLoop(JsonArray)
+print(len(out))
 
 
-for nextEvent in JsonArray:
-    nextEventTime = DateTimeSplitter(nextEvent["dateUtc"])
-    print(str(breakTimer(nextEventTime[1])) + " : " + nextEvent["name"])
-    handleNextEvent(nextEvent)
+#while bool(JsonArray):
 
-    #time.sleep(breakTimer(nextEventTime))
-    """ while True:
-        if nextEvent[1] == datetime.Datetime.now():
-        calculate(nextEvent) """
+    #break 
+
+
+
+""" 
+    AktiveEvents = []
+    while NOT bool(AktiveEvents):
+    nextEventcheck -> 1+
+
+
+
+ """
+
+
+
+
+#del JsonArray[0]
+#print(JsonArray)
+
+
+
+
+""" while True:
+    if nextEvent[1] == datetime.Datetime.now():
+    calculate(nextEvent) """
 

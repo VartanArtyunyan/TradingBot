@@ -27,7 +27,10 @@ body {
   scrollbar-width: none;
 }
 
-h2,
+h2 {
+  color: wheat;
+}
+
 h3,
 a {
   color: wheat;
@@ -54,10 +57,11 @@ h2 {
   display: flex;
   justify-content: center;
 }
+
 .blurred-nav {
   position: fixed;
   width: 110vw;
-  height: 100px;
+  height: 60px;
   filter: blur(15px 15px);
   background-color: rgba(0, 0, 0, 0.9);
 }
@@ -82,13 +86,13 @@ h2 {
 .heade {
   z-index: 99;
   position: fixed;
-  height: 100px;
+  height: 60px;
   width: 100%;
   display: flex;
 }
 
 .inner-header {
-  height: 100px;
+  height: 60px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -98,23 +102,38 @@ h2 {
   backdrop-filter: blur(8px);
 }
 
-/* =================================
-  Media Queries
-==================================== */
+/* Lower  */
+
+.outside {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.lower {
+  margin: 50px 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: grey;
+  box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+    0 6.7px 5.3px rgba(0, 0, 0, 0.048), 0 12.5px 10px rgba(0, 0, 0, 0.06),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.072), 0 41.8px 33.4px rgba(0, 0, 0, 0.086),
+    0 100px 80px rgba(0, 0, 0, 0.12);
+}
 
 /* Home Section */
 
 .back-img {
   z-index: 1;
   width: 100%;
-  opacity: 0.9;
+  opacity: 0.8;
   max-height: 100vh;
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
-  filter: blur(15px);
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .text-pic {
@@ -126,7 +145,7 @@ h2 {
 }
 
 .text-pic h1 {
-  color: rgb(167, 155, 123);
+  color: wheat;
   font-size: 50px;
 }
 
@@ -138,9 +157,34 @@ h2 {
 /* Sections General */
 
 .sections {
-  padding: 5% 20% 0% 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0% 5%;
 }
 
 .last {
-  padding-bottom: 5%;
+}
+
+.personen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: green;
+}
+
+.personen-liste {
+  display: flex;
+  margin: 5px 0px;
+}
+
+hr {
+  border: 0;
+  clear: both;
+  display: block;
+  width: 96%;
+  background-color: #4b4b48;
+  height: 1px;
 }

@@ -1,0 +1,137 @@
+{
+  "account": {
+    "guaranteedStopLossOrderMode": "ALLOWED",
+    "hedgingEnabled": false,
+    "id": "101-012-22085247-001",
+    "createdTime": "2022-04-04T18:40:51.239030712Z",
+    "currency": "EUR",
+    "createdByUserID": 22085247,
+    "alias": "Primary",
+    "marginRate": "0.02",
+    "lastTransactionID": "199",
+    "balance": "99991.3150",
+    "openTradeCount": 0,
+    "openPositionCount": 0,
+    "pendingOrderCount": 2,
+    "pl": "-6.4279",
+    "resettablePL": "-6.4279",
+    "resettablePLTime": "0",
+    "financing": "-2.2571",
+    "commission": "0.0000",
+    "dividendAdjustment": "0",
+    "guaranteedExecutionFees": "0.0000",
+    "orders": [
+      {
+        "id": "176",
+        "createTime": "2022-05-27T13:03:39.176212095Z",
+        "type": "LIMIT",
+        "instrument": "TRY_JPY",
+        "units": "-36",
+        "timeInForce": "GTC",
+        "takeProfitOnFill": { "price": "22.000", "timeInForce": "GTC" },
+        "stopLossOnFill": {
+          "price": "44.000",
+          "timeInForce": "GTC",
+          "triggerMode": "TOP_OF_BOOK"
+        },
+        "price": "30.000",
+        "triggerCondition": "DEFAULT",
+        "partialFill": "DEFAULT_FILL",
+        "positionFill": "DEFAULT",
+        "state": "PENDING"
+      },
+      {
+        "id": "177",
+        "createTime": "2022-05-27T13:03:43.106890672Z",
+        "type": "LIMIT",
+        "instrument": "TRY_JPY",
+        "units": "-36",
+        "timeInForce": "GTC",
+        "takeProfitOnFill": { "price": "22.000", "timeInForce": "GTC" },
+        "stopLossOnFill": {
+          "price": "44.000",
+          "timeInForce": "GTC",
+          "triggerMode": "TOP_OF_BOOK"
+        },
+        "price": "30.000",
+        "triggerCondition": "DEFAULT",
+        "partialFill": "DEFAULT_FILL",
+        "positionFill": "DEFAULT",
+        "state": "PENDING"
+      }
+    ],
+    "positions": [
+      {
+        "instrument": "EUR_USD",
+        "long": {
+          "units": "0",
+          "pl": "-0.9093",
+          "resettablePL": "-0.9093",
+          "financing": "-0.1449",
+          "dividendAdjustment": "0.0000",
+          "guaranteedExecutionFees": "0.0000",
+          "unrealizedPL": "0.0000"
+        },
+        "short": {
+          "units": "0",
+          "pl": "0.0000",
+          "resettablePL": "0.0000",
+          "financing": "0.0000",
+          "dividendAdjustment": "0.0000",
+          "guaranteedExecutionFees": "0.0000",
+          "unrealizedPL": "0.0000"
+        },
+        "pl": "-0.9093",
+        "resettablePL": "-0.9093",
+        "financing": "-0.1449",
+        "commission": "0.0000",
+        "dividendAdjustment": "0.0000",
+        "guaranteedExecutionFees": "0.0000",
+        "unrealizedPL": "0.0000"
+      },
+      {
+        "instrument": "EUR_JPY",
+        "long": {
+          "units": "0",
+          "pl": "-5.5186",
+          "resettablePL": "-5.5186",
+          "financing": "-2.1122",
+          "dividendAdjustment": "0.0000",
+          "guaranteedExecutionFees": "0.0000",
+          "unrealizedPL": "0.0000"
+        },
+        "short": {
+          "units": "0",
+          "pl": "0.0000",
+          "resettablePL": "0.0000",
+          "financing": "0.0000",
+          "dividendAdjustment": "0.0000",
+          "guaranteedExecutionFees": "0.0000",
+          "unrealizedPL": "0.0000"
+        },
+        "pl": "-5.5186",
+        "resettablePL": "-5.5186",
+        "financing": "-2.1122",
+        "commission": "0.0000",
+        "dividendAdjustment": "0.0000",
+        "guaranteedExecutionFees": "0.0000",
+        "unrealizedPL": "0.0000"
+      }
+    ],
+    "trades": [],
+    "unrealizedPL": "0.0000",
+    "NAV": "99991.3150",
+    "marginUsed": "0.0000",
+    "marginAvailable": "99991.3150",
+    "positionValue": "0.0000",
+    "marginCloseoutUnrealizedPL": "0.0000",
+    "marginCloseoutNAV": "99991.3150",
+    "marginCloseoutMarginUsed": "0.0000",
+    "marginCloseoutPositionValue": "0.0000",
+    "marginCloseoutPercent": "0.00000",
+    "withdrawalLimit": "99991.3150",
+    "marginCallMarginUsed": "0.0000",
+    "marginCallPercent": "0.00000"
+  },
+  "lastTransactionID": "199"
+}

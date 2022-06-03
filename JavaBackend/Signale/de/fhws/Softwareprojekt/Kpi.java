@@ -13,8 +13,10 @@ public class Kpi implements Comparable<Kpi>{
 	public String instrument;
 	public String granularity;
 	public int periods;
-	double atr=0;
-	ArrayList<Double> atrListe=new ArrayList<>();
+	int IntegerAtr=0;
+	ArrayList<Integer> IntegerAtrListe=new ArrayList<>();
+ double atr=0;
+ ArrayList<Double>atrListe=new ArrayList<Double>();
 	double ema = 0;
 	double vorema=0;
 	double macd=0;
@@ -52,21 +54,51 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 		this.periods=periods;
 	}
 	
+
+	public double getKaufpreis() {
+		return 0.0;  // müsste eigentlich 0,02*kontostand zurückgeben
+	}
+	public double runden(double wert,int n)
+	{
+		return ((Math.round(wert* Math.pow(10, n))/ Math.pow(10, n)));
+	}
+	public double aufrunden(double wert,int n)
+	{
+		double number = runden(wert,n)+1/Math.pow(10, n);
+		return runden(wert,n)>wert?runden(wert,n):runden(number,3);
+	}
+	public double abrunden(double wert,int n)
+	{
+		double number = runden(wert,n)-1/Math.pow(10, n);
+		return runden(wert,n)<wert?runden(wert,n):runden(number,3);
+	}
+	
+	public double getLimitPrice() {
+		if(longShort)return runden(lastPrice+0.005,3);
+		return runden(lastPrice-0.005,3);
+	}
+	
+	
+
 	
 	public double getLongStopLoss() {
-		return parabolicSAR;
+		
+		return abrunden( parabolicSAR,3);
 	}
 	
 	public double getLongTakeProfit() {
-		return lastPrice + (lastPrice - parabolicSAR)*2;
+	double wert= lastPrice + (lastPrice - parabolicSAR)*2;
+	return aufrunden(wert,3);
 	}
 	
 	public double getShortStopLoss() {
-		return lastPrice - (parabolicSAR - lastPrice)*2;
+		 double wert=lastPrice + (parabolicSAR - lastPrice)*2;
+		 return aufrunden(wert,3);
+		 
 	}
 	
 	public double getShortTakeProfit() {
-		return parabolicSAR;
+		return abrunden(parabolicSAR,3);
 	}
 	
 	@Override
@@ -125,7 +157,7 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 			return -1;
 		else return 0;
 	}
-	return 0;
+	return 1;
 	}
 	
 

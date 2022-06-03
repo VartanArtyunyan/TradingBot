@@ -21,26 +21,38 @@ public static void main(String[] args) {
 		;*/
 	//	kombiniereMACDEMAPSAR(connection,"USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 		Ema e = new Ema(connection);
-		int zaehler;
+		int zaehler=0;
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
+
 	for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) 
 		{
+	
 			if(instrument.type.compareTo("CURRENCY")==0)
 			{
 				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9, 0, 0);
 			//String c="";
-		if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
+	//	if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
 			{
-			System.out.println(kpi.granularity);
-			System.out.println("OK");
-			System.out.println(kpi.instrument);
-			ausgabe("alles",kpi,instrument);
-			System.out.println(kpi.prozent);
+				if((kpi.atr>0.0001)&&(!(instrument.name.contains("HUF"))))
+				{
+				System.out.println(kpi.instrument);
+				System.out.println(kpi.aufrunden(kpi.parabolicSAR, 3));
+				System.out.println(kpi.abrunden(kpi.parabolicSAR,3));
+				System.out.println(kpi.runden(kpi.parabolicSAR, 3));
+				zaehler++;
+				}
+				//System.out.println("macdTriggert " + kpi.atr +" "+kpi.macds.get(kpi.macds.size()-1));
+		//	System.out.println("macd " +kpi.macd);
+	//		System.out.println("OK");
+			
+			//ausgabe("alles",kpi,instrument);
+ 			//System.out.println(kpi.prozent);
 		
-			System.out.println(pruefeVorperioden(kpi,"MACD"));
+			//System.out.println(pruefeVorperioden(kpi,"MACD"));
 			}
 		}
 		}
+	System.out.println(zaehler);
 		/*	for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) 
 				
 			{

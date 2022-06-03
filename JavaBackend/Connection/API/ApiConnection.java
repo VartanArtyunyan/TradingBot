@@ -35,7 +35,7 @@ public class ApiConnection {
 		
 		String apiResponseString = connection.getCandleStickData(count, instrument, from, to, price, granularity);
 		
-		jsonParser.parseLastCandleFromAPIString(apiResponseString);
+	//	jsonParser.parseLastCandleFromAPIString(apiResponseString);
 
 		return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
 	}

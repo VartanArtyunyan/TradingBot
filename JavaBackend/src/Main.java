@@ -12,7 +12,7 @@ import positionen.Verwaltung;
 
 public class Main {
 		
-	static String granularity = "M15";
+	static String granularity = "M1";
 		
 	public static void main(String[] args) {
 	

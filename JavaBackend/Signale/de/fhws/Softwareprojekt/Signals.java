@@ -25,7 +25,7 @@ public class Signals {
 	Ema e;
 	ArrayList<JsonInstrumentsInstrument> instrumentsList;
 	JsonInstrumentsRoot instrumentsRoot;
-	TreeSet<Kpi> signale;
+	HashSet<Kpi> signale;
 
 	public Signals(ApiConnection connection, Verwaltung verwaltung, LogFileWriter logFileWriter) {
 
@@ -37,7 +37,7 @@ public class Signals {
 		this.instrumentsList = new ArrayList<>();
 		this.instrumentsRoot = e.getInstruments();
 
-		this.signale = new TreeSet<>();
+		this.signale = new HashSet<>();
 
 		for (JsonInstrumentsInstrument i : instrumentsRoot.instruments) {
 			if (i.type.compareTo("CURRENCY") == 0)
@@ -60,7 +60,8 @@ public class Signals {
 				System.out.println(r);
 				kpi.longShort = (r == 1) ? true : false;
 				ausgabe("alles", kpi, instrument);
-				signale.add(kpi);
+				verwaltung.placeLongOrder(kpi.instrument,kpi.getLimitPrice(), 0.0, kpi.lastPrice+2, kpi.lastPrice);
+				//signale.add(kpi);
 
 			}
 
@@ -77,24 +78,24 @@ public class Signals {
 	public void endPeriod() {
 //Hier an dieser Stelle soll das Hash Set gemäß der compareTo Methode sortiert werden
 	//	Collections.sort(signale,  Signals.class);
-//TreeSet<Kpi> sorted=new TreeSet<>(signale);
+		TreeSet<Kpi> sortedSignals = new TreeSet<>(signale);
 		
-		for (Kpi s : signale) {
+		for (Kpi s : sortedSignals) {
 			if (s.longShort) {
-				verwaltung.placeLongOrder(s.instrument,s.lastPrice+0.0005, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
+				verwaltung.placeLongOrder(s.instrument,s.getLimitPrice(), s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
 
-				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, (connection.getBalance()*0.02), s.getLongTakeProfit(),
+				logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice,  s.getLongTakeProfit(),
 						s.getLongStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
 				System.out.println("long");
 			} else if (!s.longShort) {
-				verwaltung.placeShortOrder(s.instrument,s.lastPrice+0.0005, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
-				logFileWriter.log(s.instrument, s.lastTime, s.lastPrice,(connection.getBalance()*0.02), s.getShortTakeProfit(),
+				verwaltung.placeShortOrder(s.instrument,s.getLimitPrice(), s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
+				logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice, s.getShortTakeProfit(),
 						s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
 				System.out.println("short");
 			}
 		}
 
-		signale = new TreeSet<>();
+		signale = new HashSet<>();
 
 	}
 
@@ -135,7 +136,7 @@ public class Signals {
 			if (pruefeVorperioden(werte, "MACD") == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter
 															// Signallinie?
 				if ((werte.macd - werte.macdTriggert) >= 0) {
-					if(werte.prozent>0.20)
+					if(werte.prozent>0.0)
 					{
 					// 3. ist der aktuelle MACD auf oder über 0?
 					// for (int i = 0; i < 2; i++) { //4. Schleifendurchlauf für nächste Bedingung
@@ -152,7 +153,7 @@ public class Signals {
 				if (pruefeVorperioden(werte, "MACD") == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über
 																// Signallinie?
 					if ((werte.macd - werte.macdTriggert) <= 0) { 
-						if(werte.prozent<-0.25)
+						if(werte.prozent<-0.0)
 						{// 3. ist der aktuelle MACD auf oder unter 0?
 					
 						// 4. Schleifendurchlauf für nächste Bedingung
