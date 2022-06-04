@@ -108,9 +108,51 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 
     public double getShortTakeProfit() {
         double wert=lastPrice *0.998;
-       
-   return checkPrecision(wert, false);
+        return checkPrecision(wert, false);
     }
+    public double convertIntegerATRInDouble(boolean plusMinus) {
+    	//ATR dient hier als Stoploss-/Takeprofit-Wert
+    	//Es wird der IntegerATR als String umgewandelt, um "0.00" davorzusetzen und zu einem Doublewert umgewandelt
+    	//Es wird nicht unterschieden, ob der ATR-Wert(als Double) führende Nullen nach dem Komma hat oder nicht
+    	//plusMinus: True=Plus, Minus=False
+
+    	String StringATR = String.valueOf(IntegerAtr);
+    	String add = "";
+    	if( plusMinus = true) {
+    		add = "0.00";
+    	}
+    	else { //plusMinus = false
+    		add = "-0.00";
+    	}
+    	StringATR = add+StringATR;
+    	double atr_neu = Double.parseDouble(StringATR);
+    	return atr_neu;
+    }
+    
+    //ATR-Wert als Prozentsatz mit lastPrice und einem übergebenen Multiplikator multipliziert:
+    public double getLongStopLossATR(double multiplier) {
+    	double sl = 1-(convertIntegerATRInDouble(false)*multiplier);
+    	double wert = sl*lastPrice;
+    	return checkPrecision(wert, false);
+    }
+    
+    public double getLongTakeProfitATR(double multiplier) {
+    	double sl = 1+(convertIntegerATRInDouble(false)*multiplier);
+    	double wert = sl*lastPrice;
+    	return checkPrecision(wert, true);
+    }
+    public double getShortStopLossATR(double multiplier) {
+    	double sl = 1+(convertIntegerATRInDouble(false)*multiplier);
+    	double wert = sl*lastPrice;
+    	return checkPrecision(wert, true);
+    }
+    public double getShortTakeProfitATR(double multiplier) {
+    	double sl = 1-(convertIntegerATRInDouble(false)*multiplier);
+    	double wert = sl*lastPrice;
+    	return checkPrecision(wert, false);
+    }
+    
+
     public double checkPrecision(double wert,boolean aufrunden)
     {
     	   

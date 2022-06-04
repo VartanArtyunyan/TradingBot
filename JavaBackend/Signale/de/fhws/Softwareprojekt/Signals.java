@@ -54,13 +54,14 @@ public class Signals {
 			
 			Kpi kpi = e.aufrufAlles(instrument.name, 200, 14, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
 			// nach kauf für 6 x granularität insturment sperren
-			int r = kombiniereMACDEMAPSAR(connection, kpi);
+			int r = kombiniereMACDEMAPSAR(kpi);
 
 			if (r != 0) {
 				System.out.println(r);
 				kpi.longShort = (r == 1) ? true : false;
 				ausgabe("alles", kpi, instrument);
 			//	verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(), kpi.getShortTakeProfit(), kpi.getShortStopLoss(),kpi.lastPrice);
+			//	verwaltung.addManualPosition(instrument.name);
 				signale.add(kpi);
 
 			}
@@ -138,7 +139,96 @@ public class Signals {
 				+ kpi.avg + "  " + kpi.firstTime + " - " + kpi.lastTime + ")");
 	}
 	
+	
+	
+	public static void kombiniereMACD_PSAR(Kpi werte) {
+		if (pruefePerioden(werte, "MACD", 6) == -1) {
+			if(pruefePSAR(werte)==1) {
+				System.out.println("MACD_PSAR Long");
+			}
+		}
+		else if (pruefePerioden(werte, "MACD", 6) == 1) {
+			if (pruefePSAR(werte)==-1) {
+				System.out.println("MACD_PSAR Short");
+			}
+		}
+	}
+	
+	public static int kombiniereMACDEMAPSAR(Kpi werte) {
+		//public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
+			// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte: 12,26,9)
 
+			int rueckgabewert = 0;
+			//Connection con = new Connection();
+			//ApiConnection connection = new ApiConnection(con);
+			//Ema ema= new Ema(connection);
+			
+			//Kpi werte = ema.aufrufAlles(instrument, emaperiods, periods,  granularity, startBF,  inkrementBF,  maxBF, x,  y,  z, multiplicatorUpper, multiplicatorLower);
+			
+			//System.out.println(pruefeATR(werte));
+			//System.out.println("Letzter Preis " +werte.lastPrice);
+			//System.out.println("SAR " +werte.parabolicSAR);
+			//System.out.println("ema " +werte.ema);
+			//System.out.println("macd " +werte.macd);
+			//System.out.println("macd verhältnis " + (werte.macdTriggert-werte.macd));
+			//System.out.println("macd trigger " +werte.macdTriggert);
+			//System.out.println("macd methode " +pruefeMACD(werte));
+			//System.out.println("ema200 methode " +pruefeEMA200(werte));
+			//System.out.println("psar methode " +pruefePSAR(werte));
+			//System.out.println("vorperioden methode " +pruefeVorperioden(werte, "RSI"));
+			//System.out.println("rsi methode " +pruefeRSI(werte));
+			
+			
+			//ToDo: Doppelten Code vermeiden -> Funktionen zusammenlegen
+			//		Ermitteln welche Rückgabewerte zu einer Kaufentscheidung führt
+			//		Kaufposition aufrufen
+			//		MACD Periodencheck mit aktuellem MACD kombinieren?
+			//		Verfügbarkeit prüfen -> Wird der
+			//		pruefeVorperioden mit aktuellem MACD
+			
+			
+			
+			try {
+				if(pruefeEMA200(werte) == 1) {
+					System.out.println("1.versuch");												//1. liegt Trend (= 200 EMA) über Kurs?
+					if(pruefePerioden(werte, "MACD", 5) == -1) {		//2. liegt MACD-Linie in den letzten 5 Perioden unter Signallinie?
+								if(pruefePSAR(werte) == 1) {		//5. ist der PSAR-Wert unter dem Kurs?
+									//long							//Long-Position
+									//return werte;	
+									System.out.println("long");
+									rueckgabewert = 1;
+								}
+							}
+						}
+					
+				
+				else if (pruefeEMA200(werte) == -1){System.out.println("2.versuch");				//1. liegt Trend unter Kurs?
+					if(pruefePerioden(werte, "MACD", 5) == 1) {		//2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
+								if(pruefePSAR(werte) == -1) {		//5. ist der PSAR-Wert über dem Kurs?
+									//short							//Short-Position 
+									//Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze, double untergrenze);
+									//Verwaltung.placeOrder(instrument, double wer, double kurs, double obergrenze, double untergrenze);
+									//return werte;
+									System.out.println("short");
+									rueckgabewert = -1;
+								}
+							}
+						}
+					
+				
+				//wenn 0?
+				
+				
+					
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				
+			}
+			return rueckgabewert;
+			
+		}
+	/*// alter Code
 	public static int kombiniereMACDEMAPSAR(ApiConnection connection, Kpi werte) {
 		
 	
@@ -197,7 +287,7 @@ public class Signals {
 				}
 			}
 			return rueckgabewert;
-		}
+		}*/
 		// short //Short-Position
 		// Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze,
 		// double untergrenze);
@@ -418,68 +508,151 @@ public class Signals {
 
 	}
 
-	public static int pruefeVorperioden(Kpi werte, String entscheideSignal) {
-		// Die Methode, soll die Vorperiode prüfen, ob bestimmte Ereignisse vorgefallen
-		// sind oder nicht
-		// Dabei werden die Methoden pruefeMACD() und pruefeRSI() zusammengelegt
+	public static int pruefePerioden(Kpi werte, String entscheideSignal, int anzahlVorperioden) {
+		//Die Methode, soll die Vorperiode prüfen, ob bestimmte Ereignisse vorgefallen sind oder nicht
+		//Dabei werden die Methoden pruefeMACD() und pruefeRSI() zusammengelegt
 		int ausgabe = 99;
 		int MACDRueckgabewert = 99;
 		int RSIRueckgabewert = 99;
-		boolean verhaeltnisVorzeichenNegativ = false;
+		boolean verhaeltnisVorzeichenNegativ = false;	
 		boolean verhaeltnisVorzeichenPositiv = false;
-		boolean RSIOverbought = false; // RSI über 70%
-		boolean RSIOversold = false; // RSI unter 30%
+		boolean RSIOverbought = false;	//RSI über 70% 
+		boolean RSIOversold = false; 	//RSI unter 30%
+		int MACDAktuell = 99;
+		
+		//anzahl Vorperioden falscher Übergabewert
+		if(anzahlVorperioden<2) return ausgabe;
+		
+		for(int i = 1; i<anzahlVorperioden+2; i++) {
+			double macd = werte.macds.get(werte.macds.size()-i);
+			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
 
-		for (int i = 2; i < 7; i++) {
-			double macd = werte.macds.get(werte.macds.size() - i);
-			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
-			double macdVerhaeltnis = macd - trigger;
-			//System.out.println(werte.rsiListe.get(werte.rsiListe.size() - i));
-			if (macdVerhaeltnis < 0) {
-				verhaeltnisVorzeichenNegativ = true;
-			} else if (macdVerhaeltnis > 0) {
-				verhaeltnisVorzeichenPositiv = true;
-			} else { // macdVerhaeltnis == 0
-				break;
+			double macdVerhaeltnis = macd-trigger;
+			System.out.println(i+". Durchlauf: Verhältnis "+macdVerhaeltnis);
+			//System.out.println(MACDAktuell);
+			//Wie ist das aktuelle Verhältnis?:
+			if (i ==1) {
+				if(macdVerhaeltnis <=0) {
+					MACDAktuell = -1;
+					//System.out.println("kleinergleich "+MACDAktuell);
+				}
+				else if (macdVerhaeltnis >= 0) {
+					MACDAktuell = 1;
+					//System.out.println("größergleich "+MACDAktuell);
+				}
+
 			}
-			if (werte.rsiListe.get(werte.rsiListe.size() - i) > 70) {
-				RSIOverbought = true;
-			} else if (werte.rsiListe.get(werte.rsiListe.size() - i) < 30) {
-				RSIOversold = true;
-			} else { // "70 >= werte.rsiListe.get(werte.rsiListe.size()-i) >=30"
-				break;
+			//Vorperioden
+			else if (i>0&&i!=1) {
+				if(macdVerhaeltnis < 0) {
+					verhaeltnisVorzeichenNegativ = true;
+				}
+				else if (macdVerhaeltnis > 0) {
+					verhaeltnisVorzeichenPositiv = true;
+				}
+				else { //macdVerhaeltnis == 0   
+					break;
+				}
+				if (werte.rsiListe.get(werte.rsiListe.size()-i) > 70) {
+					RSIOverbought = true;
+				}
+				else if (werte.rsiListe.get(werte.rsiListe.size()-i) < 30) {
+					RSIOversold = true;
+				}
+				else { //"70 >= werte.rsiListe.get(werte.rsiListe.size()-i) >=30"
+					break;
+				}
 			}
 		}
-		if (verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false) {
-			// die letzten 5 MACDs sind negativ
+		if(verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false && MACDAktuell ==1) {
+			//die letzten MACDs sind negativ und der Aktuelle positiv oder null
 			MACDRueckgabewert = -1;
-		} else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true) {
-			// die letzten 5 MACDs sind positiv oder
+			
+		}
+		else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true && MACDAktuell == -1) {
+			//die letzten MACDs sind positiv und der Aktuelle negativ oder null
 			MACDRueckgabewert = 1;
-		} else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true)
-				|| (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)) {
-			// die letzten 5 MACDs haben nicht das gleiche Vorzeichen
+		}
+		else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true) || (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)){
+			//die letzten MACDs haben nicht das gleiche Vorzeichen 
 			MACDRueckgabewert = 0;
 		}
 		if (RSIOversold == true && RSIOverbought == false) {
-			// die letzten 5 RSIs sind Oversold, also unter 30%
+			//die letzten 5 RSIs sind Oversold, also unter 30%
 			RSIRueckgabewert = -1;
-		} else if (RSIOversold == false && RSIOverbought == true) {
-			// die letzten 5 RSIs sind Overbought, also über 70%
+		}
+		else if (RSIOversold == false && RSIOverbought == true) {
+			//die letzten 5 RSIs sind Overbought, also über 70%
 			RSIRueckgabewert = 1;
-		} else if ((RSIOversold == true && RSIOverbought == true) || (RSIOversold == false && RSIOverbought == false)) {
-			// die letzten 5 RSIs schwanken oder liegen alle zwischen 30 und 70 Prozent
+		}
+		else if ((RSIOversold == true && RSIOverbought == true) || (RSIOversold == false && RSIOverbought == false)) {
+			//die letzten 5 RSIs schwanken oder liegen alle zwischen 30 und 70 Prozent
 			RSIRueckgabewert = 0;
 		}
 		if (entscheideSignal == "MACD") {
 			ausgabe = MACDRueckgabewert;
-		} else if (entscheideSignal == "RSI") {
+		}
+		else if (entscheideSignal =="RSI") {
 			ausgabe = RSIRueckgabewert;
-		} else if (entscheideSignal != "MACD" && entscheideSignal != "RSI") {
-			// keine Änderung von ausgabe
+		}
+		else if (entscheideSignal != "MACD" && entscheideSignal != "RSI") {
+			//keine Änderung von ausgabe
 			ausgabe = 99;
 		}
+		
 		return ausgabe;
+	}
+	
+	public static int pruefeATR(Kpi werte) {
+		//JPY und HUF sind die ATR-Werte zu hoch, um sie zum Stoploss zu verwenden !(instrument.name.contains("HUF")|| instrument.name.contains("JPY")
+		//Wo ist der niedrigste und Höchste ATR-Wert
+		//Dieser Wert ist der Vergleichspunkt mit dem aktuellen ATR Wert
+		//Jedoch soll der Wert nur ungefär gleich sein, weil eine genaue Übereinstimmung zu unrealistisch ist
+		//Und weil der Indikator nur ein Hilfsindikator ist
+		//der ATR gibt aus, wie oft das aktuelle Instrument in den letzten 14 Perioden den Wert geändert hat
+		//Wenn der ATR am niedrigsten Punkt ist, ist auszugehen, dass das Instrument in den nächsten Perioden stärker
+		//nachgefragt wird, jedoch gibt er keine Auskunft in welche Richtung
+		int rueckgabe = 0;
+		System.out.println("vanilla " + werte.atr);
+		/*double y = werte.atr*100000;
+		System.out.println("test "+ runden(y));
+		
+		
+		double x = runden(werte.atr);
+		x *=1000;
+		System.out.println(x);*/
+		
+		
+		
+		double relativesMinimum = 1000;
+		double relativesMaximum = 0;
+		for(int i = 2; i<werte.atrListe.size()+1; i++) {
+			double vergleich = werte.atrListe.get(werte.atrListe.size()-i); 
+			if (vergleich < relativesMinimum) {
+				relativesMinimum=vergleich;
+			}
+			if (vergleich > relativesMaximum) {
+				relativesMaximum = vergleich;
+			}
+		}
+		System.out.println("relativesMaximum "+relativesMaximum+"; relativesMinimum "+relativesMinimum);
+		double prozentsatz =  ((relativesMinimum*100/relativesMaximum)+1)/100;
+		System.out.println("prozentsatz "+prozentsatz);
+		double aktuellerATR = werte.atr+prozentsatz;
+		System.out.println("aktueller atr "+werte.atr+" neuer ATR "+aktuellerATR);
+		
+		if (relativesMinimum < aktuellerATR) {
+			//aktueller ATR ist nicht am niedrigsten Punkt
+			rueckgabe = -1;
+		}
+		else if (relativesMinimum>= aktuellerATR) {
+			rueckgabe = 1;
+		} 
+		
+		return rueckgabe;
+		
+		
+		
 	}
 
 	public static int berechneMillisekunden(String granularity) {
