@@ -28,6 +28,9 @@ public class Kpi implements Comparable<Kpi>{
 	ArrayList<Double>Prozent=new ArrayList<Double>();
 	double prozent=0;
 	double sma=0;
+	
+	
+	
 	public String getInstrument() {
 		return instrument;
 	}
@@ -96,6 +99,7 @@ ArrayList<Double>rsiListe=new ArrayList<>();
     ArrayList<Double>parabolicSARs=new ArrayList<>();
 	String trend="";
 	ArrayList<Double>emas=new ArrayList<>();
+	JsonInstrumentsInstrument i=new JsonInstrumentsInstrument();
 	public Kpi(String instrument,String granularity,int periods)
 	{
 		this.instrument=instrument;
@@ -125,18 +129,26 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 	public double aufrunden(double wert,int n)
 	{
-		double number = runden(wert,n)+1/Math.pow(10, n);
-		return runden(wert,n)>wert?runden(wert,n):(runden(number,3));
+		double number = runden(wert,n)+(1/Math.pow(10, n));
+		return runden(wert,n)>wert?runden(wert,n):(runden(number,n));
 	}
 	public double abrunden(double wert,int n)
 	{
-		double number = runden(wert,n)-1/Math.pow(10, n);
-		return runden(wert,n)<wert?runden(wert,n):runden(number,3);
+		double number = runden(wert,n)-(1/Math.pow(10, n));
+		return runden(wert,n)<wert?runden(wert,n):runden(number,n);
 	}
 	
 	public double getLimitPrice() {
+		if(instrument.contains("USD_THB")||instrument.contains("USD_INR")||(instrument.contains("JPY")||instrument.contains("HUF")))
+		{
         if(longShort)return runden(lastPrice+0.001,3);
-        return runden(lastPrice-0.001,3);
+        return runden((lastPrice-0.001),3);
+		}
+		else
+		{
+			if(longShort)return runden(lastPrice+0.0005,4);
+					return runden(lastPrice-0.0005,4);
+		}
     }
 	
 	public double getStopLoss() {
@@ -150,24 +162,81 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 	}
 
 
-    private double getLongStopLoss() {
-        double wert= lastPrice * 0.9980;
-        return abrunden(wert,3);
+    public double getLongStopLoss() {
+    	//Hier muss mit der DisplayPrecision 
+        double wert= lastPrice * 0.9990;
+        return checkPrecision(wert, false);
     }
 
-    private double getLongTakeProfit() {
-        double wert=lastPrice * 1.004;
-    return    runden(wert,3);
+    public double getLongTakeProfit() {
+        double wert=lastPrice * 1.002;
+        return checkPrecision(wert, true);
     }
 
-    private double getShortStopLoss() {
-        double wert=lastPrice * 1.0020;
-        return aufrunden(wert,3);
+    public double getShortStopLoss() {
+        double wert=lastPrice * 1.0010;
+        return checkPrecision(wert, true);
     }
 
-    private double getShortTakeProfit() {
-        double wert=lastPrice *0.996;
-        return runden(wert,3);
+    public double getShortTakeProfit() {
+        double wert=lastPrice *0.998;
+        return checkPrecision(wert, false);
+    }
+    public double convertIntegerATRInDouble(boolean plusMinus) {
+    	//ATR dient hier als Stoploss-/Takeprofit-Wert
+    	//Es wird der IntegerATR als String umgewandelt, um "0.00" davorzusetzen und zu einem Doublewert umgewandelt
+    	//Es wird nicht unterschieden, ob der ATR-Wert(als Double) führende Nullen nach dem Komma hat oder nicht
+    	//plusMinus: True=Plus, Minus=False
+
+    	String StringATR = String.valueOf(IntegerAtr);
+    	String add = "";
+    	if( plusMinus = true) {
+    		add = "0.00";
+    	}
+    	else { //plusMinus = false
+    		add = "-0.00";
+    	}
+    	StringATR = add+StringATR;
+    	double atr_neu = Double.parseDouble(StringATR);
+    	return atr_neu;
+    }
+    
+    //ATR-Wert als Prozentsatz mit lastPrice und einem übergebenen Multiplikator multipliziert:
+    public double getLongStopLossATR(double multiplier) {
+    	double sl = 1-(convertIntegerATRInDouble(false)*multiplier);
+    	double wert = sl*lastPrice;
+    	return checkPrecision(wert, false);
+    }
+    
+    public double getLongTakeProfitATR(double multiplier) {
+    	double sl = 1+(convertIntegerATRInDouble(false)*multiplier);
+    	double wert = sl*lastPrice;
+    	return checkPrecision(wert, true);
+    }
+    public double getShortStopLossATR(double multiplier) {
+    	double sl = 1+(convertIntegerATRInDouble(false)*multiplier);
+    	double wert = sl*lastPrice;
+    	return checkPrecision(wert, true);
+    }
+    public double getShortTakeProfitATR(double multiplier) {
+    	double sl = 1-(convertIntegerATRInDouble(false)*multiplier);
+    	double wert = sl*lastPrice;
+    	return checkPrecision(wert, false);
+    }
+    
+
+    public double checkPrecision(double wert,boolean aufrunden)
+    {
+    	   
+        	  if(instrument.contains("USD_THB")||instrument.contains("USD_INR")||(instrument.contains("JPY")||instrument.contains("HUF")))
+        	  {
+        		  if(aufrunden)
+        	  return aufrunden (wert,3);
+        		  else return abrunden(wert,3);
+        	  }
+        	  else return runden(wert,5);
+  
+
     }
 	
 	@Override

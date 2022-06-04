@@ -22,11 +22,14 @@ public class EmaListe {
 	public static void main(String[] args) {
 		
 		
+
+		
+		
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
 		
-		
-		/*System.out.println("Instrumentliste - Suchbegriff:");
+		/*
+		System.out.println("Instrumentliste - Suchbegriff:");
 		String filter;
 		try (Scanner scanner = new Scanner(System.in);) {
 			filter = scanner.nextLine().toUpperCase();
@@ -36,16 +39,19 @@ public class EmaListe {
 		;*/
 		
 		Ema e = new Ema(connection);
-		Kpi test = e.aufrufAlles("USD_JPY", 200, 14, "H1",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
+		Kpi test = e.aufrufAlles("EUR_USD", 200, 14, "H1",0.02, 0.02, 0.2, 12, 26, 9);
 		//Kpi test2 = e.aufrufAlles("USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 		//System.out.println(pruefePerioden(test, "MACD", 5));
 		//kombiniereMACDEMAPSAR(connection,test2);
 		//boolean isUsed = false;
-		pruefeATR(test);
+		System.out.println(test.lastPrice);
+		System.out.println(test.convertIntegerATRInDouble(true));
+		System.out.println(test.getLongStopLossATR(2));
+		
 		Map<String, Boolean> instrumentenVerfuegbarkeit = new HashMap<>();
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
 		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
-
+			
 			/*if (instrument.type.compareTo("CURRENCY")==0) {
 			if (instrument.name.toUpperCase().contains(filter) || instrument.displayName.toUpperCase().contains(filter)
 					|| instrument.type.toUpperCase().contains(filter)) {*/
@@ -55,7 +61,7 @@ public class EmaListe {
 			//instrumentenVerfuegbarkeit.put(instrument.name.toString(), false);
 			//System.out.println(instrument.name);
 			//kombiniereMACD_PSAR(test);
-		}
+		//}
 		/*
 		for(String k : instrumentenVerfuegbarkeit.keySet()) {
 			System.out.println(k);
@@ -63,7 +69,7 @@ public class EmaListe {
 			kombiniereMACDEMAPSAR(connection,werte);
 	
 		}*/
-
+		}
 		
 		
 	}
@@ -105,11 +111,11 @@ public class EmaListe {
 	  
 	  
 	  
-	public static void kombiniereMACDEMAPSAR(Kpi werte) {
+	public static int kombiniereMACDEMAPSAR(Kpi werte) {
 	//public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
 		// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte: 12,26,9)
 
-		
+		int rueckgabewert = 0;
 		//Connection con = new Connection();
 		//ApiConnection connection = new ApiConnection(con);
 		//Ema ema= new Ema(connection);
@@ -147,6 +153,7 @@ public class EmaListe {
 								//long							//Long-Position
 								//return werte;	
 								System.out.println("long");
+								rueckgabewert = 1;
 							}
 						}
 					}
@@ -160,6 +167,7 @@ public class EmaListe {
 								//Verwaltung.placeOrder(instrument, double wer, double kurs, double obergrenze, double untergrenze);
 								//return werte;
 								System.out.println("short");
+								rueckgabewert = -1;
 							}
 						}
 					}
@@ -167,12 +175,14 @@ public class EmaListe {
 			
 			//wenn 0?
 			
+			
 				
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 			
 		}
+		return rueckgabewert;
 		
 	}
 	

@@ -1,5 +1,7 @@
 package de.fhws.Softwareprojekt;
 
+import java.util.ArrayList;
+
 import API.ApiConnection;
 import API.Connection;
 
@@ -9,8 +11,11 @@ public static void main(String[] args) {
 		
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
-		
-		
+		ArrayList<String>a=new ArrayList();
+		a.add("JPY");
+		a.add("HUF");
+		a.add("USD_THB");
+		a.add("USD_INR");
 		/*System.out.println("Instrumentliste - Suchbegriff:");
 		String filter;
 		try (Scanner scanner = new Scanner(System.in);) {
@@ -30,13 +35,26 @@ public static void main(String[] args) {
 			if(instrument.type.compareTo("CURRENCY")==0)
 			{
 				EmaListe es=new EmaListe();
-				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9, 0, 0);
+				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
 			//String c="";
 	//	if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
 			{
-				if((kpi.atr>0.0001))
+			
+				//
+			//	if(instrument.name.contains("USD_THB")||instrument.name.contains("USD_INR")||(instrument.name.contains("JPY")||instrument.name.contains("HUF")))
+				if(instrument.displayPrecision==3)
 				{
 					
+					
+				//System.out.println(instrument.displayPrecision);
+				//	System.out.println(kpi.lastPrice);
+					System.out.println(kpi.instrument);
+					//System.out.println(kpi.getLimitPrice());
+					//System.out.println(kpi.getLongStopLoss());
+					//System.out.println(kpi.getLongTakeProfit());
+					//System.out.println(kpi.getShortStopLoss());
+					//System.out.println(kpi.getShortTakeProfit());
+					}
 				//	System.out.println(kpi.parabolicSAR+" " +kpi.lastPrice+es.kombiniereMACDEMAPSAR (kpi));
 			//	System.out.println(	kpi.runden(kpi.parabolicSAR,3)+1/Math.pow(10, 3));
 				//System.out.println(kpi.instrument);
@@ -56,7 +74,8 @@ public static void main(String[] args) {
 			//System.out.println(pruefeVorperioden(kpi,"MACD"));
 			}
 		}
-		}
+
+		
 	System.out.println(zaehler);
 		/*	for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) 
 				

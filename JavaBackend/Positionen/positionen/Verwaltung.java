@@ -84,7 +84,6 @@ public class Verwaltung {
 		aktualisierePosition();
 		
 		
-		
 	}
 
 	public void placeShortOrder(String instrument,double limitPrice, double takeProfit, double stopLoss, double kurs) {
