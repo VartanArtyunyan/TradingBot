@@ -55,7 +55,7 @@ public class Signals {
 			Kpi kpi = e.aufrufAlles(instrument.name, 200, 14, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
 			// nach kauf für 6 x granularität insturment sperren
 			int r = kombiniereMACDEMAPSAR(kpi);
-
+			
 			if (r != 0) {
 				System.out.println(r);
 				kpi.longShort = (r == 1) ? true : false;
@@ -69,14 +69,15 @@ public class Signals {
 			//	signale.add(kpi);
 
 			}
-			//else {
-				int s = kombiniereMACD_PSAR(kpi);
+			else {
+			int s = kombiniereMACD_PSAR(kpi);
 			 System.out.println(s);
+			 kpi.signalStrenght = 0.5;
 			 kpi.longShort = (s == 1) ? true : false;
 			ausgabe("alles", kpi, instrument);
 
-			//verwaltung.pushSignal(kpi);
-			//}
+			verwaltung.pushSignal(kpi);
+			}
 
 		}
 

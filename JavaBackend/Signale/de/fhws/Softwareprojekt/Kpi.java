@@ -6,8 +6,11 @@ import java.util.List;
 
 public class Kpi implements Comparable<Kpi>{
 	
-	
+	//werden in der Signals Klasse gefüllt
 	boolean longShort;   //false = short, long = true
+	double signalStrenght = 1; 
+	
+	
 	
 	JsonCandlesRoot root;
 	public String instrument;
@@ -33,6 +36,10 @@ public class Kpi implements Comparable<Kpi>{
 	
 	public String getInstrument() {
 		return instrument;
+	}
+	
+	public double getSignalStrenght() {
+		return signalStrenght;
 	}
 
 	public void setInstrument(String instrument) {

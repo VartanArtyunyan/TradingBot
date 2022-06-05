@@ -74,10 +74,11 @@ public class Verwaltung {
 		}
 		
 		double curBalance = connection.getBalance();
-		double buyingPrice = curBalance * factor;
+		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
 		double units =  buyingPrice / kpi.getLastPrice();
 		
 		connection.placeLimitOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());	
+		
 		logFileWriter.log(kpi.getInstrument(), kpi.getLastTime(),buyingPrice, kpi.getLastPrice(),  kpi.getTakeProfit(),
 				kpi.getStopLoss(), kpi.getMacd(), kpi.getMacdTriggert(), kpi.getParabolicSAR(), kpi.getEma());
 		

@@ -19,12 +19,9 @@ def breakTimer(EventTime):
 def handleNextEvent(event):
     return event
 
-def EventLoop(liste):
-    list1 = liste
+def EventLoop(list1):
     for nextEvent in list1:
-        print(nextEvent["name"])
         update = Connection.checkEvent(nextEvent)
-        print(update["actual"])
         if update["actual"] is not None:
             calculate(nextEvent)
             list1.remove(nextEvent)
@@ -46,12 +43,8 @@ def filterSpeechAndReport(list):
 
 Connection.start()
 JsonArray = JsonReader.read()
-print(len(JsonArray))
 JsonArray = filterSpeechAndReport(JsonArray)
-print(len(JsonArray))
 
-out = EventLoop(JsonArray)
-print(len(out))
 
 
 #while bool(JsonArray):
