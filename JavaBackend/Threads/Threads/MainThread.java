@@ -3,7 +3,7 @@ package Threads;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import de.fhws.Softwareprojekt.Ema;
+import de.fhws.Softwareprojekt.KpiCalculator;
 import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.Signals;
 

@@ -1,23 +1,16 @@
 package de.fhws.Softwareprojekt;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-
 import java.time.LocalDate;
-
-
 
 import API.ApiConnection;
 //import sun.security.mscapi.CKeyStore.ROOT;
 
-public class Ema {
+public class KpiCalculator {
 	
 	private ApiConnection connection;
 	
-	public Ema(ApiConnection connection) {
+	public KpiCalculator(ApiConnection connection) {
 
 		this.connection = connection;
 	}
@@ -135,9 +128,9 @@ public class Ema {
 			double extrempunkt = 0;
 			double extrempunktAlt = 0;
 			double faktor=0;
-			double hAlt = 0;
+		/*	double hAlt = 0;
 			double lAlt = 0;
-			double startBFAlt = 0;
+			double startBFAlt = 0;*/
 			int count = 0;
 			kpi.trend = "bull";
 			String vortrend = "bull";
@@ -303,8 +296,6 @@ public class Ema {
 	}
 
 	
-
-
 	
 	public Kpi getATR(String instrument,int periods,String granularity, JsonCandlesRoot jcr)
 
@@ -334,9 +325,8 @@ public class Ema {
 			}
 			return kpi;
 		}
-
 	
-
+	
 	public Kpi getRSI(String instrument, int periods, String granularity,JsonCandlesRoot jcr) {
 		Kpi kpi=getBasisKpi(instrument,periods,granularity,jcr);
 
@@ -394,64 +384,6 @@ public class Ema {
 		}
 		return kpi;
 	}
-	/*public Kpi getSupertrend(String instrument, int periods, String granularity,JsonCandlesRoot jcr,int multiplicatorUpper,int multiplicatorLower)
-	{
-		Kpi kpi=getATR(instrument, periods, granularity, jcr);
-		double upperband=0;
-		double upperbandPrev=0;
-		double lowerband=0;
-		double lowerbandPrev=0;
-		
-		int count=0;
-		for(int i=1;i<kpi.root.candles.size();i++)
-		{
-			if (i>periods)
-			{
-		
-			//Wenn upperband kleiner als upperbandPrev oder vorherige Schlusskurz größer ist als upperbandPrev dann nehme upperband
-				//Wenn lowerband größer ist als lowerbandPrev pder vorherige Schlusskurs kleiner als lowerbandPrev ist dann nehme lowerband
-				upperband=((kpi.root.candles.get(i).mid.h+kpi.root.candles.get(i).mid.l)/2)+(multiplicatorUpper*kpi.atrListe.get(count));
-				lowerband=((kpi.root.candles.get(i).mid.h+kpi.root.candles.get(i).mid.l)/2)-(multiplicatorLower*kpi.atrListe.get(count));
-				if(i==periods+1)
-					{
-					upperbandPrev=upperband;
-					lowerbandPrev=lowerband;
-					kpi.superTrend=upperbandPrev;
-					}
-				
-					
-				upperband=upperband<upperbandPrev?upperband:upperbandPrev;
-				if((upperband==upperbandPrev)&&(i!=periods+1))
-				upperband=kpi.root.candles.get(i-1).mid.c>upperbandPrev?upperband:upperbandPrev;
-				
-				lowerband=lowerband>lowerbandPrev?lowerband:lowerbandPrev;
-				if((lowerband==lowerbandPrev)&&(i!=periods+1))
-				lowerband=kpi.root.candles.get(i-1).mid.c<lowerbandPrev?lowerband:lowerbandPrev;
-				
-				count++;
-			
-			if(kpi.superTrend==upperbandPrev)
-			{
-		if(kpi.root.candles.get(i).mid.c<upperband)
-			kpi.superTrend=upperband;
-		else if(kpi.root.candles.get(i).mid.c>upperband)
-			kpi.superTrend=lowerband;
-			}
-			else if(kpi.superTrend==lowerbandPrev)
-			{
-				if(kpi.root.candles.get(i).mid.c>lowerband)
-					kpi.superTrend=lowerband;
-				else if(kpi.root.candles.get(i).mid.c<lowerband)
-					kpi.superTrend=upperband;
-			}
-			
-			lowerbandPrev=lowerband;
-			upperbandPrev=upperband;
-			kpi.superTrends.add(kpi.superTrend);
-		}
-		}
-		return kpi;
-	} */
 
 }
 

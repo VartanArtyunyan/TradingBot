@@ -22,7 +22,7 @@ public class Signals {
 	ApiConnection connection;
 	Verwaltung verwaltung;
 	LogFileWriter logFileWriter;
-	Ema e;
+	KpiCalculator e;
 	ArrayList<JsonInstrumentsInstrument> instrumentsList;
 	JsonInstrumentsRoot instrumentsRoot;
 	HashSet<Kpi> signale;
@@ -32,7 +32,7 @@ public class Signals {
 		this.connection = connection;
 		this.verwaltung = verwaltung;
 		this.logFileWriter = logFileWriter;
-		this.e = new Ema(connection);
+		this.e = new KpiCalculator(connection);
 
 		this.instrumentsList = new ArrayList<>();
 		this.instrumentsRoot = e.getInstruments();
