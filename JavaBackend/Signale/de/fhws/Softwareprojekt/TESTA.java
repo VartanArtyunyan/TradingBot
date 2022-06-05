@@ -253,7 +253,7 @@ public static int kombiniereMACDEMAPSAR(ApiConnection connection, Kpi werte) {
 		if (pruefeVorperioden(werte, "MACD") == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter
 														// Signallinie?
 			if ((werte.macd - werte.macdTriggert) >= 0) {
-				if(werte.prozent>0.20)
+				if(werte.macdIntensity>0.20)
 				{
 				// 3. ist der aktuelle MACD auf oder über 0?
 				// for (int i = 0; i < 2; i++) { //4. Schleifendurchlauf für nächste Bedingung
@@ -270,7 +270,7 @@ public static int kombiniereMACDEMAPSAR(ApiConnection connection, Kpi werte) {
 			if (pruefeVorperioden(werte, "MACD") == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über
 															// Signallinie?
 				if ((werte.macd - werte.macdTriggert) <= 0) { 
-					if(werte.prozent<-0.25)
+					if(werte.macdIntensity<-0.25)
 					{// 3. ist der aktuelle MACD auf oder unter 0?
 				
 					// 4. Schleifendurchlauf für nächste Bedingung

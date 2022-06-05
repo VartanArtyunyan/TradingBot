@@ -47,8 +47,8 @@ public class Kpi implements Comparable<Kpi> {
 	ArrayList<Double> macds = new ArrayList<>();
 	ArrayList<Double> macdsTriggert = new ArrayList<>();
 	double macdTriggert = 0;
-	ArrayList<Double> Prozent = new ArrayList<Double>();
-	double prozent = 0;
+	ArrayList<Double> macdIntensitys = new ArrayList<Double>();
+	double macdIntensity = 0;
 
 	// atr
 	double atr = 0;
@@ -269,46 +269,46 @@ public class Kpi implements Comparable<Kpi> {
 	@Override
 	public int compareTo(Kpi wert2) {
 		// Beide long Positionen
-		if ((this.prozent > 0 && wert2.prozent > 0)) {
-			if (this.prozent > wert2.prozent)
+		if ((this.macdIntensity > 0 && wert2.macdIntensity > 0)) {
+			if (this.macdIntensity > wert2.macdIntensity)
 				return 1;
-			else if (this.prozent < wert2.prozent)
+			else if (this.macdIntensity < wert2.macdIntensity)
 				return -1;
 
 		}
 		// Beide short Positionen
-		if ((this.prozent < 0 && wert2.prozent < 0)) {
-			if (this.prozent < wert2.prozent)
+		if ((this.macdIntensity < 0 && wert2.macdIntensity < 0)) {
+			if (this.macdIntensity < wert2.macdIntensity)
 				return 1;
-			else if (this.prozent > wert2.prozent)
+			else if (this.macdIntensity > wert2.macdIntensity)
 				return -1;
 		}
 
 		// wert 1 long und wert 2 short
-		if (this.prozent > 0 && wert2.prozent < 0) {
-			if ((this.prozent > wert2.prozent * (-1)))
+		if (this.macdIntensity > 0 && wert2.macdIntensity < 0) {
+			if ((this.macdIntensity > wert2.macdIntensity * (-1)))
 				return 1;
-			else if ((this.prozent < wert2.prozent * (-1)))
+			else if ((this.macdIntensity < wert2.macdIntensity * (-1)))
 				return -1;
 			// Wenn gleich:Dann nehme long Position da seltener
 			else
 				return 1;
 		}
 		// wert 1 short und wert2 long
-		if ((this.prozent < 0 && wert2.prozent > 0)) {
-			if ((this.prozent * (-1) > wert2.prozent))
+		if ((this.macdIntensity < 0 && wert2.macdIntensity > 0)) {
+			if ((this.macdIntensity * (-1) > wert2.macdIntensity))
 				return 1;
-			else if ((this.prozent * (-1) < wert2.prozent))
+			else if ((this.macdIntensity * (-1) < wert2.macdIntensity))
 				return -1;
 			// Wenn gleich:Dann nehme long Position da seltener
 			else
 				return 1;
 		}
-		if (Math.abs(this.prozent) == Math.abs(wert2.prozent)) {
+		if (Math.abs(this.macdIntensity) == Math.abs(wert2.macdIntensity)) {
 			// Auch hier im Zweifel long
-			if (this.prozent > wert2.prozent)
+			if (this.macdIntensity > wert2.macdIntensity)
 				return 1;
-			else if (this.prozent < wert2.prozent)
+			else if (this.macdIntensity < wert2.macdIntensity)
 				return -1;
 			else
 				return 0;
