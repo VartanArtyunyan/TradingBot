@@ -84,7 +84,6 @@ def checkEvent(event):
 
 
 
-start()
 
 
 

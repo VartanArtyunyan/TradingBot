@@ -1,13 +1,45 @@
-from concurrent.futures import thread
-import socket, select, sys
-import json
-import time
 
-HOST = socket.gethostname()
+import socket
+
+
+socketObject = socket.socket()
+
+
+try:
+    socketObject.connect(("localhost", 12000))
+    receiveJsonData = socketObject.recv(51200)
+except socket.error as e:
+        print(str(e))
+
+
+
+def close():
+    socketObject.close()
+
+def getJson():
+    return receiveJsonData
+
+def buy(jsonData):
+    socketObject.sendall("{jsonData} + /n")
+
+
+
+
+""" while(True):
+    data = socketObject.recv(1024)
+    print(data) """
+    
+
+ 
+
+
+
+
+""" HOST = socket.gethostname()
 PORT = 12000
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(("localhost", 5000))
-data = "Hello"
+client_socket.connect((HOST, PORT))
+data = "Hello" """
 
 """ data = {
         "id": "4bda5381-c1e9-48e8-8d27-b764675b0a52",
@@ -52,11 +84,11 @@ data = "Hello"
             break; """
 
 
-try:
+""" try:
     # Connect to server and send data
     client_socket.connect((HOST, PORT))
     #client_socket.sendall(bytes(json.dumps(data), 'UTF-8'))
-    while True:
+    while 1:
         client_socket.send("{data} + /n")
         time.sleep(100)
 
@@ -65,7 +97,7 @@ try:
 finally:
     client_socket.close()
 
-
+ """
 
 
 

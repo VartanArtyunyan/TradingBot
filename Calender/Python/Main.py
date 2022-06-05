@@ -1,9 +1,9 @@
 import datetime
-from pickle import FALSE
+import json
 import Connection
 import JsonReader
-import time
-import EventRefresh
+import Calculation
+
 
 def DateStringToObject(word):
     word = datetime.datetime.strptime(word, "%Y-%m-%dT%H:%M:%SZ")
@@ -19,37 +19,48 @@ def breakTimer(EventTime):
 def handleNextEvent(event):
     return event
 
-def EventLoop(list1):
-    for nextEvent in list1:
-        update = Connection.checkEvent(nextEvent)
-        if update["actual"] is not None:
-            calculate(nextEvent)
-            list1.remove(nextEvent)
-        return list1
 
-        
-        """ nextEventTime = DateStringToObject(nextEvent["dateUtc"])
-        time.sleep(breakTimer(nextEventTime))
-        timedelta = breakTimer(nextEventTime)
-        print(timedelta.total_seconds()<0)
-        print(f"{timedelta} :" + nextEvent["name"]) """
-
-def filterSpeechAndReport(list):
-    for nextEvent in list:
-        if nextEvent["isSpeech"] or nextEvent["isReport"]:
-            list.remove(nextEvent)
-    return list
+class StoreList:
+    data = None
+    
+    def __init__(self, data):
+        self.data = data
 
 
-Connection.start()
-JsonArray = JsonReader.read()
-JsonArray = filterSpeechAndReport(JsonArray)
+    def filterSpeechAndReport(self):
+        for nextEvent in self.data:
+            if nextEvent["isSpeech"] or nextEvent["isReport"]:
+                self.data.remove(nextEvent)
+                
+    def EventLoop(self):
+        for nextEvent in self.data:
+            update = Connection.checkEvent(nextEvent)
+            if update["actual"] is not None:
+                Calculation.calculate(nextEvent)
+                self.data.remove(nextEvent)
+
+    def getData(self):
+            return self.data
 
 
+#Connection.start()
 
-#while bool(JsonArray):
+a = StoreList(JsonReader.read())
+print(len(a.getData()))
+a.filterSpeechAndReport()
+print(len(a.getData()))
+a.EventLoop()
+print(len(a.getData()))
 
-    #break 
+with open('afterLoop.json', 'w') as f:
+    json.dump(a.getData(), f)
+
+""" while bool(List):
+    myl.EventLoop(List)
+    
+    
+
+exit()  """
 
 
 
