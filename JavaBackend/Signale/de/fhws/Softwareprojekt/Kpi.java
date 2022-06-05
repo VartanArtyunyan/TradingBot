@@ -5,17 +5,24 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Kpi implements Comparable<Kpi>{
+
 	public Kpi(String instrument,String granularity,int periods)
 	{
 		this.instrument=instrument;
 		this.granularity=granularity;
 		this.periods=periods;
 	}
+
 	
-	JsonCandlesRoot root;
 	//werden in der Signals Klasse gefüllt
 	boolean longShort;   //false = short, long = true
 	double signalStrenght = 1; 
+	
+	
+
+	
+	JsonCandlesRoot root;
+
 	//Konstruktor
 	public String instrument;
 	public String granularity;
