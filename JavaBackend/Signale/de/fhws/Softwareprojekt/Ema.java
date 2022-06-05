@@ -22,7 +22,7 @@ public class Ema {
 		this.connection = connection;
 	}
 
-	public Kpi getKpi(String instrument, int periods, String granularity, JsonCandlesRoot jcr) {
+	public Kpi getBasisKpi(String instrument, int periods, String granularity, JsonCandlesRoot jcr) {
 
 		// HttpURLConnection connection;
 
@@ -88,8 +88,8 @@ public class Ema {
 		return root;
 	}
 
-	public Kpi parabolicSar(String instrument, String granularity,int periods, double startBF, double inkrementBF, double maxBF,JsonCandlesRoot jcr) {
-			Kpi kpi = getKpi(instrument,periods,granularity,jcr);
+	public Kpi getParabolicSar(String instrument, String granularity,int periods, double startBF, double inkrementBF, double maxBF,JsonCandlesRoot jcr) {
+			Kpi kpi = getBasisKpi(instrument,periods,granularity,jcr);
 			double startBFAf = startBF;
 			double extrempunkt = 0;
 			double extrempunktAlt = 0;
@@ -192,9 +192,9 @@ if(count>0)
 	}
 
 	public Kpi getMACD(String instrument, String granularity, int x, int y, int z, JsonCandlesRoot jcr) {
-		Kpi kpi1 = getKpi(instrument, x, granularity,jcr);
-		Kpi kpi2 = getKpi(instrument, y, granularity,jcr);
-		Kpi md = getKpi(instrument, z, granularity,jcr);
+		Kpi kpi1 = getBasisKpi(instrument, x, granularity,jcr);
+		Kpi kpi2 = getBasisKpi(instrument, y, granularity,jcr);
+		Kpi md = getBasisKpi(instrument, z, granularity,jcr);
 	double ergebnis = 0;
 	double maxDifferenz=0;
 	double minDifferenz=0;
@@ -337,41 +337,40 @@ if(count>0)
 		
 		JsonCandlesRoot jcr = extracted(instrument, granularity);
 		
-		Kpi kpi=getKpi(instrument, emaperiods, granularity,jcr);
+		Kpi kpi=getBasisKpi(instrument, emaperiods, granularity,jcr);
 		
-		Kpi kpi2=parabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
+		Kpi kpiTemp=getParabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
+		kpi.parabolicSAR=kpiTemp.parabolicSAR;
+		kpi.parabolicSARs=kpiTemp.parabolicSARs;
+		kpi.trend=kpiTemp.trend;
+		kpi.trendWechsel=kpiTemp.trendWechsel;
 		
-		Kpi kpi3=getMACD(instrument, granularity, x, y, z,jcr);
+		kpiTemp=getMACD(instrument, granularity, x, y, z,jcr);
+		kpi.macd=kpiTemp.macd;
+		kpi.macds=kpiTemp.macds;
+		kpi.macdsTriggert=kpiTemp.macdsTriggert;
+		kpi.macdTriggert=kpiTemp.macdTriggert;
+		kpi.prozent=kpiTemp.prozent;
+		kpi.Prozent=kpiTemp.Prozent;
 	
-		Kpi kpi4=getRSI(instrument, periods, granularity,jcr);
+		kpiTemp=getRSI(instrument, periods, granularity,jcr);
+		kpi.rsi=kpiTemp.rsi;
+		kpi.rsiListe=kpiTemp.rsiListe;
 		
-		Kpi kpi5=getATR(instrument, periods, granularity,jcr);
+		kpiTemp=getATR(instrument, periods, granularity,jcr);
+		kpi.atr=kpiTemp.atr;
+		kpi.atrListe=kpiTemp.atrListe;
+		kpi.IntegerAtr=kpiTemp.IntegerAtr;
+		kpi.IntegerAtrListe=kpiTemp.IntegerAtrListe;
 		
-		//Kpi kpi6=getSupertrend(instrument, periods, granularity, jcr, multiplicatorUpper, multiplicatorLower);
+		kpiTemp=getSMA(instrument, periods, granularity, jcr);
+		kpi.sma=kpiTemp.sma;
+		kpi.smaList=kpiTemp.smaList;
 		
-		Kpi kpi6=getSMA(instrument, periods, granularity, jcr);
+		// kpiTemp=getSupertrend(instrument, periods, granularity, jcr, multiplicatorUpper, multiplicatorLower);
+		// kpi.superTrend=kpiTemp.superTrend;
+		// kpi.superTrends=kpiTemp.superTrends;
 		
-		
-		kpi.sma=kpi6.sma;
-		kpi.smaList=kpi6.smaList;
-		kpi.atr=kpi5.atr;
-		kpi.atrListe=kpi5.atrListe;
-		kpi.IntegerAtr=kpi5.IntegerAtr;
-		kpi.IntegerAtrListe=kpi5.IntegerAtrListe;
-		kpi.macd=kpi3.macd;
-		kpi.macds=kpi3.macds;
-		kpi.macdsTriggert=kpi3.macdsTriggert;
-		kpi.macdTriggert=kpi3.macdTriggert;
-		kpi.prozent=kpi3.prozent;
-		kpi.Prozent=kpi3.Prozent;
-		kpi.parabolicSAR=kpi2.parabolicSAR;
-		kpi.parabolicSARs=kpi2.parabolicSARs;
-		kpi.rsi=kpi4.rsi;
-		kpi.rsiListe=kpi4.rsiListe;
-		kpi.trend=kpi2.trend;
-		kpi.trendWechsel=kpi2.trendWechsel;
-	//	kpi.superTrend=kpi6.superTrend;
-	//	kpi.superTrends=kpi6.superTrends;
 		return kpi;
 		
 	} 
@@ -381,7 +380,7 @@ if(count>0)
 
 	{
 
-			Kpi kpi=getKpi(instrument,periods,granularity,jcr);
+			Kpi kpi=getBasisKpi(instrument,periods,granularity,jcr);
 			double betrag=0;
 			double prev=0;
 			double wert=0;
@@ -409,7 +408,7 @@ if(count>0)
 	
 
 	public Kpi getRSI(String instrument, int periods, String granularity,JsonCandlesRoot jcr) {
-		Kpi kpi=getKpi(instrument,periods,granularity,jcr);
+		Kpi kpi=getBasisKpi(instrument,periods,granularity,jcr);
 
 		double gain=0;
 		double loss=0;
@@ -445,7 +444,7 @@ if(count>0)
 	}
 	public Kpi getSMA(String instrument, int periods, String granularity,JsonCandlesRoot jcr)
 	{
-		Kpi kpi=getKpi(instrument,periods,granularity,jcr);
+		Kpi kpi=getBasisKpi(instrument,periods,granularity,jcr);
 	
 		for(int i=0;i< kpi.root.candles.size();i++)
 		{
