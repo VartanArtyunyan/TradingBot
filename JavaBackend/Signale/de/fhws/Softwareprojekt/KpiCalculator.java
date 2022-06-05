@@ -1,27 +1,63 @@
 package de.fhws.Softwareprojekt;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-
 import java.time.LocalDate;
-
-
 
 import API.ApiConnection;
 //import sun.security.mscapi.CKeyStore.ROOT;
 
-public class Ema {
+public class KpiCalculator {
 	
 	private ApiConnection connection;
 	
-	public Ema(ApiConnection connection) {
+	public KpiCalculator(ApiConnection connection) {
 
 		this.connection = connection;
 	}
-
+	public Kpi getAll(String instrument, int emaperiods,int periods, String granularity, double startBF, double inkrementBF, double maxBF,int x, int y, int z)
+	{
+		// Candles von Oanda-Api holen und in Json-Object mappen
+		JsonCandlesRoot jcr = extracted(instrument, granularity);
+		
+		// Einfache Kennzahlen und EMA (Exponential Moving Average) berechnen
+		Kpi kpi=getBasisKpi(instrument, emaperiods, granularity,jcr);
+		
+		// Parabolic SAR berechnen
+		Kpi kpiTemp=getParabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
+		kpi.parabolicSAR=kpiTemp.parabolicSAR;
+		kpi.parabolicSARs=kpiTemp.parabolicSARs;
+		kpi.trend=kpiTemp.trend;
+		kpi.trendWechsel=kpiTemp.trendWechsel;
+		
+		// MACD (Moving Average Convergence/Divergence) berechnen 
+		kpiTemp=getMACD(instrument, granularity, x, y, z,jcr);
+		kpi.macd=kpiTemp.macd;
+		kpi.macds=kpiTemp.macds;
+		kpi.macdsTriggert=kpiTemp.macdsTriggert;
+		kpi.macdTriggert=kpiTemp.macdTriggert;
+		kpi.prozent=kpiTemp.prozent;
+		kpi.Prozent=kpiTemp.Prozent;
+	
+		// Relative Strength Index (RSI) berechnen mit exponentiell gleitenden Durchschnitt
+		kpiTemp=getRSI(instrument, periods, granularity,jcr);
+		kpi.rsi=kpiTemp.rsi;
+		kpi.rsiListe=kpiTemp.rsiListe;
+		
+		// Average True Range (ATR) berechnen
+		kpiTemp=getATR(instrument, periods, granularity,jcr);
+		kpi.atr=kpiTemp.atr;
+		kpi.atrListe=kpiTemp.atrListe;
+		kpi.IntegerAtr=kpiTemp.IntegerAtr;
+		kpi.IntegerAtrListe=kpiTemp.IntegerAtrListe;
+		
+		// Simple Moving Average (SMA) berechnen
+		kpiTemp=getSMA(instrument, periods, granularity, jcr);
+		kpi.sma=kpiTemp.sma;
+		kpi.smaList=kpiTemp.smaList;
+		
+		return kpi;
+		
+	} 
 	public Kpi getBasisKpi(String instrument, int periods, String granularity, JsonCandlesRoot jcr) {
 
 		// HttpURLConnection connection;
@@ -52,9 +88,9 @@ public class Ema {
 					kpi.ema = candle.mid.c * sf + (1 - sf) * kpi.ema;
 					kpi.lastPrices.add(candle.mid.c);
 					kpi.emas.add(kpi.ema);
-					if (count == kpi.root.candles.size() - 1) {
+					/*if (count == kpi.root.candles.size() - 1) {
 						kpi.vorema = candle.mid.c * sf + (1 - sf) * kpi.ema;
-					}
+					}*/
 					// Nur für die angeforderten Perioden die weiteren Kennzahlen ermitteln
 					if (count > kpi.root.candles.size() - periods) {
 						sum2 += candle.mid.c;
@@ -94,9 +130,9 @@ public class Ema {
 			double extrempunkt = 0;
 			double extrempunktAlt = 0;
 			double faktor=0;
-			double hAlt = 0;
+		/*	double hAlt = 0;
 			double lAlt = 0;
-			double startBFAlt = 0;
+			double startBFAlt = 0;*/
 			int count = 0;
 			kpi.trend = "bull";
 			String vortrend = "bull";
@@ -126,66 +162,24 @@ public class Ema {
 	 if((kpi.trend.compareTo(vortrend)==0)&&(kpi.trend.compareTo("bull")==0))
 	 {
 	startBF=(extrempunkt<=extrempunktAlt)?startBF:(startBF!=maxBF)?startBF+inkrementBF:startBF;
+	kpi.trendWechsel=false;
 	 }
 	else if((kpi.trend.compareTo(vortrend)==0)&&(kpi.trend.compareTo("bear")==0))
+	{
 		startBF=(extrempunkt>=extrempunktAlt)?startBF:(startBF!=maxBF)?startBF+inkrementBF:startBF;
-	else startBF=startBFAf;
-	 //
- 
+		kpi.trendWechsel=false;
+	}
+	else
+	{
+		kpi.trendWechsel=true;
+		startBF=startBFAf;
+	}
 				}
 				count++;
 				vortrend=kpi.trend;
 				extrempunktAlt=extrempunkt;
 			}
-					/*if (kpi.trend.compareTo("bull") == 0) {
-						extrempunkt = candle.mid.h > extrempunkt ? candle.mid.h : extrempunkt;
-						if ((extrempunkt >extrempunktAlt) && (startBF != maxBF)&&(vortrend.compareTo(kpi.trend)==0) ){
-							startBF += inkrementBF;
-						}
-					}
-					if(kpi.trend.compareTo("bear")==0)
-					{
-						extrempunkt = candle.mid.l < extrempunkt ? candle.mid.l : extrempunkt;
-						if ((extrempunkt <extrempunktAlt) && (startBF != maxBF)&&(vortrend.compareTo(kpi.trend)==0)) {
-							startBF += inkrementBF;
-						}
-					}
-				}
-if(count>0)
-{
-	if(((kpi.parabolicSAR+(extrempunktAlt - kpi.parabolicSAR)*startBFAlt)>candle.mid.l&&kpi.trend.compareTo("bull")==0)||(((kpi.parabolicSAR+(extrempunktAlt - kpi.parabolicSAR)*startBFAlt)<candle.mid.h)&&kpi.trend.compareTo("bear")==0))
-		kpi.parabolicSAR=extrempunktAlt;
-	else
-		kpi.parabolicSAR+=	 (extrempunktAlt - kpi.parabolicSAR) * startBFAlt;
-	
-}
-				kpi.parabolicSARs.add(kpi.parabolicSAR);
-				extrempunktAlt = extrempunkt;
-				startBFAlt = startBF;
-				vortrend = kpi.trend;
-				// Trendwechsel checken
-				if (kpi.parabolicSAR <candle.mid.h) {
-					if (kpi.trend.compareTo("bull") != 0) {
-						startBF = startBFAf;
-					}
-					kpi.trend = "bull";
-					
-				}
-				else
-				{	
-				 if(candle.mid.l<kpi.parabolicSAR) {
-					if (kpi.trend.compareTo("bear") != 0) {
-						startBF = startBFAf;
-					}
-					kpi.trend = "bear";
-					
-				}
-				}
-			//	hAlt=candle.mid.h;
-			//	lAlt=candle.mid.l;
-				count++;
-				
-			}*/
+		
 				
 			return kpi;
 				
@@ -198,23 +192,7 @@ if(count>0)
 	double ergebnis = 0;
 	double maxDifferenz=0;
 	double minDifferenz=0;
- //   double Vorergebnis=0;
-/*    for(int i=md.periods;i<md.emas.size()+1;i++)
-    {
-    	if(i==md.periods)md.macds.add(kpi1.emas.get(i-1)-kpi2.emas.get(i-1));
-    	
-    	ergebnis=0;
-    	if(i<md.emas.size())
-    	md.macds.add(kpi1.emas.get(i)-kpi2.emas.get(i));
-    	for(int b=i-md.periods;b<i;b++)
-    	{
-    		ergebnis+=kpi1.emas.get(b)-kpi2.emas.get(b);
-    	}
-    	ergebnis=ergebnis/md.periods;
-    	
-    	md.macdsTriggert.add(ergebnis);
-    	
-    }*/
+
 	for(int i=0;i<md.emas.size();i++)
 	{
 		md.macd=(kpi1.emas.get(i)-kpi2.emas.get(i));
@@ -244,18 +222,6 @@ if(count>0)
 		
 			ergebnis=0;
 	}
- 
-   // md.macd=md.macds.get(md.macds.size()-1);
-   // md.macdTriggert=md.macdsTriggert.get(md.macdsTriggert.size()-1);
-		/*for(int i= md.emas.size()-md.periods-1;i<md.emas.size();i++)
-		{
-		ergebnis=(i>=(md.emas.size()-md.periods))?ergebnis+(kpi1.emas.get(i)-kpi2.emas.get(i)):ergebnis;
-		Vorergebnis=(i<md.emas.size()-1)?Vorergebnis+(kpi1.emas.get(i)-kpi2.emas.get(i)):Vorergebnis;
-	}
-		md.Vormacd=kpi1.vorema-kpi2.vorema;
-		md.macd=kpi1.ema-kpi2.ema;
-		md.VormacdTriggert=
-		md.macdTriggert=ergebnis/md.periods;*/
 		return md;
 	}
 
@@ -332,49 +298,6 @@ if(count>0)
 	}
 
 	
-	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity, double startBF, double inkrementBF, double maxBF,int x, int y, int z)
-	{
-		
-		JsonCandlesRoot jcr = extracted(instrument, granularity);
-		
-		Kpi kpi=getBasisKpi(instrument, emaperiods, granularity,jcr);
-		
-		Kpi kpiTemp=getParabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
-		kpi.parabolicSAR=kpiTemp.parabolicSAR;
-		kpi.parabolicSARs=kpiTemp.parabolicSARs;
-		kpi.trend=kpiTemp.trend;
-		kpi.trendWechsel=kpiTemp.trendWechsel;
-		
-		kpiTemp=getMACD(instrument, granularity, x, y, z,jcr);
-		kpi.macd=kpiTemp.macd;
-		kpi.macds=kpiTemp.macds;
-		kpi.macdsTriggert=kpiTemp.macdsTriggert;
-		kpi.macdTriggert=kpiTemp.macdTriggert;
-		kpi.prozent=kpiTemp.prozent;
-		kpi.Prozent=kpiTemp.Prozent;
-	
-		kpiTemp=getRSI(instrument, periods, granularity,jcr);
-		kpi.rsi=kpiTemp.rsi;
-		kpi.rsiListe=kpiTemp.rsiListe;
-		
-		kpiTemp=getATR(instrument, periods, granularity,jcr);
-		kpi.atr=kpiTemp.atr;
-		kpi.atrListe=kpiTemp.atrListe;
-		kpi.IntegerAtr=kpiTemp.IntegerAtr;
-		kpi.IntegerAtrListe=kpiTemp.IntegerAtrListe;
-		
-		kpiTemp=getSMA(instrument, periods, granularity, jcr);
-		kpi.sma=kpiTemp.sma;
-		kpi.smaList=kpiTemp.smaList;
-		
-		// kpiTemp=getSupertrend(instrument, periods, granularity, jcr, multiplicatorUpper, multiplicatorLower);
-		// kpi.superTrend=kpiTemp.superTrend;
-		// kpi.superTrends=kpiTemp.superTrends;
-		
-		return kpi;
-		
-	} 
-
 	
 	public Kpi getATR(String instrument,int periods,String granularity, JsonCandlesRoot jcr)
 
@@ -404,9 +327,8 @@ if(count>0)
 			}
 			return kpi;
 		}
-
 	
-
+	
 	public Kpi getRSI(String instrument, int periods, String granularity,JsonCandlesRoot jcr) {
 		Kpi kpi=getBasisKpi(instrument,periods,granularity,jcr);
 
@@ -464,64 +386,6 @@ if(count>0)
 		}
 		return kpi;
 	}
-	/*public Kpi getSupertrend(String instrument, int periods, String granularity,JsonCandlesRoot jcr,int multiplicatorUpper,int multiplicatorLower)
-	{
-		Kpi kpi=getATR(instrument, periods, granularity, jcr);
-		double upperband=0;
-		double upperbandPrev=0;
-		double lowerband=0;
-		double lowerbandPrev=0;
-		
-		int count=0;
-		for(int i=1;i<kpi.root.candles.size();i++)
-		{
-			if (i>periods)
-			{
-		
-			//Wenn upperband kleiner als upperbandPrev oder vorherige Schlusskurz größer ist als upperbandPrev dann nehme upperband
-				//Wenn lowerband größer ist als lowerbandPrev pder vorherige Schlusskurs kleiner als lowerbandPrev ist dann nehme lowerband
-				upperband=((kpi.root.candles.get(i).mid.h+kpi.root.candles.get(i).mid.l)/2)+(multiplicatorUpper*kpi.atrListe.get(count));
-				lowerband=((kpi.root.candles.get(i).mid.h+kpi.root.candles.get(i).mid.l)/2)-(multiplicatorLower*kpi.atrListe.get(count));
-				if(i==periods+1)
-					{
-					upperbandPrev=upperband;
-					lowerbandPrev=lowerband;
-					kpi.superTrend=upperbandPrev;
-					}
-				
-					
-				upperband=upperband<upperbandPrev?upperband:upperbandPrev;
-				if((upperband==upperbandPrev)&&(i!=periods+1))
-				upperband=kpi.root.candles.get(i-1).mid.c>upperbandPrev?upperband:upperbandPrev;
-				
-				lowerband=lowerband>lowerbandPrev?lowerband:lowerbandPrev;
-				if((lowerband==lowerbandPrev)&&(i!=periods+1))
-				lowerband=kpi.root.candles.get(i-1).mid.c<lowerbandPrev?lowerband:lowerbandPrev;
-				
-				count++;
-			
-			if(kpi.superTrend==upperbandPrev)
-			{
-		if(kpi.root.candles.get(i).mid.c<upperband)
-			kpi.superTrend=upperband;
-		else if(kpi.root.candles.get(i).mid.c>upperband)
-			kpi.superTrend=lowerband;
-			}
-			else if(kpi.superTrend==lowerbandPrev)
-			{
-				if(kpi.root.candles.get(i).mid.c>lowerband)
-					kpi.superTrend=lowerband;
-				else if(kpi.root.candles.get(i).mid.c<lowerband)
-					kpi.superTrend=upperband;
-			}
-			
-			lowerbandPrev=lowerband;
-			upperbandPrev=upperband;
-			kpi.superTrends.add(kpi.superTrend);
-		}
-		}
-		return kpi;
-	} */
 
 }
 

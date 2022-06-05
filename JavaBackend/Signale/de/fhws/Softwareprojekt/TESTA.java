@@ -25,7 +25,7 @@ public static void main(String[] args) {
 		}
 		;*/
 	//	kombiniereMACDEMAPSAR(connection,"USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
-		Ema e = new Ema(connection);
+		KpiCalculator e = new KpiCalculator(connection);
 		int zaehler=0;
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
 
@@ -35,7 +35,7 @@ public static void main(String[] args) {
 			if(instrument.type.compareTo("CURRENCY")==0)
 			{
 				EmaListe es=new EmaListe();
-				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
+				Kpi kpi=e.getAll(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
 			//String c="";
 	//	if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
 			{
@@ -46,14 +46,14 @@ public static void main(String[] args) {
 				{
 					
 					
-				//System.out.println(instrument.displayPrecision);
-				//	System.out.println(kpi.lastPrice);
-					System.out.println(kpi.instrument);
-					//System.out.println(kpi.getLimitPrice());
-					//System.out.println(kpi.getLongStopLoss());
-					//System.out.println(kpi.getLongTakeProfit());
-					//System.out.println(kpi.getShortStopLoss());
-					//System.out.println(kpi.getShortTakeProfit());
+				System.out.println(instrument.displayPrecision);
+				System.out.println(kpi.lastPrice);
+					System.out.println(kpi.parabolicSAR);
+					System.out.println(kpi.getLimitPrice());
+					System.out.println(kpi.getLongStopLoss());
+					System.out.println(kpi.getLongTakeProfit());
+					System.out.println(kpi.getShortStopLoss());
+					System.out.println(kpi.getShortTakeProfit());
 					}
 				//	System.out.println(kpi.parabolicSAR+" " +kpi.lastPrice+es.kombiniereMACDEMAPSAR (kpi));
 			//	System.out.println(	kpi.runden(kpi.parabolicSAR,3)+1/Math.pow(10, 3));
