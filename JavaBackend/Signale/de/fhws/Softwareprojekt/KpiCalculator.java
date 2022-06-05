@@ -14,19 +14,22 @@ public class KpiCalculator {
 
 		this.connection = connection;
 	}
-	public Kpi aufrufAlles(String instrument, int emaperiods,int periods, String granularity, double startBF, double inkrementBF, double maxBF,int x, int y, int z)
+	public Kpi getAll(String instrument, int emaperiods,int periods, String granularity, double startBF, double inkrementBF, double maxBF,int x, int y, int z)
 	{
-		
+		// Candles von Oanda-Api holen und in Json-Object mappen
 		JsonCandlesRoot jcr = extracted(instrument, granularity);
 		
+		// Einfache Kennzahlen und EMA (Exponential Moving Average) berechnen
 		Kpi kpi=getBasisKpi(instrument, emaperiods, granularity,jcr);
 		
+		// Parabolic SAR berechnen
 		Kpi kpiTemp=getParabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
 		kpi.parabolicSAR=kpiTemp.parabolicSAR;
 		kpi.parabolicSARs=kpiTemp.parabolicSARs;
 		kpi.trend=kpiTemp.trend;
 		kpi.trendWechsel=kpiTemp.trendWechsel;
 		
+		// MACD (Moving Average Convergence/Divergence) berechnen 
 		kpiTemp=getMACD(instrument, granularity, x, y, z,jcr);
 		kpi.macd=kpiTemp.macd;
 		kpi.macds=kpiTemp.macds;
@@ -35,23 +38,22 @@ public class KpiCalculator {
 		kpi.prozent=kpiTemp.prozent;
 		kpi.Prozent=kpiTemp.Prozent;
 	
+		// Relative Strength Index (RSI) berechnen mit exponentiell gleitenden Durchschnitt
 		kpiTemp=getRSI(instrument, periods, granularity,jcr);
 		kpi.rsi=kpiTemp.rsi;
 		kpi.rsiListe=kpiTemp.rsiListe;
 		
+		// Average True Range (ATR) berechnen
 		kpiTemp=getATR(instrument, periods, granularity,jcr);
 		kpi.atr=kpiTemp.atr;
 		kpi.atrListe=kpiTemp.atrListe;
 		kpi.IntegerAtr=kpiTemp.IntegerAtr;
 		kpi.IntegerAtrListe=kpiTemp.IntegerAtrListe;
 		
+		// Simple Moving Average (SMA) berechnen
 		kpiTemp=getSMA(instrument, periods, granularity, jcr);
 		kpi.sma=kpiTemp.sma;
 		kpi.smaList=kpiTemp.smaList;
-		
-		// kpiTemp=getSupertrend(instrument, periods, granularity, jcr, multiplicatorUpper, multiplicatorLower);
-		// kpi.superTrend=kpiTemp.superTrend;
-		// kpi.superTrends=kpiTemp.superTrends;
 		
 		return kpi;
 		

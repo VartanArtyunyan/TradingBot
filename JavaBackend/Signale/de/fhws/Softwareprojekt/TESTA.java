@@ -35,7 +35,7 @@ public static void main(String[] args) {
 			if(instrument.type.compareTo("CURRENCY")==0)
 			{
 				EmaListe es=new EmaListe();
-				Kpi kpi=e.aufrufAlles(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
+				Kpi kpi=e.getAll(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
 			//String c="";
 	//	if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
 			{

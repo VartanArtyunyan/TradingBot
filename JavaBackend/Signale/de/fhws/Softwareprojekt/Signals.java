@@ -1,19 +1,9 @@
 package de.fhws.Softwareprojekt;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeSet;
 
 import API.ApiConnection;
-import API.Connection;
 import LogFileWriter.LogFileWriter;
 import positionen.Verwaltung;
 
@@ -43,19 +33,15 @@ public class Signals {
 			if (i.type.compareTo("CURRENCY") == 0)
 				instrumentsList.add(i);
 		}
-
 	}
 
 	public void runSignals(String granularity) {
 
 		for (JsonInstrumentsInstrument instrument : instrumentsList) {
-			// Kpi kpi=e.getKpi(instrument.name, 14, "M15");
-			// kpi=e.getATR(instrument.name,14 , "M15");
-			
-			Kpi kpi = e.aufrufAlles(instrument.name, 200, 14, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
+			Kpi kpi = e.getAll(instrument.name, 200, 14, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
 			// nach kauf für 6 x granularität insturment sperren
 			int r = kombiniereMACDEMAPSAR(kpi);
-			
+
 			if (r != 0) {
 				System.out.println(r);
 				kpi.longShort = (r == 1) ? true : false;
@@ -63,295 +49,267 @@ public class Signals {
 
 				verwaltung.pushSignal(kpi);
 
-			//	verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(), kpi.getShortTakeProfit(), kpi.getShortStopLoss(),kpi.lastPrice);
-			//	verwaltung.addManualPosition(instrument.name);
+				// verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(),
+				// kpi.getShortTakeProfit(), kpi.getShortStopLoss(),kpi.lastPrice);
+				// verwaltung.addManualPosition(instrument.name);
 
-			//	signale.add(kpi);
+				// signale.add(kpi);
 
+			} else {
+				int s = kombiniereMACD_PSAR(kpi);
+				System.out.println(s);
+				kpi.signalStrenght = 0.5;
+				kpi.longShort = (s == 1) ? true : false;
+				ausgabe("alles", kpi, instrument);
+
+				verwaltung.pushSignal(kpi);
 			}
-			else {
-			int s = kombiniereMACD_PSAR(kpi);
-			 System.out.println(s);
-			 kpi.signalStrenght = 0.5;
-			 kpi.longShort = (s == 1) ? true : false;
-			ausgabe("alles", kpi, instrument);
-
-			verwaltung.pushSignal(kpi);
-			}
-
 		}
 
-		/*System.out.println("\n\nSIGNALE\n");
-		for (Kpi s : signale) {
-			System.out.println(s.instrument);
-		}
-		System.out.println("\nSIGNALE-ENDE\n\n");*/
-
+		/*
+		 * System.out.println("\n\nSIGNALE\n"); for (Kpi s : signale) {
+		 * System.out.println(s.instrument); } System.out.println("\nSIGNALE-ENDE\n\n");
+		 */
 	}
 
-	/*public void endPeriod() {
-		//Hier an dieser Stelle soll das Hash Set gemäß der compareTo Methode sortiert werden
-			//	Collections.sort(signale,  Signals.class);
-				TreeSet<Kpi> sortedSignals = new TreeSet<>(signale);
-				
-				for (Kpi s : sortedSignals) {
-					if (s.longShort) {
-						System.out.println("long");
-					//	verwaltung.placeLongOrder(s.instrument,s.lastPrice+0.001, s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
-						if((s.getLimitPrice()<s.getLongTakeProfit())&&(s.getLimitPrice()>s.getShortStopLoss()))
-						{
-						verwaltung.placeLongOrder(s.instrument,s.getLimitPrice(), s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
-
-
-						logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice,  s.getLongTakeProfit(),
-								s.getLongStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
-						}
-						else
-		            	{
-							System.out.println("InvalidValues: ");
-							if(s.getLimitPrice()>=s.getLongTakeProfit())
-		                		System.out.println("getLimitPrice>=getLongTakeProfit()"  +" :" +s.getLimitPrice()+">="+s.getLongTakeProfit() );
-		                		else if(s.getLimitPrice()<=s.getLongStopLoss())
-		                			System.out.println("getLimitPrice<=getLongStopLoss() :"   +s.getLimitPrice()+">="+s.getLongStopLoss() );
-		            	}
-						
-					} else if (!s.longShort) {
-						System.out.println("short");
-				//		verwaltung.placeShortOrder(s.instrument,s.lastPrice-0.001, s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
-					//	logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(), s.getShortTakeProfit());
-		                    if((s.getLimitPrice()>s.getShortTakeProfit())&&(s.getLimitPrice()<s.getShortStopLoss()))
-		                    {
-						verwaltung.placeShortOrder(s.instrument,s.getLimitPrice(), s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
-						logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02), s.lastPrice, s.getShortTakeProfit(),
-
-								s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
-					
-		                    }
-		                	
-		                	else
-		                	{
-		                		System.out.println("InvalidValues: ");
-		                		if(s.getLimitPrice()<=s.getShortTakeProfit())
-		                		System.out.println("getLimitPrice<=getShortTakeProfit()"  +" :" +s.getLimitPrice()+"<="+s.getShortTakeProfit() );
-		                		else if(s.getLimitPrice()>=s.getShortStopLoss())
-		                			System.out.println("getLimitPrice>=getShortStopLoss() :"   +s.getLimitPrice()+">="+s.getShortStopLoss() );
-		                	}
-					}
-				}
-
-				signale = new HashSet<>();
-
-			} */
+	/*
+	 * public void endPeriod() { //Hier an dieser Stelle soll das Hash Set gemäß der
+	 * compareTo Methode sortiert werden // Collections.sort(signale,
+	 * Signals.class); TreeSet<Kpi> sortedSignals = new TreeSet<>(signale);
+	 * 
+	 * for (Kpi s : sortedSignals) { if (s.longShort) { System.out.println("long");
+	 * // verwaltung.placeLongOrder(s.instrument,s.lastPrice+0.001,
+	 * s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
+	 * if((s.getLimitPrice()<s.getLongTakeProfit())&&(s.getLimitPrice()>s.
+	 * getShortStopLoss())) {
+	 * verwaltung.placeLongOrder(s.instrument,s.getLimitPrice(),
+	 * s.getLongTakeProfit(), s.getLongStopLoss(), s.lastPrice);
+	 * 
+	 * 
+	 * logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02),
+	 * s.lastPrice, s.getLongTakeProfit(), s.getLongStopLoss(), s.macd,
+	 * s.macdTriggert, s.parabolicSAR, s.ema); } else {
+	 * System.out.println("InvalidValues: ");
+	 * if(s.getLimitPrice()>=s.getLongTakeProfit())
+	 * System.out.println("getLimitPrice>=getLongTakeProfit()" +" :"
+	 * +s.getLimitPrice()+">="+s.getLongTakeProfit() ); else
+	 * if(s.getLimitPrice()<=s.getLongStopLoss())
+	 * System.out.println("getLimitPrice<=getLongStopLoss() :"
+	 * +s.getLimitPrice()+">="+s.getLongStopLoss() ); }
+	 * 
+	 * } else if (!s.longShort) { System.out.println("short"); //
+	 * verwaltung.placeShortOrder(s.instrument,s.lastPrice-0.001,
+	 * s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice); //
+	 * logFileWriter.log(s.instrument, s.lastTime, s.lastPrice, s.getKaufpreis(),
+	 * s.getShortTakeProfit());
+	 * if((s.getLimitPrice()>s.getShortTakeProfit())&&(s.getLimitPrice()<s.
+	 * getShortStopLoss())) {
+	 * verwaltung.placeShortOrder(s.instrument,s.getLimitPrice(),
+	 * s.getShortTakeProfit(), s.getShortStopLoss(), s.lastPrice);
+	 * logFileWriter.log(s.instrument, s.lastTime,(connection.getBalance()*0.02),
+	 * s.lastPrice, s.getShortTakeProfit(),
+	 * 
+	 * s.getShortStopLoss(), s.macd, s.macdTriggert, s.parabolicSAR, s.ema);
+	 * 
+	 * }
+	 * 
+	 * else { System.out.println("InvalidValues: ");
+	 * if(s.getLimitPrice()<=s.getShortTakeProfit())
+	 * System.out.println("getLimitPrice<=getShortTakeProfit()" +" :"
+	 * +s.getLimitPrice()+"<="+s.getShortTakeProfit() ); else
+	 * if(s.getLimitPrice()>=s.getShortStopLoss())
+	 * System.out.println("getLimitPrice>=getShortStopLoss() :"
+	 * +s.getLimitPrice()+">="+s.getShortStopLoss() ); } } }
+	 * 
+	 * signale = new HashSet<>();
+	 * 
+	 * }
+	 */
 
 	public static void ausgabe(String emaName, Kpi kpi, JsonInstrumentsInstrument instrument) {
 
 		System.out.println(kpi.instrument + " " + instrument.displayName + " " + instrument.type + " " + emaName + ":  "
 				+ kpi.ema + " MCAD: " + kpi.macd + " MACDTriggert: " + kpi.macdTriggert + " ParaboliocSAR: "
-				+ kpi.parabolicSAR + " RSI: " + kpi.rsi + " ATR: " + kpi.atr /*+ " Supertrend: " + kpi.superTrend*/
+				+ kpi.parabolicSAR + " RSI: " + kpi.rsi + " ATR: " + kpi.atr /* + " Supertrend: " + kpi.superTrend */
 				+ " SMA: " + kpi.sma + " (" + kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: "
 				+ kpi.avg + "  " + kpi.firstTime + " - " + kpi.lastTime + ")");
 	}
-	
-	
-	
+
 	public static int kombiniereMACD_PSAR(Kpi werte) {
 		if (pruefePerioden(werte, "MACD", 6) == -1) {
-			if(pruefePSAR(werte)==1) {
+			if (pruefePSAR(werte) == 1) {
 				System.out.println("MACD_PSAR Long");
 				return 1;
 			}
-		}
-		else if (pruefePerioden(werte, "MACD", 6) == 1) {
-			if (pruefePSAR(werte)==-1) {
+		} else if (pruefePerioden(werte, "MACD", 6) == 1) {
+			if (pruefePSAR(werte) == -1) {
 				System.out.println("MACD_PSAR Short");
 				return -1;
 			}
 		}
 		return 0;
 	}
-	
-	public static int kombiniereMACDEMAPSAR(Kpi werte) {
-		//public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
-			// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte: 12,26,9)
 
-			int rueckgabewert = 0;
-			//Connection con = new Connection();
-			//ApiConnection connection = new ApiConnection(con);
-			//Ema ema= new Ema(connection);
-			
-			//Kpi werte = ema.aufrufAlles(instrument, emaperiods, periods,  granularity, startBF,  inkrementBF,  maxBF, x,  y,  z, multiplicatorUpper, multiplicatorLower);
-			
-			//System.out.println(pruefeATR(werte));
-			//System.out.println("Letzter Preis " +werte.lastPrice);
-			//System.out.println("SAR " +werte.parabolicSAR);
-			//System.out.println("ema " +werte.ema);
-			//System.out.println("macd " +werte.macd);
-			//System.out.println("macd verhältnis " + (werte.macdTriggert-werte.macd));
-			//System.out.println("macd trigger " +werte.macdTriggert);
-			//System.out.println("macd methode " +pruefeMACD(werte));
-			//System.out.println("ema200 methode " +pruefeEMA200(werte));
-			//System.out.println("psar methode " +pruefePSAR(werte));
-			//System.out.println("vorperioden methode " +pruefeVorperioden(werte, "RSI"));
-			//System.out.println("rsi methode " +pruefeRSI(werte));
-			
-			
-			//ToDo: Doppelten Code vermeiden -> Funktionen zusammenlegen
-			//		Ermitteln welche Rückgabewerte zu einer Kaufentscheidung führt
-			//		Kaufposition aufrufen
-			//		MACD Periodencheck mit aktuellem MACD kombinieren?
-			//		Verfügbarkeit prüfen -> Wird der
-			//		pruefeVorperioden mit aktuellem MACD
-			
-			
-			
-			try {
-				if(pruefeEMA200(werte) == 1) {
-					System.out.println("1.versuch");												//1. liegt Trend (= 200 EMA) über Kurs?
-					if(pruefePerioden(werte, "MACD", 5) == -1) {		//2. liegt MACD-Linie in den letzten 5 Perioden unter Signallinie?
-								if(pruefePSAR(werte) == 1) {		//5. ist der PSAR-Wert unter dem Kurs?
-									//long							//Long-Position
-									//return werte;	
-									System.out.println("long");
-									rueckgabewert = 1;
-								}
-							}
-						}
-					
-				
-				else if (pruefeEMA200(werte) == -1){System.out.println("2.versuch");				//1. liegt Trend unter Kurs?
-					if(pruefePerioden(werte, "MACD", 5) == 1) {		//2. liegt MACD-Linie in den letzten 5 Perioden über Signallinie?
-								if(pruefePSAR(werte) == -1) {		//5. ist der PSAR-Wert über dem Kurs?
-									//short							//Short-Position 
-									//Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze, double untergrenze);
-									//Verwaltung.placeOrder(instrument, double wer, double kurs, double obergrenze, double untergrenze);
-									//return werte;
-									System.out.println("short");
-									rueckgabewert = -1;
-								}
-							}
-						}
-					
-				
-				//wenn 0?
-				
-				
-					
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-			return rueckgabewert;
-			
-		}
-	/*// alter Code
-	public static int kombiniereMACDEMAPSAR(ApiConnection connection, Kpi werte) {
-		
-	
+	public static int kombiniereMACDEMAPSAR(Kpi werte) {
 		// public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) {
 		// x = kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte:
 		// 12,26,9)
+
+		int rueckgabewert = 0;
 		// Connection con = new Connection();
 		// ApiConnection connection = new ApiConnection(con);
-		boolean kaufentscheidung = false;
-		JsonCandlesRoot h = werte.root;
+		// Ema ema= new Ema(connection);
 
-		// System.out.println(werte.ema);
-		// System.out.println(werte.macd);
-		// System.out.println(werte.macdTrigger);
-		// System.out.println(pruefeMACD(werte));
-		// System.out.println(pruefeEMA200(werte));
-		// System.out.println(pruefePSAR(werte));
+		// Kpi werte = ema.aufrufAlles(instrument, emaperiods, periods, granularity,
+		// startBF, inkrementBF, maxBF, x, y, z, multiplicatorUpper,
+		// multiplicatorLower);
 
-		// ToDo: Abgleichen der Werte von EMA200, MACD und PSAR
+		// System.out.println(pruefeATR(werte));
+		// System.out.println("Letzter Preis " +werte.lastPrice);
+		// System.out.println("SAR " +werte.parabolicSAR);
+		// System.out.println("ema " +werte.ema);
+		// System.out.println("macd " +werte.macd);
+		// System.out.println("macd verhältnis " + (werte.macdTriggert-werte.macd));
+		// System.out.println("macd trigger " +werte.macdTriggert);
+		// System.out.println("macd methode " +pruefeMACD(werte));
+		// System.out.println("ema200 methode " +pruefeEMA200(werte));
+		// System.out.println("psar methode " +pruefePSAR(werte));
+		// System.out.println("vorperioden methode " +pruefeVorperioden(werte, "RSI"));
+		// System.out.println("rsi methode " +pruefeRSI(werte));
+
+		// ToDo: Doppelten Code vermeiden -> Funktionen zusammenlegen
 		// Ermitteln welche Rückgabewerte zu einer Kaufentscheidung führt
 		// Kaufposition aufrufen
-		int rueckgabewert = 0;
+		// MACD Periodencheck mit aktuellem MACD kombinieren?
+		// Verfügbarkeit prüfen -> Wird der
+		// pruefeVorperioden mit aktuellem MACD
 
-		if (pruefeEMA200(werte) == 1) { // 1. liegt Trend (= 200 EMA) über Kurs?
-			if (pruefeVorperioden(werte, "MACD") == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter
-															// Signallinie?
-				if ((werte.macd - werte.macdTriggert) >= 0) {
-					if(werte.prozent>0.0)
-					{
-					// 3. ist der aktuelle MACD auf oder über 0?
-					// for (int i = 0; i < 2; i++) { //4. Schleifendurchlauf für nächste Bedingung
+		try {
+			if (pruefeEMA200(werte) == 1) {
+				System.out.println("1.versuch"); // 1. liegt Trend (= 200 EMA) über Kurs?
+				if (pruefePerioden(werte, "MACD", 5) == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter
+																// Signallinie?
 					if (pruefePSAR(werte) == 1) { // 5. ist der PSAR-Wert unter dem Kurs?
 						// long //Long-Position
 						// return werte;
+						System.out.println("long");
 						rueckgabewert = 1;
 					}
-					// }
 				}
 			}
-			}
-		}else if (pruefeEMA200(werte) == -1) { // 1. liegt Trend unter Kurs?
-				if (pruefeVorperioden(werte, "MACD") == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über
-																// Signallinie?
-					if ((werte.macd - werte.macdTriggert) <= 0) { 
-						if(werte.prozent<-0.0)
-						{// 3. ist der aktuelle MACD auf oder unter 0?
-					
-						// 4. Schleifendurchlauf für nächste Bedingung
-						if (pruefePSAR(werte) == -1) {
-							// 5. ist der PSAR-Wert über dem Kurs?
-							rueckgabewert = -1;
-						}
 
+			else if (pruefeEMA200(werte) == -1) {
+				System.out.println("2.versuch"); // 1. liegt Trend unter Kurs?
+				if (pruefePerioden(werte, "MACD", 5) == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über
+																// Signallinie?
+					if (pruefePSAR(werte) == -1) { // 5. ist der PSAR-Wert über dem Kurs?
+						// short //Short-Position
+						// Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze,
+						// double untergrenze);
+						// Verwaltung.placeOrder(instrument, double wer, double kurs, double obergrenze,
+						// double untergrenze);
+						// return werte;
+						System.out.println("short");
+						rueckgabewert = -1;
 					}
 				}
-				}
 			}
-			return rueckgabewert;
-		}*/
-		// short //Short-Position
-		// Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze,
-		// double untergrenze);
-		// Verwaltung.placeOrder(instrument, double wer, double kurs, double obergrenze,
-		// double untergrenze);
-		// return werte;
 
-		/*
-		 * else if (pruefePSAR(werte) != -1 && i <1) {//5.1 PSAR ist unter dem Kurs ->
-		 * eine Periode warten Thread.sleep(berechneMillisekunden(werte.granularity));
-		 * i++; }
-		 */
+			// wenn 0?
 
-		// wenn 0?
-		/*
-		 * LocalTime jetzt=LocalTime.now(); int minuten=jetzt.getMinute(); //Die
-		 * Wertlinie 50 im RSI-Fenster muss von unten überquert werden. //Die Kursbalken
-		 * müssen sich oberhalb der SMA10-Linie entwickeln. // Die beiden Linien des
-		 * MACD-Indikators müssen sich unter der 0-Linie schneiden. if((
-		 * VergleicheWerte(werte)==1) &&(pruefeSMA(werte)==1)&&(pruefeRSI(werte)==1) )
-		 * //Long Trade bis Ende nächster Kerze sofort ausführen {
-		 * Thread.sleep(berechneMillisekunden(granularity)*2-(minuten%15)*60000);
-		 * //Verkaufen } //Die RSI 50-Linie wird von oben gekreuzt. //Die Kursbalken
-		 * entwickeln sich unter der SMA10-Linie. //Die MACD-Linien schneiden sich über
-		 * die 0-Linien. else if(( VergleicheWerte(werte)==1)
-		 * &&(pruefeSMA(werte)==1)&&(pruefeRSI(werte)==1)) { //ShortTrade bis Ende
-		 * nächster Kerze sofort ausführen
-		 * Thread.sleep(berechneMillisekunden(granularity)*2-minuten%15); //Verkaufen }
-		 * }
-		 */
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rueckgabewert;
+	}
 
-		// }
+	/*
+	 * // alter Code public static int kombiniereMACDEMAPSAR(ApiConnection
+	 * connection, Kpi werte) {
+	 * 
+	 * 
+	 * // public static Kpi kombiniereMACDEMAPSAR(ApiConnection connection) { // x =
+	 * kurze Periode , y = lange Periode , z = Signallänge ; (Standardwerte: //
+	 * 12,26,9) // Connection con = new Connection(); // ApiConnection connection =
+	 * new ApiConnection(con); boolean kaufentscheidung = false; JsonCandlesRoot h =
+	 * werte.root;
+	 * 
+	 * // System.out.println(werte.ema); // System.out.println(werte.macd); //
+	 * System.out.println(werte.macdTrigger); //
+	 * System.out.println(pruefeMACD(werte)); //
+	 * System.out.println(pruefeEMA200(werte)); //
+	 * System.out.println(pruefePSAR(werte));
+	 * 
+	 * // ToDo: Abgleichen der Werte von EMA200, MACD und PSAR // Ermitteln welche
+	 * Rückgabewerte zu einer Kaufentscheidung führt // Kaufposition aufrufen int
+	 * rueckgabewert = 0;
+	 * 
+	 * if (pruefeEMA200(werte) == 1) { // 1. liegt Trend (= 200 EMA) über Kurs? if
+	 * (pruefeVorperioden(werte, "MACD") == -1) { // 2. liegt MACD-Linie in den
+	 * letzten 5 Perioden unter // Signallinie? if ((werte.macd -
+	 * werte.macdTriggert) >= 0) { if(werte.prozent>0.0) { // 3. ist der aktuelle
+	 * MACD auf oder über 0? // for (int i = 0; i < 2; i++) { //4.
+	 * Schleifendurchlauf für nächste Bedingung if (pruefePSAR(werte) == 1) { // 5.
+	 * ist der PSAR-Wert unter dem Kurs? // long //Long-Position // return werte;
+	 * rueckgabewert = 1; } // } } } } }else if (pruefeEMA200(werte) == -1) { // 1.
+	 * liegt Trend unter Kurs? if (pruefeVorperioden(werte, "MACD") == 1) { // 2.
+	 * liegt MACD-Linie in den letzten 5 Perioden über // Signallinie? if
+	 * ((werte.macd - werte.macdTriggert) <= 0) { if(werte.prozent<-0.0) {// 3. ist
+	 * der aktuelle MACD auf oder unter 0?
+	 * 
+	 * // 4. Schleifendurchlauf für nächste Bedingung if (pruefePSAR(werte) == -1) {
+	 * // 5. ist der PSAR-Wert über dem Kurs? rueckgabewert = -1; }
+	 * 
+	 * } } } } return rueckgabewert; }
+	 */
+	// short //Short-Position
+	// Verwaltung.placeOrder(String i, double wert, double kurs, double obergrenze,
+	// double untergrenze);
+	// Verwaltung.placeOrder(instrument, double wer, double kurs, double obergrenze,
+	// double untergrenze);
+	// return werte;
 
-		/*
-		 * public static int pruefeMACD(Kpi werte) { // Optionale Prüfung, ob MACD-Trend
-		 * in den Vorperioden optimal ist int zaehlerNegativ=0; int zaehlerPositiv=0;
-		 * boolean Negativ=false; boolean Positiv=true; int rueckgabewert = 99; int
-		 * aktuellerWert=0; for (int i = 1; i < 7; i++) {
-		 * 
-		 * double macd = werte.macds.get(werte.macds.size() - i); double trigger =
-		 * werte.macdsTriggert.get(werte.macdsTriggert.size() - i); double
-		 * macdVerhaeltnis = macd - trigger; if(i==1) { if(macdVerhaeltnis<0)
-		 * Negativ=true; } if(macdVerhaeltnis>0) { Positiv=true; }
-		 * 
-		 * else { if (macdVerhaeltnis < 0) { zaehlerNegativ++; } else if
-		 * (macdVerhaeltnis > 0) { zaehlerPositiv++; // } else /* macdVerhaeltnis = 0
-		 */ // {
-		// break;
+	/*
+	 * else if (pruefePSAR(werte) != -1 && i <1) {//5.1 PSAR ist unter dem Kurs ->
+	 * eine Periode warten Thread.sleep(berechneMillisekunden(werte.granularity));
+	 * i++; }
+	 */
+
+	// wenn 0?
+	/*
+	 * LocalTime jetzt=LocalTime.now(); int minuten=jetzt.getMinute(); //Die
+	 * Wertlinie 50 im RSI-Fenster muss von unten überquert werden. //Die Kursbalken
+	 * müssen sich oberhalb der SMA10-Linie entwickeln. // Die beiden Linien des
+	 * MACD-Indikators müssen sich unter der 0-Linie schneiden. if((
+	 * VergleicheWerte(werte)==1) &&(pruefeSMA(werte)==1)&&(pruefeRSI(werte)==1) )
+	 * //Long Trade bis Ende nächster Kerze sofort ausführen {
+	 * Thread.sleep(berechneMillisekunden(granularity)*2-(minuten%15)*60000);
+	 * //Verkaufen } //Die RSI 50-Linie wird von oben gekreuzt. //Die Kursbalken
+	 * entwickeln sich unter der SMA10-Linie. //Die MACD-Linien schneiden sich über
+	 * die 0-Linien. else if(( VergleicheWerte(werte)==1)
+	 * &&(pruefeSMA(werte)==1)&&(pruefeRSI(werte)==1)) { //ShortTrade bis Ende
+	 * nächster Kerze sofort ausführen
+	 * Thread.sleep(berechneMillisekunden(granularity)*2-minuten%15); //Verkaufen }
+	 * }
+	 */
+
+	// }
+
+	/*
+	 * public static int pruefeMACD(Kpi werte) { // Optionale Prüfung, ob MACD-Trend
+	 * in den Vorperioden optimal ist int zaehlerNegativ=0; int zaehlerPositiv=0;
+	 * boolean Negativ=false; boolean Positiv=true; int rueckgabewert = 99; int
+	 * aktuellerWert=0; for (int i = 1; i < 7; i++) {
+	 * 
+	 * double macd = werte.macds.get(werte.macds.size() - i); double trigger =
+	 * werte.macdsTriggert.get(werte.macdsTriggert.size() - i); double
+	 * macdVerhaeltnis = macd - trigger; if(i==1) { if(macdVerhaeltnis<0)
+	 * Negativ=true; } if(macdVerhaeltnis>0) { Positiv=true; }
+	 * 
+	 * else { if (macdVerhaeltnis < 0) { zaehlerNegativ++; } else if
+	 * (macdVerhaeltnis > 0) { zaehlerPositiv++; // } else /* macdVerhaeltnis = 0
+	 */ // {
+	// break;
 
 	// }
 	// } // System.out.println(macdVerhaeltnis);
@@ -362,6 +320,7 @@ public class Signals {
 
 	// return rueckgabewert;
 	// }
+
 	public static int pruefeMACD(Kpi werte) {
 		// Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
 
@@ -458,15 +417,14 @@ public class Signals {
 		// Ausgabewerte: 1 -> Kurs über Trend; -1 -> Kurs unter Trend; 0 -> Kurs gleich
 		// Preis
 		int rueckgabewert = 99;
-		//double faktorRundung = 1.001;
+		// double faktorRundung = 1.001;
 		double ema200 = werte.ema;// * faktorRundung;
 
 		double aktuellerKurs = werte.lastPrice;
 
 		if (aktuellerKurs > ema200) {
 			rueckgabewert = 1;
-		}
-		else if (aktuellerKurs < ema200) {
+		} else if (aktuellerKurs < ema200) {
 			rueckgabewert = -1;
 		} else /* aktuellerKurs = ema200 */ {
 			rueckgabewert = 0;
@@ -505,6 +463,7 @@ public class Signals {
 	// return rueckgabewert;
 
 	// }
+
 	public static int pruefePSAR(Kpi werte) {
 		// Prüfue, ob der aktuelle Preis unter oder über dem Parabolic SAR liegt
 		// Ausgabewerte: 1 -> PSAR-Punkt unter Preis; -1 -> PSAR-Punkt über Preis; 0 ->
@@ -514,8 +473,7 @@ public class Signals {
 		double PSAR = werte.parabolicSAR;
 		if (aktuellerKurs > PSAR) {
 			rueckgabewert = 1;
-		}
-		else if (aktuellerKurs < PSAR) {
+		} else if (aktuellerKurs < PSAR) {
 			rueckgabewert = -1;
 		} else /* aktuellerKurs = PSAR */ {
 			rueckgabewert = 0;
@@ -525,150 +483,140 @@ public class Signals {
 	}
 
 	public static int pruefePerioden(Kpi werte, String entscheideSignal, int anzahlVorperioden) {
-		//Die Methode, soll die Vorperiode prüfen, ob bestimmte Ereignisse vorgefallen sind oder nicht
-		//Dabei werden die Methoden pruefeMACD() und pruefeRSI() zusammengelegt
+		// Die Methode, soll die Vorperiode prüfen, ob bestimmte Ereignisse vorgefallen
+		// sind oder nicht
+		// Dabei werden die Methoden pruefeMACD() und pruefeRSI() zusammengelegt
 		int ausgabe = 99;
 		int MACDRueckgabewert = 99;
 		int RSIRueckgabewert = 99;
-		boolean verhaeltnisVorzeichenNegativ = false;	
+		boolean verhaeltnisVorzeichenNegativ = false;
 		boolean verhaeltnisVorzeichenPositiv = false;
-		boolean RSIOverbought = false;	//RSI über 70% 
-		boolean RSIOversold = false; 	//RSI unter 30%
+		boolean RSIOverbought = false; // RSI über 70%
+		boolean RSIOversold = false; // RSI unter 30%
 		int MACDAktuell = 99;
-		
-		//anzahl Vorperioden falscher Übergabewert
-		if(anzahlVorperioden<2) return ausgabe;
-		
-		for(int i = 1; i<anzahlVorperioden+2; i++) {
-			double macd = werte.macds.get(werte.macds.size()-i);
-			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size()-i);
 
-			double macdVerhaeltnis = macd-trigger;
-			System.out.println(i+". Durchlauf: Verhältnis "+macdVerhaeltnis);
-			//System.out.println(MACDAktuell);
-			//Wie ist das aktuelle Verhältnis?:
-			if (i ==1) {
-				if(macdVerhaeltnis <=0) {
+		// anzahl Vorperioden falscher Übergabewert
+		if (anzahlVorperioden < 2)
+			return ausgabe;
+
+		for (int i = 1; i < anzahlVorperioden + 2; i++) {
+			double macd = werte.macds.get(werte.macds.size() - i);
+			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
+
+			double macdVerhaeltnis = macd - trigger;
+			System.out.println(i + ". Durchlauf: Verhältnis " + macdVerhaeltnis);
+			// System.out.println(MACDAktuell);
+			// Wie ist das aktuelle Verhältnis?:
+			if (i == 1) {
+				if (macdVerhaeltnis <= 0) {
 					MACDAktuell = -1;
-					//System.out.println("kleinergleich "+MACDAktuell);
-				}
-				else if (macdVerhaeltnis >= 0) {
+					// System.out.println("kleinergleich "+MACDAktuell);
+				} else if (macdVerhaeltnis >= 0) {
 					MACDAktuell = 1;
-					//System.out.println("größergleich "+MACDAktuell);
+					// System.out.println("größergleich "+MACDAktuell);
 				}
 
 			}
-			//Vorperioden
-			else if (i>0&&i!=1) {
-				if(macdVerhaeltnis < 0) {
+			// Vorperioden
+			else if (i > 0 && i != 1) {
+				if (macdVerhaeltnis < 0) {
 					verhaeltnisVorzeichenNegativ = true;
-				}
-				else if (macdVerhaeltnis > 0) {
+				} else if (macdVerhaeltnis > 0) {
 					verhaeltnisVorzeichenPositiv = true;
-				}
-				else { //macdVerhaeltnis == 0   
+				} else { // macdVerhaeltnis == 0
 					break;
 				}
-				if (werte.rsiListe.get(werte.rsiListe.size()-i) > 70) {
+				if (werte.rsiListe.get(werte.rsiListe.size() - i) > 70) {
 					RSIOverbought = true;
-				}
-				else if (werte.rsiListe.get(werte.rsiListe.size()-i) < 30) {
+				} else if (werte.rsiListe.get(werte.rsiListe.size() - i) < 30) {
 					RSIOversold = true;
-				}
-				else { //"70 >= werte.rsiListe.get(werte.rsiListe.size()-i) >=30"
+				} else { // "70 >= werte.rsiListe.get(werte.rsiListe.size()-i) >=30"
 					break;
 				}
 			}
 		}
-		if(verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false && MACDAktuell ==1) {
-			//die letzten MACDs sind negativ und der Aktuelle positiv oder null
+		if (verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false && MACDAktuell == 1) {
+			// die letzten MACDs sind negativ und der Aktuelle positiv oder null
 			MACDRueckgabewert = -1;
-			
-		}
-		else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true && MACDAktuell == -1) {
-			//die letzten MACDs sind positiv und der Aktuelle negativ oder null
+
+		} else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true && MACDAktuell == -1) {
+			// die letzten MACDs sind positiv und der Aktuelle negativ oder null
 			MACDRueckgabewert = 1;
-		}
-		else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true) || (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)){
-			//die letzten MACDs haben nicht das gleiche Vorzeichen 
+		} else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true)
+				|| (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)) {
+			// die letzten MACDs haben nicht das gleiche Vorzeichen
 			MACDRueckgabewert = 0;
 		}
 		if (RSIOversold == true && RSIOverbought == false) {
-			//die letzten 5 RSIs sind Oversold, also unter 30%
+			// die letzten 5 RSIs sind Oversold, also unter 30%
 			RSIRueckgabewert = -1;
-		}
-		else if (RSIOversold == false && RSIOverbought == true) {
-			//die letzten 5 RSIs sind Overbought, also über 70%
+		} else if (RSIOversold == false && RSIOverbought == true) {
+			// die letzten 5 RSIs sind Overbought, also über 70%
 			RSIRueckgabewert = 1;
-		}
-		else if ((RSIOversold == true && RSIOverbought == true) || (RSIOversold == false && RSIOverbought == false)) {
-			//die letzten 5 RSIs schwanken oder liegen alle zwischen 30 und 70 Prozent
+		} else if ((RSIOversold == true && RSIOverbought == true) || (RSIOversold == false && RSIOverbought == false)) {
+			// die letzten 5 RSIs schwanken oder liegen alle zwischen 30 und 70 Prozent
 			RSIRueckgabewert = 0;
 		}
 		if (entscheideSignal == "MACD") {
 			ausgabe = MACDRueckgabewert;
-		}
-		else if (entscheideSignal =="RSI") {
+		} else if (entscheideSignal == "RSI") {
 			ausgabe = RSIRueckgabewert;
-		}
-		else if (entscheideSignal != "MACD" && entscheideSignal != "RSI") {
-			//keine Änderung von ausgabe
+		} else if (entscheideSignal != "MACD" && entscheideSignal != "RSI") {
+			// keine Änderung von ausgabe
 			ausgabe = 99;
 		}
-		
+
 		return ausgabe;
 	}
-	
+
 	public static int pruefeATR(Kpi werte) {
-		//JPY und HUF sind die ATR-Werte zu hoch, um sie zum Stoploss zu verwenden !(instrument.name.contains("HUF")|| instrument.name.contains("JPY")
-		//Wo ist der niedrigste und Höchste ATR-Wert
-		//Dieser Wert ist der Vergleichspunkt mit dem aktuellen ATR Wert
-		//Jedoch soll der Wert nur ungefär gleich sein, weil eine genaue Übereinstimmung zu unrealistisch ist
-		//Und weil der Indikator nur ein Hilfsindikator ist
-		//der ATR gibt aus, wie oft das aktuelle Instrument in den letzten 14 Perioden den Wert geändert hat
-		//Wenn der ATR am niedrigsten Punkt ist, ist auszugehen, dass das Instrument in den nächsten Perioden stärker
-		//nachgefragt wird, jedoch gibt er keine Auskunft in welche Richtung
+		// JPY und HUF sind die ATR-Werte zu hoch, um sie zum Stoploss zu verwenden
+		// !(instrument.name.contains("HUF")|| instrument.name.contains("JPY")
+		// Wo ist der niedrigste und Höchste ATR-Wert
+		// Dieser Wert ist der Vergleichspunkt mit dem aktuellen ATR Wert
+		// Jedoch soll der Wert nur ungefär gleich sein, weil eine genaue
+		// Übereinstimmung zu unrealistisch ist
+		// Und weil der Indikator nur ein Hilfsindikator ist
+		// der ATR gibt aus, wie oft das aktuelle Instrument in den letzten 14 Perioden
+		// den Wert geändert hat
+		// Wenn der ATR am niedrigsten Punkt ist, ist auszugehen, dass das Instrument in
+		// den nächsten Perioden stärker
+		// nachgefragt wird, jedoch gibt er keine Auskunft in welche Richtung
 		int rueckgabe = 0;
 		System.out.println("vanilla " + werte.atr);
-		/*double y = werte.atr*100000;
-		System.out.println("test "+ runden(y));
-		
-		
-		double x = runden(werte.atr);
-		x *=1000;
-		System.out.println(x);*/
-		
-		
-		
+		/*
+		 * double y = werte.atr*100000; System.out.println("test "+ runden(y));
+		 * 
+		 * 
+		 * double x = runden(werte.atr); x *=1000; System.out.println(x);
+		 */
+
 		double relativesMinimum = 1000;
 		double relativesMaximum = 0;
-		for(int i = 2; i<werte.atrListe.size()+1; i++) {
-			double vergleich = werte.atrListe.get(werte.atrListe.size()-i); 
+		for (int i = 2; i < werte.atrListe.size() + 1; i++) {
+			double vergleich = werte.atrListe.get(werte.atrListe.size() - i);
 			if (vergleich < relativesMinimum) {
-				relativesMinimum=vergleich;
+				relativesMinimum = vergleich;
 			}
 			if (vergleich > relativesMaximum) {
 				relativesMaximum = vergleich;
 			}
 		}
-		System.out.println("relativesMaximum "+relativesMaximum+"; relativesMinimum "+relativesMinimum);
-		double prozentsatz =  ((relativesMinimum*100/relativesMaximum)+1)/100;
-		System.out.println("prozentsatz "+prozentsatz);
-		double aktuellerATR = werte.atr+prozentsatz;
-		System.out.println("aktueller atr "+werte.atr+" neuer ATR "+aktuellerATR);
-		
+		System.out.println("relativesMaximum " + relativesMaximum + "; relativesMinimum " + relativesMinimum);
+		double prozentsatz = ((relativesMinimum * 100 / relativesMaximum) + 1) / 100;
+		System.out.println("prozentsatz " + prozentsatz);
+		double aktuellerATR = werte.atr + prozentsatz;
+		System.out.println("aktueller atr " + werte.atr + " neuer ATR " + aktuellerATR);
+
 		if (relativesMinimum < aktuellerATR) {
-			//aktueller ATR ist nicht am niedrigsten Punkt
+			// aktueller ATR ist nicht am niedrigsten Punkt
 			rueckgabe = -1;
-		}
-		else if (relativesMinimum>= aktuellerATR) {
+		} else if (relativesMinimum >= aktuellerATR) {
 			rueckgabe = 1;
-		} 
-		
+		}
+
 		return rueckgabe;
-		
-		
-		
+
 	}
 
 	public static int berechneMillisekunden(String granularity) {
@@ -718,10 +666,6 @@ public class Signals {
 		default: {
 			return millisekunden;
 		}
-
 		}
-
 	}
-
-	
 }
