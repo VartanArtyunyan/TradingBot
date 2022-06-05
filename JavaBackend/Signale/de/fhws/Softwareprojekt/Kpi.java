@@ -5,35 +5,90 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Kpi implements Comparable<Kpi>{
+	public Kpi(String instrument,String granularity,int periods)
+	{
+		this.instrument=instrument;
+		this.granularity=granularity;
+		this.periods=periods;
+	}
 	
+	JsonCandlesRoot root;
 	//werden in der Signals Klasse gefüllt
 	boolean longShort;   //false = short, long = true
 	double signalStrenght = 1; 
-	
-	
-	
-	JsonCandlesRoot root;
+	//Konstruktor
 	public String instrument;
 	public String granularity;
 	public int periods;
-	int IntegerAtr=0;
-	ArrayList<Integer> IntegerAtrListe=new ArrayList<>();
- double atr=0;
- ArrayList<Double>atrListe=new ArrayList<Double>();
+	
+	//getBasicKpi
+	double lastPrice = 0;
+	ArrayList<Double>lastPrices=new ArrayList<>();
+	double lastHighestPrice=0;
+	double lastLowestPrice=0;
+	String firstTime = "";
+	String lastTime = "";
+	double min = 0;
+	double max = 0;
+	double avg = 0;
+	//ema
 	double ema = 0;
-	double vorema=0;
+	//double vorema=0;
+	ArrayList<Double>emas=new ArrayList<>();
+	
+	//parabolicSar
+	double parabolicSAR =0;
+    ArrayList<Double>parabolicSARs=new ArrayList<>();
+	String trend="";
+	boolean trendWechsel=false;
+	
+	//MACD
 	double macd=0;
 	ArrayList<Double>macds=new ArrayList<>();
     ArrayList<Double> macdsTriggert=new ArrayList<>();
 	double macdTriggert=0;
-
-	//Differnenz/max/min
 	ArrayList<Double>Prozent=new ArrayList<Double>();
 	double prozent=0;
+	
+	//atr
+	 double atr=0;
+	 ArrayList<Double>atrListe=new ArrayList<Double>();
+	int IntegerAtr=0;
+	ArrayList<Integer> IntegerAtrListe=new ArrayList<>();
+
+	
+	
+
+	//Differnenz/max/min
+	//sma
 	double sma=0;
+	ArrayList<Double>smaList =new ArrayList<>();
+	
+	//Rsi
+	double rsi=0;
+	ArrayList<Double>rsiListe=new ArrayList<>();	
+	
+//Supertrend
+	
+//ArrayList<Double> superTrends=new ArrayList<>();
+//double superTrend=0;
+
 	
 	
-	
+	//Die Eindeutigkeit der Kpi wird allein durch das Instrument bestimmt
+	@Override
+	public int hashCode() {
+		
+		return this.instrument.hashCode();
+	}
+	@Override
+	//
+	public boolean equals(Object o) {
+		
+		Kpi input = (Kpi) o;
+		return this.instrument.equals(input.instrument);
+		
+	}
 	public String getInstrument() {
 		return instrument;
 	}
@@ -87,33 +142,13 @@ public class Kpi implements Comparable<Kpi>{
 	}
 
 
-	ArrayList<Double>smaList =new ArrayList<>();
-ArrayList<Double> superTrends=new ArrayList<>();
-double superTrend=0;
-	boolean trendWechsel=false;
-double rsi=0;
-ArrayList<Double>rsiListe=new ArrayList<>();	
-	double lastPrice = 0;
-	ArrayList<Double>lastPrices=new ArrayList<>();
-	double lastHighestPrice=0;
-	double lastLowestPrice=0;
-	String firstTime = "";
-	String lastTime = "";
-	double min = 0;
-	double max = 0;
-	double avg = 0;
-	double parabolicSAR =0;
-    ArrayList<Double>parabolicSARs=new ArrayList<>();
-	String trend="";
-	ArrayList<Double>emas=new ArrayList<>();
-	JsonInstrumentsInstrument i=new JsonInstrumentsInstrument();
-	public Kpi(String instrument,String granularity,int periods)
-	{
-		this.instrument=instrument;
-		this.granularity=granularity;
-		this.periods=periods;
-	}
+
+
 	
+	
+
+
+
 	public boolean isLong() {
 		return longShort;
 	}
@@ -246,18 +281,7 @@ ArrayList<Double>rsiListe=new ArrayList<>();
 
     }
 	
-	@Override
-	public boolean equals(Object o) {
-		
-		Kpi input = (Kpi) o;
-		return this.instrument.equals(input.instrument);
-		
-	}
-	@Override
-	public int hashCode() {
-		
-		return this.instrument.hashCode();
-	}
+	
 
 
 	@Override

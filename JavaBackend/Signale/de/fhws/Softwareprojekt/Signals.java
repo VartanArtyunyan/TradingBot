@@ -147,7 +147,7 @@ public class Signals {
 
 		System.out.println(kpi.instrument + " " + instrument.displayName + " " + instrument.type + " " + emaName + ":  "
 				+ kpi.ema + " MCAD: " + kpi.macd + " MACDTriggert: " + kpi.macdTriggert + " ParaboliocSAR: "
-				+ kpi.parabolicSAR + " RSI: " + kpi.rsi + " ATR: " + kpi.atr + " Supertrend: " + kpi.superTrend
+				+ kpi.parabolicSAR + " RSI: " + kpi.rsi + " ATR: " + kpi.atr /*+ " Supertrend: " + kpi.superTrend*/
 				+ " SMA: " + kpi.sma + " (" + kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: "
 				+ kpi.avg + "  " + kpi.firstTime + " - " + kpi.lastTime + ")");
 	}
