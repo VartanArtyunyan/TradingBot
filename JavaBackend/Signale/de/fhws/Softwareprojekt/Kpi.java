@@ -18,7 +18,6 @@ public class Kpi implements Comparable<Kpi>{
 	boolean longShort;   //false = short, long = true
 	double signalStrenght = 1; 
 	
-	
 
 	
 	JsonCandlesRoot root;
