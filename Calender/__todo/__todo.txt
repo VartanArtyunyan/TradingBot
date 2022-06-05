@@ -26,7 +26,7 @@ Kalkulation
 3. Volatility -> Multiplikator für eingesetzte Geldmenge
 
 
-Connection?
-
-
--> Praktikum
+JSON
+1. String: Instrument ("EUR/HKD")
+3. Double: Faktor (2,3)
+4. Boolean: longShort       #false = short, true = long
