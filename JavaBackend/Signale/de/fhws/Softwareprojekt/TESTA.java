@@ -34,19 +34,33 @@ public static void main(String[] args) {
 	
 			if(instrument.type.compareTo("CURRENCY")==0)
 			{
-				EmaListe es=new EmaListe();
+				//EmaListe es=new EmaListe();
 				Kpi kpi=e.getAll(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
+				
 			//String c="";
 	//	if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
 			{
 			
 				//
 			//	if(instrument.name.contains("USD_THB")||instrument.name.contains("USD_INR")||(instrument.name.contains("JPY")||instrument.name.contains("HUF")))
-				if(instrument.displayPrecision==3)
-				{
+				//if(instrument.displayPrecision==3)
+				//{
+				//	System.out.println(kpi.rsi);
+					if(kpi.rsi==100||kpi.rsi==0)
+						System.out.println(kpi.rsi);
+					else 
+					{
+						if((instrument.name.compareTo("EUR_USD")==0)||(instrument.name.compareTo("GBP_USD")==0))
+						{
+						System.out.println(kpi.instrument);
+						System.out.println(kpi.rsi);
+						System.out.println(kpi.atr);
+						System.out.println(kpi.sma);
+						}
+					}
+						
 					
-					
-				System.out.println(instrument.displayPrecision);
+				/*System.out.println(instrument.displayPrecision);
 				System.out.println(kpi.lastPrice);
 					System.out.println(kpi.parabolicSAR);
 					System.out.println(kpi.getLimitPrice());
@@ -54,7 +68,7 @@ public static void main(String[] args) {
 					System.out.println(kpi.getLongTakeProfit());
 					System.out.println(kpi.getShortStopLoss());
 					System.out.println(kpi.getShortTakeProfit());
-					}
+					}*/
 				//	System.out.println(kpi.parabolicSAR+" " +kpi.lastPrice+es.kombiniereMACDEMAPSAR (kpi));
 			//	System.out.println(	kpi.runden(kpi.parabolicSAR,3)+1/Math.pow(10, 3));
 				//System.out.println(kpi.instrument);
@@ -73,10 +87,10 @@ public static void main(String[] args) {
 		
 			//System.out.println(pruefeVorperioden(kpi,"MACD"));
 			}
-		}
-
 		
-	System.out.println(zaehler);
+		}
+		
+	//System.out.println(zaehler);
 		/*	for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) 
 				
 			{

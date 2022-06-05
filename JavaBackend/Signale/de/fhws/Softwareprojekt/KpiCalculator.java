@@ -309,11 +309,12 @@ public class KpiCalculator {
 			double prev=0;
 			double wert=0;
 			for(int i=1;i<kpi.root.candles.size();i++)
-			{
-				prev=i>periods?0:prev;
-					betrag=(kpi.root.candles.get(i).mid.l-kpi.root.candles.get(i-1).mid.c)>((kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i-1).mid.c))?(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i-1).mid.c+prev):(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i-1).mid.c+prev);
-					betrag=betrag>kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l?betrag:kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l+prev;
-					prev=betrag;
+			{		
+				if(i==periods+1)prev=0;
+				//Maximimum aus(Hoch(H)-Tief(T),VorherigenSchluss(VS)-(H),VS-T	
+					betrag=(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l)>((kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h))?(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l+prev):(kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h+prev);
+					betrag=betrag>kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.l?betrag:kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.l+prev;
+					
 				    
 				if(i>periods)
 				{
@@ -324,6 +325,8 @@ public class KpiCalculator {
 					kpi.IntegerAtrListe.add(kpi.IntegerAtr);
 					
 				}
+				else 
+				prev=betrag;
 				
 			}
 			return kpi;
@@ -336,7 +339,7 @@ public class KpiCalculator {
 		double gain=0;
 		double loss=0;
 		
-			double startPreis=kpi.root.candles.get(0).mid.c;
+			double vorherigerPreis=kpi.root.candles.get(0).mid.c;
 			double currentG=0;
 			double currentL=0;
 			
@@ -344,8 +347,8 @@ public class KpiCalculator {
 			{
 			if(z<=periods)
 			{
-				gain=kpi.root.candles.get(z).mid.c-startPreis>0?gain+kpi.root.candles.get(z).mid.c-startPreis:gain;
-				loss=startPreis-kpi.root.candles.get(z).mid.c>0?loss+startPreis-kpi.root.candles.get(z).mid.c:loss;
+				gain=kpi.root.candles.get(z).mid.c-vorherigerPreis>0?gain+kpi.root.candles.get(z).mid.c-vorherigerPreis:gain;
+				loss=vorherigerPreis-kpi.root.candles.get(z).mid.c>0?loss+vorherigerPreis-kpi.root.candles.get(z).mid.c:loss;
 						if(z==periods)
 						{
 					gain=gain/periods;
@@ -354,15 +357,19 @@ public class KpiCalculator {
 			}
 				if(z>periods)
 				{
-					currentG=kpi.root.candles.get(z).mid.c-startPreis>0?kpi.root.candles.get(z).mid.c-startPreis:0;
-					currentL=startPreis-kpi.root.candles.get(z).mid.c>0?startPreis-kpi.root.candles.get(z).mid.c:0;
+					currentG=kpi.root.candles.get(z).mid.c-vorherigerPreis>0?kpi.root.candles.get(z).mid.c-vorherigerPreis:0;
+					currentL=vorherigerPreis-kpi.root.candles.get(z).mid.c>0?vorherigerPreis-kpi.root.candles.get(z).mid.c:0;
 					gain=(gain*(periods-1)+currentG)/periods;
 					loss=(loss*(periods-1)+currentL)/periods;
+					
+					kpi.rsi=(loss==0)?100:100-(100/((gain/loss)+1));
+					kpi.rsiListe.add(kpi.rsi);
 				}
-				startPreis=kpi.root.candles.get(z).mid.c;
-				kpi.rsi=100-(100/((gain/loss)+1));
-				kpi.rsiListe.add(kpi.rsi);
+				vorherigerPreis=kpi.root.candles.get(z).mid.c;
 			}
+				
+				
+			
 	return kpi;
 	}
 	public Kpi getSMA(String instrument, int periods, String granularity,JsonCandlesRoot jcr)
