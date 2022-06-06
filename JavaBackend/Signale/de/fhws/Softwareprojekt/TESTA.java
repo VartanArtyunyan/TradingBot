@@ -8,7 +8,10 @@ import API.Connection;
 public class TESTA {
 public static void main(String[] args) {
 		
-		
+		int zahl1=7;
+		int zahl2=9;
+		double wert=(double)zahl1/zahl2;
+		System.out.println(wert);
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
 		ArrayList<String>a=new ArrayList();
