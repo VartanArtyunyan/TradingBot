@@ -13,18 +13,21 @@ public class ApiConnection {
 
 	JsonParser jsonParser;
 	Connection connection;
+	JsonInstrumentsRoot availableInstruemts;
 	CandleCache candleCache;
 
 	public ApiConnection(Connection c) {
 		jsonParser = new JsonParser();
 		connection = c;
+		candleCache = new CandleCache();
+		
 	}
 
 	public ArrayList<trade> getTrades() {
 		ArrayList<trade> output = new ArrayList<>();
 		String apiResponseString = connection.getTrades();
-		
-		//System.out.println(apiResponseString);
+
+		// System.out.println(apiResponseString);
 
 		output = jsonParser.convertApiStringToTradesArray(apiResponseString);
 
@@ -33,30 +36,32 @@ public class ApiConnection {
 
 	public JsonCandlesRoot getJsonCandlesRoot(int count, String instrument, String from, String to, String price,
 			String granularity) {
-		
-		
-		String apiResponseString = connection.getCandleStickData(count, instrument, from, to, price, granularity);
-		
-	//	jsonParser.parseLastCandleFromAPIString(apiResponseString);
 
-		return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
+		String apiResponseString = connection.getCandleStickData(count, instrument, from, to, price, granularity);
+
+		JsonCandlesCandle lastCandle = jsonParser.parseLastCandleFromAPIString(apiResponseString);
+		
+		if(candleCache.needsUpdate(instrument, lastCandle)) candleCache.update(jsonParser.convertAPiStringToCandlesRootModel(apiResponseString));
+
+		return candleCache.get(instrument, lastCandle);
 	}
-	
 
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
-		String apiResponseString = connection.getInstruments();
+		if (availableInstruemts == null) {
+			String apiResponseString = connection.getInstruments();
 
-		return jsonParser.convertAPiStringToInstrumentsRootModel(apiResponseString);
+			availableInstruemts = jsonParser.convertAPiStringToInstrumentsRootModel(apiResponseString);
+		}
+		return availableInstruemts;
 	}
 
 	public double getKurs(String instrument) {
 		return 1.09;
 	}
 
-	public void placeLimitOrder(String instrument, double units, double takeProfit, double stopLoss) { 
+	public void placeLimitOrder(String instrument, double units, double takeProfit, double stopLoss) {
 
-		String orderJson = jsonParser.makeOrederRequestJson(instrument, units, takeProfit,
-				stopLoss); //
+		String orderJson = jsonParser.makeOrederRequestJson(instrument, units, takeProfit, stopLoss); //
 
 		connection.placeLimitOrder(orderJson);
 	}

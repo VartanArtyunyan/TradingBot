@@ -5,6 +5,7 @@ import GUI.GUI;
 import LogFileWriter.LogFileWriter;
 import Threads.MainRuntimeThread;
 import Threads.SignalThread;
+import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.Signals;
 
@@ -37,6 +38,7 @@ public class Verwaltung {
 		trades = new ArrayList<trade>();
 		this.granularity = granularity;
 		mrt = new MainRuntimeThread(this);
+		
 	}
 
 	
@@ -56,6 +58,7 @@ public class Verwaltung {
 	public void startTraiding() {
 		mrt.start();
 	}
+	
 	
 	public boolean eneoughBalance() {
 		double curBalance = connection.getBalance();
