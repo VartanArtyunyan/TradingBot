@@ -3,6 +3,7 @@ package positionen;
 import java.util.ArrayList;
 import GUI.GUI;
 import LogFileWriter.LogFileWriter;
+import PyhtonConnection.Order;
 import Threads.MainRuntimeThread;
 import Threads.SignalThread;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
@@ -10,6 +11,8 @@ import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.Signals;
 
 import java.util.HashSet;
+
+
 
 import API.ApiConnection;
 
@@ -23,13 +26,11 @@ public class Verwaltung {
 	ArrayList<trade> trades;
 	String granularity;
 	MainRuntimeThread mrt;
-	
 	double einsatz;
 
 	public Verwaltung(ApiConnection connection, String granularity, double einsatz) {
 		
 		this.einsatz = einsatz;
-		
 		this.connection = connection;
 		gui = new GUI();
 		logFileWriter = new LogFileWriter();
@@ -41,11 +42,9 @@ public class Verwaltung {
 		
 	}
 
-	
 	public void onTick(){
 		SignalThread signalThread = new SignalThread(signals, granularity);
 		signalThread.start();
-		
 		
 		try {
 			signalThread.join();
@@ -53,6 +52,10 @@ public class Verwaltung {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
+		return connection.getJsonInstrumentsRoot();
 	}
 	
 	public void startTraiding() {
@@ -64,6 +67,10 @@ public class Verwaltung {
 		double curBalance = connection.getBalance();
 		
 		return curBalance > 100.0;
+	}
+	
+	public void pushOrder(Order order) {
+		
 	}
 	
 	public void pushSignal(Kpi kpi) {

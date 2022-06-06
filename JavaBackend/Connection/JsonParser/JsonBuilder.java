@@ -12,29 +12,24 @@ public class JsonBuilder {
 	public JsonBuilder() {
 		json = "{";
 		stack = new Stack<>();
+		
 	}
 
 	public void addString(String name, String string) {
+		if (inArray()) json += "\"" + string + "\",";
+			
 		json += "\"" + name + "\":\"" + string + "\",";
 	}
 
-	public void addObject(String name, JsonObject jsonObject) {
-		json += "\"" + name + "\":\"" + jsonObject.toString() + "\",";
-	}
-
-	public void addArray(String name, JsonArray jsonArray) {
-
-	}
-
-	public void pushObject() {
+	private void pushObject() {
 		stack.push(false);
 	}
 
-	public void pushArray() {
+	private void pushArray() {
 		stack.push(true);
 	}
 
-	public boolean popObject() {
+	private boolean popObject() {
 		boolean output = !stack.peek();
 
 		if (output) {
@@ -44,7 +39,7 @@ public class JsonBuilder {
 		return output;
 	}
 
-	public boolean popArray() {
+	private boolean popArray() {
 		boolean output = stack.peek();
 
 		if (output) {
@@ -56,6 +51,7 @@ public class JsonBuilder {
 
 	public void openObject(String name) {
 		json += "\"" + name + "\":{";
+
 		pushObject();
 	}
 
@@ -69,6 +65,7 @@ public class JsonBuilder {
 
 	public void openArray(String name) {
 		json += "\"" + name + "\":[";
+
 		pushArray();
 	}
 
@@ -77,10 +74,15 @@ public class JsonBuilder {
 		if (popArray()) {
 			removeLastChar();
 			json += "],";
+
 		}
 
 		else
 			throw new invalidJsonOperation("can not close Array");
+	}
+
+	public boolean inArray() {
+		return stack.peek();
 	}
 
 	public void removeLastChar() {
