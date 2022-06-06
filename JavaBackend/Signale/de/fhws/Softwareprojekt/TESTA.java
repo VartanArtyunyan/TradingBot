@@ -35,29 +35,33 @@ public static void main(String[] args) {
 			if(instrument.type.compareTo("CURRENCY")==0)
 			{
 				//EmaListe es=new EmaListe();
-				Kpi kpi=e.getAll(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
-				
+				Kpi kpi=e.getAll(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,300,9);
+				if(kpi.macd>1)
+					System.out.println(kpi.macd);
+				else
+				{
+					if(kpi.macd>1)
+					System.out.println(kpi.macd);
+				}
 			//String c="";
 	//	if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
-			{
+				//{
 			
 				//
 			//	if(instrument.name.contains("USD_THB")||instrument.name.contains("USD_INR")||(instrument.name.contains("JPY")||instrument.name.contains("HUF")))
 				//if(instrument.displayPrecision==3)
 				//{
 				//	System.out.println(kpi.rsi);
-					if(kpi.rsi==100||kpi.rsi==0)
-						System.out.println(kpi.rsi);
-					else 
-					{
-						if((instrument.name.compareTo("EUR_USD")==0)||(instrument.name.compareTo("GBP_USD")==0))
-						{
-						System.out.println(kpi.instrument);
-						System.out.println(kpi.rsi);
-						System.out.println(kpi.atr);
-						System.out.println(kpi.sma);
-						}
-					}
+					
+					
+					//	if((instrument.name.compareTo("EUR_USD")==0)||(instrument.name.compareTo("GBP_USD")==0))
+					//	{
+					//	System.out.println(kpi.instrument);
+						//System.out.println(kpi.rsi);
+						//System.out.println(kpi.atr);
+						//System.out.println(kpi.sma);
+						//}
+					//}
 						
 					
 				/*System.out.println(instrument.displayPrecision);
@@ -104,7 +108,7 @@ public static void main(String[] args) {
 				System.out.println("Nein");
 		}
 		*/
-}
+
 public static void ausgabe(String emaName, Kpi kpi, JsonInstrumentsInstrument instrument) {
 	
 	System.out.println(kpi.instrument + " " + instrument.displayName+ " " + instrument.type + " " + emaName + ":  " + kpi.ema +" MCAD: "+kpi.macd+ " MACDTriggert: " + kpi.macdTriggert + " ParaboliocSAR: " +kpi.parabolicSAR+ " RSI: " +kpi.rsi +" ATR: "+ kpi.atr+ " ("
