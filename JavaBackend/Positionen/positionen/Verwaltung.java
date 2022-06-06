@@ -34,24 +34,17 @@ public class Verwaltung {
 		this.connection = connection;
 		gui = new GUI();
 		logFileWriter = new LogFileWriter();
-		signals = new Signals(connection, this, logFileWriter);
+		this.granularity = granularity;
+		signals = new Signals(connection, this, logFileWriter, this.granularity);
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
-		this.granularity = granularity;
+		
 		mrt = new MainRuntimeThread(this);
 		
 	}
 
 	public void onTick(){
-		SignalThread signalThread = new SignalThread(signals, granularity);
-		signalThread.start();
 		
-		try {
-			signalThread.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
@@ -59,7 +52,7 @@ public class Verwaltung {
 	}
 	
 	public void startTraiding() {
-		mrt.start();
+		signals.start();
 	}
 	
 	

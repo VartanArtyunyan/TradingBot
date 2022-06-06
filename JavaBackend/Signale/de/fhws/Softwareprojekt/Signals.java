@@ -5,23 +5,26 @@ import java.util.HashSet;
 
 import API.ApiConnection;
 import LogFileWriter.LogFileWriter;
+import Threads.stopableThread;
 import positionen.Verwaltung;
 
-public class Signals {
+public class Signals extends stopableThread{
 
 	ApiConnection connection;
 	Verwaltung verwaltung;
 	LogFileWriter logFileWriter;
+	String granularity;
 	KpiCalculator e;
 	ArrayList<JsonInstrumentsInstrument> instrumentsList;
 	JsonInstrumentsRoot instrumentsRoot;
 	HashSet<Kpi> signale;
 
-	public Signals(ApiConnection connection, Verwaltung verwaltung, LogFileWriter logFileWriter) {
+	public Signals(ApiConnection connection, Verwaltung verwaltung, LogFileWriter logFileWriter, String granularity) {
 
 		this.connection = connection;
 		this.verwaltung = verwaltung;
 		this.logFileWriter = logFileWriter;
+		this.granularity = granularity;
 		this.e = new KpiCalculator(connection);
 
 		this.instrumentsList = new ArrayList<>();
@@ -33,6 +36,11 @@ public class Signals {
 			if (i.type.compareTo("CURRENCY") == 0)
 				instrumentsList.add(i);
 		}
+	}
+	
+	@Override
+	public void onTick() {
+		runSignals(granularity);
 	}
 
 	public void runSignals(String granularity) {
