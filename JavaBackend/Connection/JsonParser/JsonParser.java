@@ -167,8 +167,7 @@ public class JsonParser {
 		lastCandle.time = candle.getValue("time");
 		lastCandle.mid = jcm;
 		
-		
-		System.out.println(candleJson);
+	
 		return lastCandle;
 	}
 	

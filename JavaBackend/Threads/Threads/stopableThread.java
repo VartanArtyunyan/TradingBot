@@ -5,9 +5,14 @@ public class stopableThread extends Thread{
     boolean execute = true;
     
     public void run() {
+    	onStart();
     	while(execute) {
     		onTick();
     	}
+    }
+    
+    public void onStart() {
+    	
     }
 	
     public void onTick() {

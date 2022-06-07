@@ -12,7 +12,7 @@ import positionen.Verwaltung;
 
 public class Main {
 		
-	static String granularity = "M1";
+	static String granularity = "M15";
 	static double einsatz = 0.02;
 		
 	public static void main(String[] args) {

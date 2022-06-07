@@ -20,48 +20,47 @@ import positionen.Verwaltung;
 public class PyhtonConnection extends stopableThread{
 	
 	Verwaltung verwaltung;
-
+	
+	int port;
+	ServerSocket ss;
+	Socket connection;
+	BufferedReader br;
+	BufferedWriter bw;
+	String instrumente;
 	
 	public PyhtonConnection(Verwaltung verwaltung) {
 		 this.verwaltung = verwaltung;
+		
+		instrumente = makeInstrumentJson(verwaltung.getJsonInstrumentsRoot());
+	
 	}
 	
-	
-	public void run() {
-		JsonInstrumentsRoot jir = verwaltung.getJsonInstrumentsRoot();
-		String instrumente = makeInstrumentJson(jir);
-		
-		
-		System.out.println("warte auf Client");
-		int port = 12000;
-		try (ServerSocket ss = new ServerSocket(port);
-				Socket connection = ss.accept();
-				InputStream is = connection.getInputStream();
-				BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-				OutputStream os = connection.getOutputStream();
-				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-
-		) {
-			System.out.println("Ein Client hat sich verbunden");
-
-			bw.write(instrumente);
-			bw.flush();
-
-			while (getExecute()){
-				try {
-					String s = br.readLine();
-					System.out.println(s);
-					verwaltung.pushOrder(makeOrder(s));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+	@Override
+	public void onStart(){
+		 try {
+				ss = new ServerSocket(port);
+				System.out.println("warte auf Client");
+				connection = ss.accept();
+				System.out.println("Ein Client hat sich verbunden");
+				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+				bw.write(instrumente);
+				bw.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (IOException e1) {
+	}
+	
+	@Override
+	public void onTick() {
+		try {
+		String s = br.readLine();
+		System.out.println(s);
+		verwaltung.pushOrder(makeOrder(s));
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
 		
 	}
