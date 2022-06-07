@@ -344,7 +344,8 @@ public class KpiCalculator {
 			{		
 				if(i==periods+1)prev=0;
 				//Maximimum aus(Hoch(H)-Tief(T),VorherigenSchluss(VS)-(H),VS-T	
-					betrag=(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l)>((kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h))?(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l+prev):(kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h+prev);
+					betrag=(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l)>((kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h))
+							?(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l+prev):(kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h+prev);
 					betrag=betrag>kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.l?betrag:kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.l+prev;
 					
 				    
