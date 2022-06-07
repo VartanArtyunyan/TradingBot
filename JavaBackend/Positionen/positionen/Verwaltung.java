@@ -5,8 +5,7 @@ import GUI.GUI;
 import LogFileWriter.LogFileWriter;
 import PyhtonConnection.Order;
 import PyhtonConnection.PyhtonConnection;
-import Threads.MainRuntimeThread;
-import Threads.SignalThread;
+
 import Threads.stopableThread;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import de.fhws.Softwareprojekt.Kpi;
