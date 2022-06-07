@@ -79,7 +79,7 @@ public class PyhtonConnection extends stopableThread{
 		JsonBuilder jsonBuilder = new JsonBuilder();
 		jsonBuilder.openArray("instrumente");
 		for(JsonInstrumentsInstrument jii : jir.instruments) {
-			jsonBuilder.addString(null, jii.name);
+			jsonBuilder.addString(null, jii.displayName);
 		}
 		jsonBuilder.closeArray();
 		return jsonBuilder.build();
