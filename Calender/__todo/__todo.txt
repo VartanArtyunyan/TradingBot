@@ -30,3 +30,7 @@ JSON
 1. String: Instrument ("EUR/HKD")
 3. Double: Faktor (2,3)
 4. Boolean: longShort       #false = short, true = long
+
+Faktor = (Volatility * (ratioDeviation + (Prognose-Abweichung -> Prozent)) - timedelta
+
+        2 * ((1.5+10) - 0.5)
