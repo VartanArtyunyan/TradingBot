@@ -64,6 +64,9 @@ public class Kpi implements Comparable<Kpi> {
 	// Rsi
 	double rsi = 0;
 	ArrayList<Double> rsiListe = new ArrayList<>();
+	
+	//Signal 
+	int signal; 
 
 	// Die Eindeutigkeit der Kpi wird allein durch das Instrument bestimmt
 	@Override
@@ -190,22 +193,22 @@ public class Kpi implements Comparable<Kpi> {
 
 	public double getLongStopLoss() {
 		// Hier muss mit der DisplayPrecision
-		double wert = lastPrice * 0.9995;
+		double wert = lastPrice * 0.9990;
 		return checkPrecision(wert, false);
 	}
 
 	public double getLongTakeProfit() {
-		double wert = lastPrice * 1.001;
+		double wert = lastPrice * 1.002;
 		return checkPrecision(wert, true);
 	}
 
 	public double getShortStopLoss() {
-		double wert = lastPrice * 1.0005;
+		double wert = lastPrice * 1.001;
 		return checkPrecision(wert, true);
 	}
 
 	public double getShortTakeProfit() {
-		double wert = lastPrice * 0.999;
+		double wert = lastPrice * 0.998;
 		return checkPrecision(wert, false);
 	}
 

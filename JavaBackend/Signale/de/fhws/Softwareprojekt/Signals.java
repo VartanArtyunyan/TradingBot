@@ -54,15 +54,14 @@ public class Signals extends stopableThread{
 				System.out.println(r);
 				kpi.longShort = (r == 1) ? true : false;
 				ausgabe("alles", kpi, instrument);
-
 				verwaltung.pushSignal(kpi);
-
+				
 				// verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(),
 				// kpi.getShortTakeProfit(), kpi.getShortStopLoss(),kpi.lastPrice);
 				// verwaltung.addManualPosition(instrument.name);
-
+				
 				// signale.add(kpi);
-
+				
 			} else {
 				int s = kombiniereMACD_PSAR(kpi);
 				System.out.println(s);

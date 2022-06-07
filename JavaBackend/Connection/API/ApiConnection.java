@@ -37,12 +37,15 @@ public class ApiConnection {
 	public JsonCandlesRoot getJsonCandlesRoot(int count, String instrument, String from, String to, String price,
 			String granularity) {
 
-		String apiResponseString = connection.getCandleStickData(count, instrument, from, to, price, granularity);
+		String apiResponseString = connection.getCandleStickData(1, instrument, null, null, price, granularity);
 
 		JsonCandlesCandle lastCandle = jsonParser.parseLastCandleFromAPIString(apiResponseString);
 
-		if (candleCache.needsUpdate(instrument, lastCandle))
+		if (candleCache.needsUpdate(instrument, lastCandle)) {
+			apiResponseString = connection.getCandleStickData(count, instrument, from, to, price, granularity);
 			candleCache.update(jsonParser.convertAPiStringToCandlesRootModel(apiResponseString));
+		}
+			
 
 		return candleCache.get(instrument, lastCandle);
 		// return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
