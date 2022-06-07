@@ -195,7 +195,7 @@ public class Kpi implements Comparable<Kpi> {
 	}
 
 	public double getLongTakeProfit() {
-		double wert = lastPrice * 1.0015;
+		double wert = lastPrice * 1.001;
 		return checkPrecision(wert, true);
 	}
 
@@ -205,7 +205,7 @@ public class Kpi implements Comparable<Kpi> {
 	}
 
 	public double getShortTakeProfit() {
-		double wert = lastPrice * 0.9985;
+		double wert = lastPrice * 0.999;
 		return checkPrecision(wert, false);
 	}
 

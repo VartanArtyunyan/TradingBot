@@ -35,7 +35,7 @@ public class Verwaltung {
 		
 		this.einsatz = einsatz;
 		this.connection = connection;
-		gui = new GUI();
+		//gui = new GUI();
 		logFileWriter = new LogFileWriter();
 		this.granularity = granularity;
 		signals = new Signals(connection, this, logFileWriter, this.granularity);
@@ -104,8 +104,8 @@ public class Verwaltung {
 			return;
 		}
 		
-		double factor = einsatz * (kpi.isLong()? 1 : -1);
-		
+		double factor = einsatz;
+		if(kpi.isShort())factor = factor * -1;
 		
 		
 		double curBalance = connection.getBalance();
