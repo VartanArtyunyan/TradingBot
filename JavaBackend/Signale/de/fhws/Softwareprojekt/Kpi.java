@@ -190,22 +190,22 @@ public class Kpi implements Comparable<Kpi> {
 
 	public double getLongStopLoss() {
 		// Hier muss mit der DisplayPrecision
-		double wert = lastPrice * 0.9990;
+		double wert = lastPrice * 0.9995;
 		return checkPrecision(wert, false);
 	}
 
 	public double getLongTakeProfit() {
-		double wert = lastPrice * 1.002;
+		double wert = lastPrice * 1.0015;
 		return checkPrecision(wert, true);
 	}
 
 	public double getShortStopLoss() {
-		double wert = lastPrice * 1.0010;
+		double wert = lastPrice * 1.0005;
 		return checkPrecision(wert, true);
 	}
 
 	public double getShortTakeProfit() {
-		double wert = lastPrice * 0.998;
+		double wert = lastPrice * 0.9985;
 		return checkPrecision(wert, false);
 	}
 
