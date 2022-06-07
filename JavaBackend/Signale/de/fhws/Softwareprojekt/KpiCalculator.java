@@ -21,9 +21,9 @@ public class KpiCalculator {
 		
 		// Einfache Kennzahlen und EMA (Exponential Moving Average) berechnen
 		Kpi kpi=getBasisKpi(instrument, emaperiods, granularity,jcr);
-		
+		Kpi kpiTemp;
 		// Parabolic SAR berechnen
-		Kpi kpiTemp=getParabolicSAR(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
+		 kpiTemp=getParabolicSAR(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
 		kpi.parabolicSAR=kpiTemp.parabolicSAR;
 		kpi.parabolicSARs=kpiTemp.parabolicSARs;
 		kpi.trend=kpiTemp.trend;
