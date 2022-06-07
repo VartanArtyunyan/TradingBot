@@ -3,7 +3,7 @@ from encodings import utf_8
 import http.client
 import gzip
 import json
-from pickle import FALSE
+#from pickle import FALSE
 from xmlrpc.client import gzip_decode
 from datetime import date, timedelta
 import datetime
@@ -29,7 +29,7 @@ HEADERS = {
 
 
 def writeInDocument(data):
-    f = open("jsonCalender4.json", "w")
+    f = open("jsonCalenderCalcTest.json", "w")
     f.write(data)
     f.close
 
@@ -56,7 +56,8 @@ def start():
     von = (gerade - timedelta(hours=5)).strftime("%H:%M:%S")
     dat = "2022-05-09" """
 
-    dat = date.today()
+    #dat = date.today()
+    dat = "2022-06-02"
     von = "00:00:00"
     bis = "23:59:59"
 
@@ -84,7 +85,7 @@ def checkEvent(event):
 
 
 
-
+start()
 
 
 
