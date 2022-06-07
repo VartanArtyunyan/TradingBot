@@ -1,5 +1,3 @@
-import JsonReader
+import datetime
 
-Array = JsonReader.read()
-
-print(Array[8]["actual"])
+print(datetime.datetime.now())
