@@ -10,6 +10,7 @@ import Threads.stopableThread;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.Signals;
+import randomTrader.RandomOrder;
 
 import java.util.HashSet;
 
@@ -120,6 +121,15 @@ public class Verwaltung {
 		aktualisierePosition();
 		
 		
+	}
+	
+	public void pushRanomOrder(RandomOrder randomOrder) {
+		
+		
+		
+		double curBalance = connection.getBalance();
+		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
+		double units =  buyingPrice / kpi.getLastPrice();
 	}
 
 	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
