@@ -20,7 +20,7 @@ public class ApiConnection {
 		jsonParser = new JsonParser();
 		connection = c;
 		candleCache = new CandleCache();
-		
+
 	}
 
 	public ArrayList<trade> getTrades() {
@@ -40,10 +40,12 @@ public class ApiConnection {
 		String apiResponseString = connection.getCandleStickData(count, instrument, from, to, price, granularity);
 
 		JsonCandlesCandle lastCandle = jsonParser.parseLastCandleFromAPIString(apiResponseString);
-		
-		if(candleCache.needsUpdate(instrument, lastCandle)) candleCache.update(jsonParser.convertAPiStringToCandlesRootModel(apiResponseString));
+
+		if (candleCache.needsUpdate(instrument, lastCandle))
+			candleCache.update(jsonParser.convertAPiStringToCandlesRootModel(apiResponseString));
 
 		return candleCache.get(instrument, lastCandle);
+		// return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
 	}
 
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
@@ -56,12 +58,23 @@ public class ApiConnection {
 	}
 
 	public double getKurs(String instrument) {
-		return 1.09;
+		String apiResponseString = connection.getCandleStickData(1, instrument, null, null, "M", "S5");
+
+		JsonCandlesCandle lastCandle = jsonParser.parseLastCandleFromAPIString(apiResponseString);
+
+		return lastCandle.mid.c;
 	}
 
-	public void placeLimitOrder(String instrument, double units, double takeProfit, double stopLoss) {
+	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
 
 		String orderJson = jsonParser.makeOrederRequestJson(instrument, units, takeProfit, stopLoss); //
+
+		connection.placeLimitOrder(orderJson);
+	}
+
+	public void placeOrder(String instrument, double units) {
+
+		String orderJson = jsonParser.makeOrederRequestJson(instrument, units); //
 
 		connection.placeLimitOrder(orderJson);
 	}
