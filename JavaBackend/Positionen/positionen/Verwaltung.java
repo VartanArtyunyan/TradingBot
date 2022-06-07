@@ -3,12 +3,17 @@ package positionen;
 import java.util.ArrayList;
 import GUI.GUI;
 import LogFileWriter.LogFileWriter;
-import Threads.MainRuntimeThread;
-import Threads.SignalThread;
+import PyhtonConnection.Order;
+import PyhtonConnection.PyhtonConnection;
+
+import Threads.stopableThread;
+import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.Signals;
 
 import java.util.HashSet;
+
+
 
 import API.ApiConnection;
 
@@ -18,49 +23,66 @@ public class Verwaltung {
 	GUI gui;
 	LogFileWriter logFileWriter;
 	Signals signals;
+	PyhtonConnection pythonConnection;
 	ArrayList<position> positionen;
 	ArrayList<trade> trades;
 	String granularity;
-	MainRuntimeThread mrt;
+	ArrayList<stopableThread> threads = new ArrayList<>();
 	
 	double einsatz;
 
 	public Verwaltung(ApiConnection connection, String granularity, double einsatz) {
 		
 		this.einsatz = einsatz;
-		
 		this.connection = connection;
 		gui = new GUI();
 		logFileWriter = new LogFileWriter();
-		signals = new Signals(connection, this, logFileWriter);
+		this.granularity = granularity;
+		signals = new Signals(connection, this, logFileWriter, this.granularity);
+		pythonConnection = new PyhtonConnection(this);
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
-		this.granularity = granularity;
-		mrt = new MainRuntimeThread(this);
+		
+		
 	}
 
 	
-	public void onTick(){
-		SignalThread signalThread = new SignalThread(signals, granularity);
-		signalThread.start();
-		
-		
-		try {
-			signalThread.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
+	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
+		return connection.getJsonInstrumentsRoot();
 	}
 	
 	public void startTraiding() {
-		mrt.start();
+		addThread(pythonConnection);
+		addThread(signals);
+		startThreads();
 	}
+	
+	public void startThreads() {
+		for (stopableThread st : threads) {
+			st.start();
+			}
+	}
+	
+	public void stopThreads() {
+		for (stopableThread st : threads) {
+			st.stopThread();
+			}
+	}
+	
+	public void addThread(stopableThread st) {
+		threads.add(st);
+	}
+	
 	
 	public boolean eneoughBalance() {
 		double curBalance = connection.getBalance();
 		
 		return curBalance > 100.0;
+	}
+	
+	public void pushOrder(Order order) {
+		
 	}
 	
 	public void pushSignal(Kpi kpi) {

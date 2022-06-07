@@ -17,13 +17,13 @@ public class KpiCalculator {
 	public Kpi getAll(String instrument, int emaperiods,int periods, String granularity, double startBF, double inkrementBF, double maxBF,int x, int y, int z)
 	{
 		// Candles von Oanda-Api holen und in Json-Object mappen
-		JsonCandlesRoot jcr = extracted(instrument, granularity);
+		JsonCandlesRoot jcr = getCandles(instrument, granularity);
 		
 		// Einfache Kennzahlen und EMA (Exponential Moving Average) berechnen
 		Kpi kpi=getBasisKpi(instrument, emaperiods, granularity,jcr);
 		
 		// Parabolic SAR berechnen
-		Kpi kpiTemp=getParabolicSar(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
+		Kpi kpiTemp=getParabolicSAR(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
 		kpi.parabolicSAR=kpiTemp.parabolicSAR;
 		kpi.parabolicSARs=kpiTemp.parabolicSARs;
 		kpi.trend=kpiTemp.trend;
@@ -35,8 +35,8 @@ public class KpiCalculator {
 		kpi.macds=kpiTemp.macds;
 		kpi.macdsTriggert=kpiTemp.macdsTriggert;
 		kpi.macdTriggert=kpiTemp.macdTriggert;
-		kpi.prozent=kpiTemp.prozent;
-		kpi.Prozent=kpiTemp.Prozent;
+		kpi.macdIntensity=kpiTemp.macdIntensity;
+		kpi.macdIntensitys=kpiTemp.macdIntensitys;
 	
 		// Relative Strength Index (RSI) berechnen mit exponentiell gleitenden Durchschnitt
 		kpiTemp=getRSI(instrument, periods, granularity,jcr);
@@ -109,7 +109,7 @@ public class KpiCalculator {
 		return kpi;
 	}
 
-	public JsonCandlesRoot extracted(String instrument, String granularity){
+	public JsonCandlesRoot getCandles(String instrument, String granularity){
 		//HttpURLConnection connection;
 		//URL url = new URL(oanda + account + "instruments/" + instrument + "/candles?count=4900&granularity="
 			//	+ granularity + "&from=" + startDate(granularity)+"&alignmentTimezone=Europe/Berlin&dailyAlignment=22");
@@ -124,9 +124,9 @@ public class KpiCalculator {
 		return root;
 	}
 
-	public Kpi getParabolicSar(String instrument, String granularity,int periods, double startBF, double inkrementBF, double maxBF,JsonCandlesRoot jcr) {
+	public Kpi getParabolicSAR(String instrument, String granularity,int periods, double tempBF, double inkrementBF, double maxBF,JsonCandlesRoot jcr) {
 			Kpi kpi = getBasisKpi(instrument,periods,granularity,jcr);
-			double startBFAf = startBF;
+			double startBFAf = tempBF;
 			double extrempunkt = 0;
 			double extrempunktAlt = 0;
 			double faktor=0;
@@ -144,7 +144,7 @@ public class KpiCalculator {
 
 				} else {
 					//parabolicSAR Berechnung
- faktor=(extrempunkt-kpi.parabolicSAR)*startBF;
+ faktor=(extrempunkt-kpi.parabolicSAR)*tempBF;
  if(kpi.trend.compareTo("bull")==0)
  kpi.parabolicSAR=((kpi.parabolicSAR+=faktor)>candle.mid.l)?extrempunkt:kpi.parabolicSAR+faktor;
  else
@@ -161,23 +161,24 @@ public class KpiCalculator {
 
 	 if((kpi.trend.compareTo(vortrend)==0)&&(kpi.trend.compareTo("bull")==0))
 	 {
-	startBF=(extrempunkt<=extrempunktAlt)?startBF:(startBF!=maxBF)?startBF+inkrementBF:startBF;
+	tempBF=(extrempunkt<=extrempunktAlt)?tempBF:(tempBF!=maxBF)?tempBF+inkrementBF:tempBF;
 	kpi.trendWechsel=false;
 	 }
 	else if((kpi.trend.compareTo(vortrend)==0)&&(kpi.trend.compareTo("bear")==0))
 	{
-		startBF=(extrempunkt>=extrempunktAlt)?startBF:(startBF!=maxBF)?startBF+inkrementBF:startBF;
+		tempBF=(extrempunkt>=extrempunktAlt)?tempBF:(tempBF!=maxBF)?tempBF+inkrementBF:tempBF;
 		kpi.trendWechsel=false;
 	}
 	else
 	{
 		kpi.trendWechsel=true;
-		startBF=startBFAf;
+		tempBF=startBFAf;
 	}
 				}
 				count++;
 				vortrend=kpi.trend;
 				extrempunktAlt=extrempunkt;
+				kpi.parabolicSARs.add(kpi.parabolicSAR);
 			}
 		
 				
@@ -206,7 +207,7 @@ public class KpiCalculator {
 		}
 		md.macdTriggert=ergebnis/z;
 		md.macdsTriggert.add(md.macdTriggert);
-		//Differnz zwischen Macd und MacdTriggert
+		//Differenz zwischen Macd und MacdTriggert
 		double differenz=md.macd-md.macdTriggert;
 		//Maximale Diffenenz zwischen macd und macdTriggert
 		maxDifferenz=differenz>maxDifferenz?differenz:maxDifferenz;
@@ -214,8 +215,8 @@ public class KpiCalculator {
 		minDifferenz=differenz<minDifferenz?differenz:minDifferenz;
 		//Wert für Array List bei negativer Differnz muss der Wert *(-1=) genommen werden, da -*- + ergibt und das Ergenis negativ sein soll zur Unterscheidung
 		double wert=differenz==0?0:differenz>0?differenz/maxDifferenz:differenz/minDifferenz*(-1);
-		md.Prozent.add(wert);
-		md.prozent=wert;
+		md.macdIntensitys.add(wert);
+		md.macdIntensity=wert;
 		//md.Prozent.add((md.macdTriggert>md.macdTriggert)?((md.macd-md.macdTriggert)/md.maxProzent)):md.macd>md.macdTriggert?;
 		
 		}
@@ -308,11 +309,12 @@ public class KpiCalculator {
 			double prev=0;
 			double wert=0;
 			for(int i=1;i<kpi.root.candles.size();i++)
-			{
-				prev=i>periods?0:prev;
-					betrag=(kpi.root.candles.get(i).mid.l-kpi.root.candles.get(i-1).mid.c)>((kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i-1).mid.c))?(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i-1).mid.c+prev):(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i-1).mid.c+prev);
-					betrag=betrag>kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l?betrag:kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l+prev;
-					prev=betrag;
+			{		
+				if(i==periods+1)prev=0;
+				//Maximimum aus(Hoch(H)-Tief(T),VorherigenSchluss(VS)-(H),VS-T	
+					betrag=(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l)>((kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h))?(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l+prev):(kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h+prev);
+					betrag=betrag>kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.l?betrag:kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.l+prev;
+					
 				    
 				if(i>periods)
 				{
@@ -323,6 +325,8 @@ public class KpiCalculator {
 					kpi.IntegerAtrListe.add(kpi.IntegerAtr);
 					
 				}
+				else 
+				prev=betrag;
 				
 			}
 			return kpi;
@@ -335,7 +339,7 @@ public class KpiCalculator {
 		double gain=0;
 		double loss=0;
 		
-			double startPreis=kpi.root.candles.get(0).mid.c;
+			double vorherigerPreis=kpi.root.candles.get(0).mid.c;
 			double currentG=0;
 			double currentL=0;
 			
@@ -343,8 +347,8 @@ public class KpiCalculator {
 			{
 			if(z<=periods)
 			{
-				gain=kpi.root.candles.get(z).mid.c-startPreis>0?gain+kpi.root.candles.get(z).mid.c-startPreis:gain;
-				loss=startPreis-kpi.root.candles.get(z).mid.c>0?loss+startPreis-kpi.root.candles.get(z).mid.c:loss;
+				gain=kpi.root.candles.get(z).mid.c-vorherigerPreis>0?gain+kpi.root.candles.get(z).mid.c-vorherigerPreis:gain;
+				loss=vorherigerPreis-kpi.root.candles.get(z).mid.c>0?loss+vorherigerPreis-kpi.root.candles.get(z).mid.c:loss;
 						if(z==periods)
 						{
 					gain=gain/periods;
@@ -353,15 +357,19 @@ public class KpiCalculator {
 			}
 				if(z>periods)
 				{
-					currentG=kpi.root.candles.get(z).mid.c-startPreis>0?kpi.root.candles.get(z).mid.c-startPreis:0;
-					currentL=startPreis-kpi.root.candles.get(z).mid.c>0?startPreis-kpi.root.candles.get(z).mid.c:0;
+					currentG=kpi.root.candles.get(z).mid.c-vorherigerPreis>0?kpi.root.candles.get(z).mid.c-vorherigerPreis:0;
+					currentL=vorherigerPreis-kpi.root.candles.get(z).mid.c>0?vorherigerPreis-kpi.root.candles.get(z).mid.c:0;
 					gain=(gain*(periods-1)+currentG)/periods;
 					loss=(loss*(periods-1)+currentL)/periods;
+					
+					kpi.rsi=(loss==0)?100:100-(100/((gain/loss)+1));
+					kpi.rsiListe.add(kpi.rsi);
 				}
-				startPreis=kpi.root.candles.get(z).mid.c;
-				kpi.rsi=100-(100/((gain/loss)+1));
-				kpi.rsiListe.add(kpi.rsi);
+				vorherigerPreis=kpi.root.candles.get(z).mid.c;
 			}
+				
+				
+			
 	return kpi;
 	}
 	public Kpi getSMA(String instrument, int periods, String granularity,JsonCandlesRoot jcr)

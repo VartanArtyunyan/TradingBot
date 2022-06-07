@@ -135,19 +135,40 @@ public class JsonParser {
 		return output;
 	}
 	
-	public void parseLastCandleFromAPIString(String json) {
+	public JsonCandlesCandle parseLastCandleFromAPIString(String json) {
 		int length = json.length();
 		
-		int counter = - 1;
+		int counter = 2;
+		int index = length;
 		
+		while(counter > 0) {
+			index--;
+			if(json.charAt(index) == '{') {
+				counter--;
+				}
+			
+		}
+		int end = json.length()-2;
 		
+		String candleJson = json.substring(index,end);
+		JsonObject candle = new JsonObject(candleJson);
+		JsonObject mid = candle.getObject("mid");
 		
+		JsonCandlesCandle lastCandle = new JsonCandlesCandle();
+		JsonCandlesMid jcm = new JsonCandlesMid();
 		
-		int end = json.length();
-		int start = end - 136;
-		String s = json.substring(start,end);
+		jcm.o = Double.parseDouble(mid.getValue("o"));
+		jcm.h = Double.parseDouble(mid.getValue("h"));
+		jcm.l = Double.parseDouble(mid.getValue("l"));
+		jcm.c = Double.parseDouble(mid.getValue("c"));
 		
-		System.out.println(s);
+		lastCandle.complete = Boolean.parseBoolean(candle.getValue("complete"));
+		lastCandle.volume = Integer.parseInt(candle.getValue("volume"));
+		lastCandle.time = candle.getValue("time");
+		lastCandle.mid = jcm;
+		
+	
+		return lastCandle;
 	}
 	
 	public JsonInstrumentsRoot convertAPiStringToInstrumentsRootModel(String json){
