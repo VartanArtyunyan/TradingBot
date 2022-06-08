@@ -145,16 +145,29 @@ public class Signals extends stopableThread{
 	public static int kombiniereMACD_PSAR(Kpi werte) {
 		if (pruefePerioden(werte, "MACD", 6) == -1) {
 			if (pruefePSAR(werte) == 1) {
-				System.out.println("MACD_PSAR Long");
+				//System.out.println("MACD_PSAR Long");
 				return 1;
 			}
 		} else if (pruefePerioden(werte, "MACD", 6) == 1) {
 			if (pruefePSAR(werte) == -1) {
-				System.out.println("MACD_PSAR Short");
+				//System.out.println("MACD_PSAR Short");
 				return -1;
 			}
 		}
 		return 0;
+	}
+	//Testweise:
+	public static int kombiniereEMA200ATR(Kpi werte) {
+		//long
+		if (pruefeEMA200(werte)==1) {
+			if (pruefeATR(werte) == 1) return 1;
+		}
+		//short
+		else if (pruefeEMA200(werte)==-1) {
+			if (pruefeATR(werte) == -1) return -1;
+		}
+		return 0;
+		
 	}
 
 	public static int kombiniereMACDEMAPSAR(Kpi werte) {
@@ -193,20 +206,20 @@ public class Signals extends stopableThread{
 
 		try {
 			if (pruefeEMA200(werte) == 1) {
-				System.out.println("1.versuch"); // 1. liegt Trend (= 200 EMA) über Kurs?
+				//System.out.println("1.versuch"); // 1. liegt Trend (= 200 EMA) über Kurs?
 				if (pruefePerioden(werte, "MACD", 5) == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter
 																// Signallinie?
 					if (pruefePSAR(werte) == 1) { // 5. ist der PSAR-Wert unter dem Kurs?
 						// long //Long-Position
 						// return werte;
-						System.out.println("long");
+						//System.out.println("long");
 						rueckgabewert = 1;
 					}
 				}
 			}
 
 			else if (pruefeEMA200(werte) == -1) {
-				System.out.println("2.versuch"); // 1. liegt Trend unter Kurs?
+				//System.out.println("2.versuch"); // 1. liegt Trend unter Kurs?
 				if (pruefePerioden(werte, "MACD", 5) == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über
 																// Signallinie?
 					if (pruefePSAR(werte) == -1) { // 5. ist der PSAR-Wert über dem Kurs?
@@ -216,13 +229,13 @@ public class Signals extends stopableThread{
 						// Verwaltung.placeOrder(instrument, double wer, double kurs, double obergrenze,
 						// double untergrenze);
 						// return werte;
-						System.out.println("short");
+						//System.out.println("short");
 						rueckgabewert = -1;
 					}
 				}
 			}
 
-			// wenn 0?
+			// wenn 0
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -555,13 +568,13 @@ public class Signals extends stopableThread{
 			MACDRueckgabewert = 0;
 		}
 		if (RSIOversold == true && RSIOverbought == false) {
-			// die letzten 5 RSIs sind Oversold, also unter 30%
+			// die letzten x RSIs sind Oversold, also unter 30%
 			RSIRueckgabewert = -1;
 		} else if (RSIOversold == false && RSIOverbought == true) {
-			// die letzten 5 RSIs sind Overbought, also über 70%
+			// die letzten x RSIs sind Overbought, also über 70%
 			RSIRueckgabewert = 1;
 		} else if ((RSIOversold == true && RSIOverbought == true) || (RSIOversold == false && RSIOverbought == false)) {
-			// die letzten 5 RSIs schwanken oder liegen alle zwischen 30 und 70 Prozent
+			// die letzten x RSIs schwanken oder liegen alle zwischen 30 und 70 Prozent
 			RSIRueckgabewert = 0;
 		}
 		if (entscheideSignal == "MACD") {
@@ -577,8 +590,6 @@ public class Signals extends stopableThread{
 	}
 
 	public static int pruefeATR(Kpi werte) {
-		// JPY und HUF sind die ATR-Werte zu hoch, um sie zum Stoploss zu verwenden
-		// !(instrument.name.contains("HUF")|| instrument.name.contains("JPY")
 		// Wo ist der niedrigste und Höchste ATR-Wert
 		// Dieser Wert ist der Vergleichspunkt mit dem aktuellen ATR Wert
 		// Jedoch soll der Wert nur ungefär gleich sein, weil eine genaue
@@ -590,7 +601,7 @@ public class Signals extends stopableThread{
 		// den nächsten Perioden stärker
 		// nachgefragt wird, jedoch gibt er keine Auskunft in welche Richtung
 		int rueckgabe = 0;
-		System.out.println("vanilla " + werte.atr);
+		//System.out.println("vanilla " + werte.atr);
 		/*
 		 * double y = werte.atr*100000; System.out.println("test "+ runden(y));
 		 * 
@@ -609,11 +620,11 @@ public class Signals extends stopableThread{
 				relativesMaximum = vergleich;
 			}
 		}
-		System.out.println("relativesMaximum " + relativesMaximum + "; relativesMinimum " + relativesMinimum);
+		//System.out.println("relativesMaximum " + relativesMaximum + "; relativesMinimum " + relativesMinimum);
 		double prozentsatz = ((relativesMinimum * 100 / relativesMaximum) + 1) / 100;
-		System.out.println("prozentsatz " + prozentsatz);
+		//System.out.println("prozentsatz " + prozentsatz);
 		double aktuellerATR = werte.atr + prozentsatz;
-		System.out.println("aktueller atr " + werte.atr + " neuer ATR " + aktuellerATR);
+		//System.out.println("aktueller atr " + werte.atr + " neuer ATR " + aktuellerATR);
 
 		if (relativesMinimum < aktuellerATR) {
 			// aktueller ATR ist nicht am niedrigsten Punkt
@@ -624,6 +635,30 @@ public class Signals extends stopableThread{
 
 		return rueckgabe;
 
+	}
+	
+	public static int pruefeSMACrossover(Kpi SMA20, Kpi SMA50, int anzahlVorperioden) {
+		//Baustelle
+		int ausgabe = 99;
+		double sma20Aktuell = SMA20.atr;
+		double sma50Aktuell = SMA50.atr;
+		boolean SMA20KleinerSMA50 = false;
+		boolean SMA20GroesserSMA50 = false;
+		for (int i = 1; i<anzahlVorperioden+2; i++) {
+			double sma20 = SMA20.smaList.get(SMA20.smaList.size()-i);
+			double sma50 = SMA50.smaList.get(SMA50.smaList.size()-i);
+			if (sma20 < sma50) {
+				SMA20KleinerSMA50 = true;
+			}
+			else if (sma20 > sma50) {
+				SMA20GroesserSMA50 = true;
+			}
+			
+		}
+		
+		
+		
+		return ausgabe;
 	}
 
 	public static int berechneMillisekunden(String granularity) {
