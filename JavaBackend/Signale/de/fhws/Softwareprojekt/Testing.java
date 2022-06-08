@@ -72,26 +72,40 @@ public class Testing {
 @Test
 public void RSITest()
 {
+	try
+	{
 	currencies.forEach(kpi->assertTrue((kpi.rsi>=0)&&(kpi.rsi<=100)));
+	}
+	catch(Exception e)
+	{
+		fail("Hätte keine Ausnahme gefeurt");
+	}
 	
 }
 @Test
 public void RSIIntensityTest()
 {
-	
+	try
+	{
 	currencies.forEach(kpi->assertTrue((kpi.macdIntensity>=-1&&kpi.macdIntensity<=1)&&kpi.macdIntensitys.get(kpi.macdIntensitys.size()-1)==kpi.macdIntensity));
+	}
+	catch(Exception e)
+	{
+		fail("Hätte keine Ausnahme gefeurt");
+	}
 }
 	@Test
 	public void MacdTest() {
-		
-	//	int zaehlerMACD = 0;
-	//	int zaehlerMACDTriggert = 0;
+		//-1 und 1 sind keine Grenzwerte. Trotzdem wäre es verwunderlich, wenn ein Macd und MacdTriggert in dieser Größenordnung erscheint
+	try
+	{
 currencies.forEach(kpi->assertTrue((kpi.macd<1&&kpi.macd>-1)&&(kpi.macdTriggert<1&&kpi.macdTriggert>-1)));
-	/*	for (Kpi kpi : currencies) {
-			zaehlerMACD = ((kpi.macd < 1) && (kpi.macd > -1)) ? zaehlerMACD : zaehlerMACD++;
-			zaehlerMACDTriggert = ((kpi.macdTriggert < 1) && (kpi.macdTriggert > -1)) ? zaehlerMACD : zaehlerMACD++;
-		}
-		assertTrue((zaehlerMACD <= 1) && (zaehlerMACDTriggert <= 1));*/
+	}
+	catch(Exception e)
+	{
+		fail("Hätte keine Ausnahme feuern duerfen");
+	}
+	
 	}
 @Test
 public void parabiolicSarTest()
@@ -175,7 +189,8 @@ public void emaTest()
 			}
 		}
 		double zahl = (double) zaehler / currencies.size();
-		assertTrue(zahl > 0.7);
+		if(zahl<=0.5)
+		fail("Die Zahl lautet" + zahl);  
 	}
 	
 	//Tom Kombination Bereich
