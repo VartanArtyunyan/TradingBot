@@ -70,9 +70,10 @@ public class PyhtonConnection extends stopableThread{
 		
 		String instrument = orderJson.getValue("instrument");
 		double faktor = Double.parseDouble(orderJson.getValue("faktor"));
+		int volatility = Integer.parseInt(orderJson.getValue("volatility"));
 		boolean longShort = Boolean.parseBoolean(orderJson.getValue("longShort"));
 		
-		return new Order(instrument, faktor, longShort);
+		return new Order(instrument, faktor, volatility, longShort);
 	}
 	
 	public String makeInstrumentJson(JsonInstrumentsRoot jir) {

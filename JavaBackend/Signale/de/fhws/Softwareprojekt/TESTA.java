@@ -37,15 +37,17 @@ public static void main(String[] args) {
 	
 			if(instrument.type.compareTo("CURRENCY")==0)
 			{
+			
 				//EmaListe es=new EmaListe();
-				Kpi kpi=e.getAll(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,300,9);
-				if(kpi.macd>1)
+				Kpi kpi=e.getAll(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
+				System.out.println(kpi.macds.get(kpi.macds.size()-1) +" "+kpi.macdsTriggert.get(kpi.macdsTriggert.size()-1));
+				/*if(kpi.macd>1)
 					System.out.println(kpi.macd);
 				else
 				{
 					if(kpi.macd>1)
 					System.out.println(kpi.macd);
-				}
+				}*/
 			//String c="";
 	//	if((pruefeVorperioden(kpi, "MACD")!=0)&&((kpi.prozent>0.15)||(kpi.prozent<-0.25)))
 				//{
@@ -83,8 +85,11 @@ public static void main(String[] args) {
 				System.out.println("abrunden " +kpi.abrunden(kpi.parabolicSAR,3));
 				System.out.println("runden" +kpi.runden(kpi.parabolicSAR, 3));
 				System.out.println(kpi.runden(kpi.parabolicSAR,3)+1/Math.pow(10, 3));*/
+				if(kpi.macdTriggert>kpi.macd)
 				zaehler++;
 				}
+		}
+			System.out.println(zaehler);
 				//System.out.println("macdTriggert " + kpi.atr +" "+kpi.macds.get(kpi.macds.size()-1));
 		//	System.out.println("macd " +kpi.macd);
 	//		System.out.println("OK");
@@ -95,7 +100,7 @@ public static void main(String[] args) {
 			//System.out.println(pruefeVorperioden(kpi,"MACD"));
 			}
 		
-		}
+		
 		
 	//System.out.println(zaehler);
 		/*	for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) 

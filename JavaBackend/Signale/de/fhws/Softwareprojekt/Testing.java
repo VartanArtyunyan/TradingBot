@@ -1,5 +1,6 @@
 package de.fhws.Softwareprojekt;
 
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -63,36 +64,112 @@ public class Testing {
 		if(instrument.type.compareTo("CURRENCY") == 0)
 			currenciesString.add(instrument.name);
 		}
-		currenciesString.parallelStream().sorted().forEach(k->currencies.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9)));
-		currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15"))))	;
-				
+		currenciesString.parallelStream().sorted().forEach(k->{currencies.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9));basicKpiList.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15")));});
+		
+	//	currenciesString.parallelStream().sorted().forEach(k->currencies.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15"))))	;
+	//	currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9)));
 	}
 @Test
 public void RSITest()
 {
-	currencies.forEach(kpi->assertTrue((kpi.rsi>0)&&(kpi.rsi<100)));
+	try
+	{
+	currencies.forEach(kpi->assertTrue((kpi.rsi>=0)&&(kpi.rsi<=100)));
+	}
+	catch(Exception e)
+	{
+		fail("Hätte keine Ausnahme gefeurt");
+	}
 	
 }
 @Test
 public void RSIIntensityTest()
 {
-	
-	currencies.forEach(kpi->assertTrue(kpi.macdIntensity>=-1&&kpi.macdIntensity<=1&&kpi.macdIntensitys.get(kpi.macdIntensitys.size()-1)==kpi.macdIntensity));
+	try
+	{
+	currencies.forEach(kpi->assertTrue((kpi.macdIntensity>=-1&&kpi.macdIntensity<=1)&&kpi.macdIntensitys.get(kpi.macdIntensitys.size()-1)==kpi.macdIntensity));
+	}
+	catch(Exception e)
+	{
+		fail("Hätte keine Ausnahme gefeurt");
+	}
 }
 	@Test
 	public void MacdTest() {
-		
-	//	int zaehlerMACD = 0;
-	//	int zaehlerMACDTriggert = 0;
+		//-1 und 1 sind keine Grenzwerte. Trotzdem wäre es verwunderlich, wenn ein Macd und MacdTriggert in dieser Größenordnung erscheint
+	try
+	{
 currencies.forEach(kpi->assertTrue((kpi.macd<1&&kpi.macd>-1)&&(kpi.macdTriggert<1&&kpi.macdTriggert>-1)));
-	/*	for (Kpi kpi : currencies) {
-			zaehlerMACD = ((kpi.macd < 1) && (kpi.macd > -1)) ? zaehlerMACD : zaehlerMACD++;
-			zaehlerMACDTriggert = ((kpi.macdTriggert < 1) && (kpi.macdTriggert > -1)) ? zaehlerMACD : zaehlerMACD++;
-		}
-		assertTrue((zaehlerMACD <= 1) && (zaehlerMACDTriggert <= 1));*/
 	}
+	catch(Exception e)
+	{
+		fail("Hätte keine Ausnahme feuern duerfen");
+	}
+	
+	}
+@Test
+public void parabiolicSarTest()
+{
+	
+	int zaehlerUeberKurs=0;
+	int zaehlerUnterKurs=0;
+	for(Kpi k:currencies)
+	{
+		if(k.parabolicSAR>=k.lastPrice)
+			zaehlerUeberKurs++;
+		if(k.parabolicSAR<=k.lastPrice)
+			zaehlerUnterKurs++;
+	}
+	if(zaehlerUeberKurs==currencies.size()||zaehlerUnterKurs==currencies.size())
+		fail("Parabolic SAR entweder überall unter Kurs oder überall über den Kurs");
+	
+}
+//Checken dass der macd 4 unter macdTriggert liegt
+@Test
+public void MacdMacdsTriggertlongCheck()
+{
+	int hauptzaehler=0;
+	int count=0;
+for(Kpi k:currencies)
+{	
+	count=0;
+	
+	int zaehler=0;
+	for(int i=k.macds.size()-6;i<k.macds.size();i++)
+	{
+		if(k.macdsTriggert.get(i-8)>k.macds.get((i)))
+		{
+		zaehler++;
+		count++;
+		}
+
+}
+	
+	hauptzaehler=zaehler==6?hauptzaehler+=1:hauptzaehler;
+}
+
+System.out.println(hauptzaehler);
+if(hauptzaehler==0)
+fail("Keine Chance auf ein Long Signal in dem Durchlauf");
+}
 
 
+
+@Test
+public void emaTest()
+{
+	int zaehlerUeberKurs=0;
+	int zaehlerUnterKurs=0;
+	for(Kpi k:currencies)
+	{
+		if(k.ema>=k.lastPrice)
+			zaehlerUeberKurs++;
+		if(k.ema<=k.lastPrice)
+			zaehlerUnterKurs++;
+	}
+	if(zaehlerUeberKurs==currencies.size()||zaehlerUnterKurs==currencies.size())
+		fail("Ema entweder überall unter Kurs oder überall über den Kurs");
+}
 
 	@Test
 	public void EmaGrenzwerteCheck() {
@@ -112,8 +189,10 @@ currencies.forEach(kpi->assertTrue((kpi.macd<1&&kpi.macd>-1)&&(kpi.macdTriggert<
 			}
 		}
 		double zahl = (double) zaehler / currencies.size();
-		assertTrue(zahl > 0.7);
+		if(zahl<=0.5)
+		fail("Die Zahl lautet" + zahl);  
 	}
+	
 	//Tom Kombination Bereich
 	@Test
 	public void checkSchneiden()

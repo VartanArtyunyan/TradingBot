@@ -2,9 +2,16 @@ package de.fhws.Softwareprojekt;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import API.ApiConnection;
+import Threads.getATRThread;
+import Threads.getMACDThread;
 //import sun.security.mscapi.CKeyStore.ROOT;
+import Threads.getParabolicSARThread;
+import Threads.getRSIThread;
+import Threads.getSMAThread;
+import Threads.kpiThread;
 
 public class KpiCalculator {
 	
@@ -21,16 +28,41 @@ public class KpiCalculator {
 		
 		// Einfache Kennzahlen und EMA (Exponential Moving Average) berechnen
 		Kpi kpi=getBasisKpi(instrument, emaperiods, granularity,jcr);
-		
+		Kpi kpiTemp;
 		// Parabolic SAR berechnen
-		Kpi kpiTemp=getParabolicSAR(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr);
+		
+		ArrayList<kpiThread> threads = new ArrayList<>();
+		
+		threads.add(new getParabolicSARThread(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr));
+		threads.add(new getMACDThread(instrument, granularity, x, y, z, jcr));
+		threads.add(new getRSIThread(instrument, periods, granularity, jcr));
+		threads.add(new getATRThread(instrument, periods, granularity, jcr));
+		threads.add(new getSMAThread(instrument, periods, granularity, jcr));
+		
+		for(kpiThread kt : threads) {
+			kt.start();
+		}
+		
+		for(kpiThread kt : threads) {
+			try {
+				kt.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
+		
+		kpiTemp= threads.get(0).getErgebnis();
 		kpi.parabolicSAR=kpiTemp.parabolicSAR;
 		kpi.parabolicSARs=kpiTemp.parabolicSARs;
 		kpi.trend=kpiTemp.trend;
 		kpi.trendWechsel=kpiTemp.trendWechsel;
 		
 		// MACD (Moving Average Convergence/Divergence) berechnen 
-		kpiTemp=getMACD(instrument, granularity, x, y, z,jcr);
+		kpiTemp=threads.get(1).getErgebnis();
 		kpi.macd=kpiTemp.macd;
 		kpi.macds=kpiTemp.macds;
 		kpi.macdsTriggert=kpiTemp.macdsTriggert;
@@ -39,19 +71,19 @@ public class KpiCalculator {
 		kpi.macdIntensitys=kpiTemp.macdIntensitys;
 	
 		// Relative Strength Index (RSI) berechnen mit exponentiell gleitenden Durchschnitt
-		kpiTemp=getRSI(instrument, periods, granularity,jcr);
+		kpiTemp=threads.get(2).getErgebnis();
 		kpi.rsi=kpiTemp.rsi;
 		kpi.rsiListe=kpiTemp.rsiListe;
 		
 		// Average True Range (ATR) berechnen
-		kpiTemp=getATR(instrument, periods, granularity,jcr);
+		kpiTemp=threads.get(3).getErgebnis();
 		kpi.atr=kpiTemp.atr;
 		kpi.atrListe=kpiTemp.atrListe;
 		kpi.IntegerAtr=kpiTemp.IntegerAtr;
 		kpi.IntegerAtrListe=kpiTemp.IntegerAtrListe;
 		
 		// Simple Moving Average (SMA) berechnen
-		kpiTemp=getSMA(instrument, periods, granularity, jcr);
+		kpiTemp=threads.get(4).getErgebnis();
 		kpi.sma=kpiTemp.sma;
 		kpi.smaList=kpiTemp.smaList;
 		
@@ -312,7 +344,8 @@ public class KpiCalculator {
 			{		
 				if(i==periods+1)prev=0;
 				//Maximimum aus(Hoch(H)-Tief(T),VorherigenSchluss(VS)-(H),VS-T	
-					betrag=(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l)>((kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h))?(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l+prev):(kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h+prev);
+					betrag=(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l)>((kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h))
+							?(kpi.root.candles.get(i).mid.h-kpi.root.candles.get(i).mid.l+prev):(kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.h+prev);
 					betrag=betrag>kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.l?betrag:kpi.root.candles.get(i-1).mid.c-kpi.root.candles.get(i).mid.l+prev;
 					
 				    

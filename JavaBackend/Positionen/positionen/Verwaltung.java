@@ -10,6 +10,7 @@ import Threads.stopableThread;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.Signals;
+import randomTrader.RandomOrder;
 
 import java.util.HashSet;
 
@@ -35,7 +36,7 @@ public class Verwaltung {
 		
 		this.einsatz = einsatz;
 		this.connection = connection;
-		gui = new GUI();
+		//gui = new GUI();
 		logFileWriter = new LogFileWriter();
 		this.granularity = granularity;
 		signals = new Signals(connection, this, logFileWriter, this.granularity);
@@ -83,23 +84,36 @@ public class Verwaltung {
 	
 	public void pushOrder(Order order) {
 		
-	}
-	
-	public void pushSignal(Kpi kpi) {
-		if(containsPosition(kpi.getInstrument())) return;
-		
-		double factor = einsatz * (kpi.isLong()? 1 : -1);
-		
 		if(!eneoughBalance()) {
 			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
 		}
 		
 		double curBalance = connection.getBalance();
+		double factor = einsatz * (order.isLong()? 1 : -1);
+		double buyingPrice = curBalance * factor * order.getFaktor();
+		double kurs = connection.getKurs(order.getInstrument());
+		double units =  buyingPrice / kurs;
+		
+		connection.placeOrder(order.getInstrument(), units);
+	}
+	
+	public void pushSignal(Kpi kpi) {
+		if(containsPosition(kpi.getInstrument())) return;
+		if(!eneoughBalance()) {
+			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			return;
+		}
+		
+		double factor = einsatz;
+		if(kpi.isShort())factor = factor * -1;
+		
+		
+		double curBalance = connection.getBalance();
 		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
 		double units =  buyingPrice / kpi.getLastPrice();
 		
-		connection.placeLimitOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());	
+		connection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());	
 		
 		logFileWriter.log(kpi.getInstrument(), kpi.getLastTime(),buyingPrice, kpi.getLastPrice(),  kpi.getTakeProfit(),
 				kpi.getStopLoss(), kpi.getMacd(), kpi.getMacdTriggert(), kpi.getParabolicSAR(), kpi.getEma());
@@ -108,41 +122,34 @@ public class Verwaltung {
 		
 		
 	}
-
-	public void placeShortOrder(String instrument,double limitPrice, double takeProfit, double stopLoss, double kurs) {
+	
+	public void pushRanomOrder(RandomOrder randomOrder) {
 		
-		if(!eneoughBalance()) {
-			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
-			return;
-		}
+		
 		
 		double curBalance = connection.getBalance();
-
-		double units = (curBalance * (-0.02)) / kurs;
-
-		connection.placeLimitOrder(instrument,  units, takeProfit, stopLoss);
-		
-		aktualisierePosition();
-		
-		
+		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
+		double units =  buyingPrice / kpi.getLastPrice();
 	}
-	
-	
-	public void placeLongOrder(String instrument, double limitPrice, double takeProfit, double stopLoss, double kurs) {
+
+	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
 		
 		if(!eneoughBalance()) {
 			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
 		}
 
-		double curBalance = connection.getBalance();
-
-		double units = (curBalance * 0.02) / kurs;
-
-		connection.placeLimitOrder(instrument,units, takeProfit, stopLoss);
+		connection.placeOrder(instrument, units, takeProfit, stopLoss);
 		
 		aktualisierePosition();
+		
+		
 	}
+	
+	public double getKurs(String instrument) {
+		return connection.getKurs(instrument);
+	}
+	
 	
 	public void addManualPosition(String instrument) { //GAANZ WICHTIG! in der finalen Version nicht mehr verwenden
 		position position1 = new position(instrument);
