@@ -11,10 +11,9 @@ import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.Signals;
 import randomTrader.RandomOrder;
+import randomTrader.randomTrader;
 
 import java.util.HashSet;
-
-
 
 import API.ApiConnection;
 
@@ -25,142 +24,151 @@ public class Verwaltung {
 	LogFileWriter logFileWriter;
 	Signals signals;
 	PyhtonConnection pythonConnection;
+	randomTrader rngTrader;
 	ArrayList<position> positionen;
 	ArrayList<trade> trades;
 	String granularity;
 	ArrayList<stopableThread> threads = new ArrayList<>();
-	
+
 	double einsatz;
 
 	public Verwaltung(ApiConnection connection, String granularity, double einsatz) {
-		
+
 		this.einsatz = einsatz;
 		this.connection = connection;
-		//gui = new GUI();
+		// gui = new GUI();
 		logFileWriter = new LogFileWriter();
 		this.granularity = granularity;
 		signals = new Signals(connection, this, logFileWriter, this.granularity);
 		pythonConnection = new PyhtonConnection(this);
+		rngTrader = new randomTrader(this);
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
-		
-		
+
 	}
 
-	
-	
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
 		return connection.getJsonInstrumentsRoot();
 	}
-	
+
 	public void startTraiding() {
-		addThread(pythonConnection);
-		addThread(signals);
+		// addThread(pythonConnection);
+		// addThread(signals);
+		addThread(rngTrader);
 		startThreads();
 	}
-	
+
 	public void startThreads() {
 		for (stopableThread st : threads) {
 			st.start();
-			}
+		}
 	}
-	
+
 	public void stopThreads() {
 		for (stopableThread st : threads) {
 			st.stopThread();
-			}
+		}
 	}
-	
+
 	public void addThread(stopableThread st) {
 		threads.add(st);
 	}
-	
-	
+
 	public boolean eneoughBalance() {
 		double curBalance = connection.getBalance();
-		
+
 		return curBalance > 100.0;
 	}
-	
+
 	public void pushOrder(Order order) {
-		
-		if(!eneoughBalance()) {
+
+		if (!eneoughBalance()) {
 			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
 		}
-		
+
 		double curBalance = connection.getBalance();
-		double factor = einsatz * (order.isLong()? 1 : -1);
+		double factor = einsatz * (order.isLong() ? 1 : -1);
 		double buyingPrice = curBalance * factor * order.getFaktor();
 		double kurs = connection.getKurs(order.getInstrument());
-		double units =  buyingPrice / kurs;
-		
+		double units = buyingPrice / kurs;
+
 		connection.placeOrder(order.getInstrument(), units);
+		aktualisierePosition();
 	}
-	
+
 	public void pushSignal(Kpi kpi) {
-		if(containsPosition(kpi.getInstrument())) return;
-		if(!eneoughBalance()) {
+
+		if (!eneoughBalance()) {
 			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
 		}
-		
+
 		double factor = einsatz;
-		if(kpi.isShort())factor = factor * -1;
-		
-		
+		if (kpi.isShort())
+			factor = factor * -1;
+
 		double curBalance = connection.getBalance();
 		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
-		double units =  buyingPrice / kpi.getLastPrice();
-		
-		connection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());	
-		
-		logFileWriter.log(kpi.getInstrument(), kpi.getLastTime(),buyingPrice, kpi.getLastPrice(),  kpi.getTakeProfit(),
+		double units = buyingPrice / kpi.getLastPrice();
+
+		connection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
+
+		logFileWriter.log(kpi.getInstrument(), kpi.getLastTime(), buyingPrice, kpi.getLastPrice(), kpi.getTakeProfit(),
 				kpi.getStopLoss(), kpi.getMacd(), kpi.getMacdTriggert(), kpi.getParabolicSAR(), kpi.getEma());
-		
+
 		aktualisierePosition();
-		
-		
+
 	}
-	
+
 	public void pushRanomOrder(RandomOrder randomOrder) {
-		
-		
-		
+		if (containsPosition(randomOrder.getInstrument()))
+			return;
+		double factor = einsatz;
+		if (randomOrder.isShort())
+			factor = factor * -1;
+
 		double curBalance = connection.getBalance();
-		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
-		double units =  buyingPrice / kpi.getLastPrice();
+		double buyingPrice = curBalance * factor;
+		double kurs = getKurs(randomOrder.getInstrument());
+		double units = buyingPrice / kurs;
+
+		double upperBorder = 1.001;
+		double lowerBorder = 0.999;
+
+		double takeProfit = kurs * (randomOrder.isLong() ? upperBorder : lowerBorder);
+		double stopLoss = kurs * (randomOrder.isShort() ? upperBorder : lowerBorder);
+
+		connection.placeOrder(randomOrder.getInstrument(), units, takeProfit, stopLoss);
+		aktualisierePosition();
 	}
 
 	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
-		
-		if(!eneoughBalance()) {
+
+		if (!eneoughBalance()) {
 			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
 		}
 
 		connection.placeOrder(instrument, units, takeProfit, stopLoss);
-		
+
 		aktualisierePosition();
-		
-		
+
 	}
-	
+
 	public double getKurs(String instrument) {
 		return connection.getKurs(instrument);
 	}
-	
-	
-	public void addManualPosition(String instrument) { //GAANZ WICHTIG! in der finalen Version nicht mehr verwenden
+
+	public void addManualPosition(String instrument) { // GAANZ WICHTIG! in der finalen Version nicht mehr verwenden
 		position position1 = new position(instrument);
 		addPosition(position1);
-		
+
 	}
+
 	private void addPosition(position a) {
 		positionen.add(a);
 	}
-	
-	
 
 	public void closeWholePosition(String i) {
 
@@ -177,7 +185,7 @@ public class Verwaltung {
 
 	public void aktualisierePosition() {
 		trades = connection.getTrades();
-		
+
 		HashSet<String> erstelltePosition = new HashSet<>();
 		for (int i = 0; i < trades.size(); i++) {
 			if (erstelltePosition.contains(trades.get(i).getInstrument())) {
@@ -186,7 +194,8 @@ public class Verwaltung {
 				position p = new position(trades.get(i).getInstrument());
 				erstelltePosition.add(trades.get(i).getInstrument());
 				p.addID(trades.get(i).getId());
-				addPosition(p);;
+				addPosition(p);
+				;
 			}
 
 		}
@@ -213,22 +222,24 @@ public class Verwaltung {
 	}
 
 	public void putTrade(trade t, String b) {
-		
-		if(positionen == null) return;
-		
+
+		if (positionen == null)
+			return;
+
 		for (int i = 0; i < positionen.size(); i++) {
 			if (positionen.get(i).getInstrument().equals(b)) {
 				positionen.get(i).addID(t.getId());
 			}
 		}
 	}
-	
+
 	public boolean containsPosition(String instrument) {
 		aktualisierePosition();
-		
+
 		boolean output = false;
 		for (position p : positionen) {
-			if (p.getInstrument().equals(instrument)) output = true;
+			if (p.getInstrument().equals(instrument))
+				output = true;
 		}
 		return output;
 	}

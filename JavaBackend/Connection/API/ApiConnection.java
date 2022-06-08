@@ -54,7 +54,7 @@ public class ApiConnection {
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
 		if (availableInstruemts == null) {
 			String apiResponseString = connection.getInstruments();
-
+			
 			availableInstruemts = jsonParser.convertAPiStringToInstrumentsRootModel(apiResponseString);
 		}
 		return availableInstruemts;
@@ -69,6 +69,7 @@ public class ApiConnection {
 	}
 
 	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
+		if(units == 0) return;
 
 		String orderJson = jsonParser.makeOrederRequestJson(instrument, units, takeProfit, stopLoss); //
 
