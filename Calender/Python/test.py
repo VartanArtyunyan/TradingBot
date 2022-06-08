@@ -1,3 +1,6 @@
-import datetime
+import JsonReader
+import Calculation
 
-print(datetime.datetime.now())
+
+a = JsonReader.read()
+print(Calculation.calculate(a[0]))

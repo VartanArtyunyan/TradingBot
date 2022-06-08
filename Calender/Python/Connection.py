@@ -29,9 +29,9 @@ HEADERS = {
 
 
 def writeInDocument(data):
-    f = open("jsonCalenderCalcTest.json", "w")
-    f.write(data)
-    f.close
+    with open("jsonCalenderCalcTest.json", "w") as f:
+        f.write(data)
+    
 
 def handleConnection(URL):
 
