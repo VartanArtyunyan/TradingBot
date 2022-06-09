@@ -31,7 +31,8 @@ def calculate(event):
     ratioDeviation = event["ratioDeviation"] if event["ratioDeviation"] is not None else 0
     isBetterThanExpected = event["isBetterThanExpected"]
     timedeltaFaktor = (breakTimer(DateStringToObject(event["dateUtc"]))/datetime.timedelta(hours=1))
-    volatity_factor =  FACTOR_VOTALITY_HIGH if str(event["volatility"]) is "HIGH" else FACTOR_VOTALITY_MEDIUM
+    volatility = event["volatility"]
+    volatity_factor =  FACTOR_VOTALITY_HIGH if (str(event["volatility"]) == "HIGH") else FACTOR_VOTALITY_MEDIUM
     
 
 
@@ -53,5 +54,7 @@ def calculate(event):
 
     #return trading_factor
 
-    return  endfactor
+    back_string = f",factor:{endfactor},volatility:{volatility},longShort:{longShort}"
+
+    return  back_string
 

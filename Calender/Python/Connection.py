@@ -6,7 +6,6 @@ import json
 #from pickle import FALSE
 from xmlrpc.client import gzip_decode
 from datetime import date, timedelta
-import datetime
 
 
 CONN = http.client.HTTPSConnection("calendar-api.fxstreet.com")
@@ -28,10 +27,9 @@ HEADERS = {
     }
 
 
-def writeInDocument(data):
-    with open("jsonCalenderCalcTest.json", "w") as f:
-        f.write(data)
-    
+
+
+
 
 def handleConnection(URL):
 
@@ -56,14 +54,16 @@ def start():
     von = (gerade - timedelta(hours=5)).strftime("%H:%M:%S")
     dat = "2022-05-09" """
 
-    #dat = date.today()
-    dat = "2022-06-02"
+    dat = date.today()
+    #dat = "2022-06-02"
     von = "00:00:00"
     bis = "23:59:59"
 
     URL = f"https://calendar-api.fxstreet.com/de/api/v1/eventDates/{dat}T{von}Z/{dat}T{bis}Z?=&volatilities=HIGH&volatilities=MEDIUM"
 
-    writeInDocument(handleConnection(URL))
+    return handleConnection(URL)
+
+    
 
     
 

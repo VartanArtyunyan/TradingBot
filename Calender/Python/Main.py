@@ -1,9 +1,9 @@
+import datetime
 import json
-import time
 import Connection
-import JsonReader
+import ReaderWriter
 import Calculation
-import threading
+
 #import Client as cl
     
 
@@ -33,43 +33,58 @@ class StoreList:
                 self.handleNextEvent(update)
                 self.list_news.remove(nextEvent)
     
+    def upcoming_events(self):
+        #next_event = self.list_news[0]["name"] + " " + self.list_news[0]["dateUtc"] + " " + self.list_news[0]["currencyCode"]
+
+        for nextEvent in self.list_news:
+            next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
+            if next_time > datetime.datetime.now():
+                upcoming_event = nextEvent["name"] + " " + nextEvent["dateUtc"] + " " + nextEvent["currencyCode"]
+                print(f"{upcoming_event}")
+        
+
     @staticmethod
     def handleNextEvent(event):
-        factor = Calculation.calculate(event)
-        volatility = event["volatility"]
-        longShort = True
-        for handelspaar in list_pairs["instrumente"]:
-            print(handelspaar)
-            instrument = handelspaar
-            print(f"instrument:{instrument},factor:{factor},volatility:{volatility},longShort:{longShort}")
+        calculated_traits = Calculation.calculate(event)
+        for instrument in list_pairs["instrumente"]:
+            print(instrument)
+            print(f"instrument:{instrument}{calculated_traits}")
             #sending = f"instrument:{instrument},factor:{factor},volatility:{volatility},longShort:{longShort}"
             #cl.send(sending)
-                
+    
+    
+
+
+
     def getData(self):
             return self.list_news
 
 
 
 
-#Connection.start()
 
-list_news = JsonReader.read()
+file_name = 'jsonCalender4.json'
 
-
-#list_pairs = json.load(cl.read())
+income_json = Connection.start()
 list_pairs = json.loads(INSTRUMENTS)
-#print(list_pairs["instrumente"][1])
+#list_pairs = json.loads(cl.read())
+
+
+
+#Daten können bei Bedarf aus Dokument wieder ausgelesen werden
+ReaderWriter.writeInDocument(income_json, file_name)
+list_news = ReaderWriter.openJsonFile(file_name)
 
 
 
 a = StoreList(list_news, list_pairs)
 
-#a.filterSpeechAndReport()
+a.filterSpeechAndReport()
 
-
+a.upcoming_events()
 
 #while (bool(a.data)):
-a.EventLoop()
+#a.EventLoop()
 
 
 #exit()

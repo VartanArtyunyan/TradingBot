@@ -1,6 +1,6 @@
-import JsonReader
+import ReaderWriter
 import Calculation
 
 
-a = JsonReader.read()
+a = ReaderWriter.read()
 print(Calculation.calculate(a[0]))

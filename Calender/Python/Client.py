@@ -15,7 +15,7 @@ client.connect(ADDR)
 def send(msg):
     message = msg.encode(FORMAT)
     client.send(message)
-    print(client.recv(51200).decode(FORMAT))
+    
 
 def read():
     input = None
@@ -25,12 +25,15 @@ def read():
     return input
 
 
+print(read())
+
+send("hey")
 
 
 
 
 
-connect = True
+""" connect = True
 while connect == True:
     input_msg = ""
     if input_msg is not "":
@@ -52,7 +55,7 @@ print("[SYSTEM DISCONNECTED]")
 
 
 
-time.sleep(2000)
+time.sleep(2000) """
 
 
 
