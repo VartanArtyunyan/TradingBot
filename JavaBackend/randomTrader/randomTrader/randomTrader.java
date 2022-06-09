@@ -13,6 +13,7 @@ public class randomTrader extends stopableThread{
 	public randomTrader(Verwaltung verwaltung) {
 		this.verwaltung = verwaltung;
 		nextBuy = System.currentTimeMillis();
+		caclulateNextBuy();
 		
 		
 	}
@@ -28,8 +29,8 @@ public class randomTrader extends stopableThread{
 	
 	public void caclulateNextBuy() {
 		long time = System.currentTimeMillis();
-		int wait = (int) (Math.random()*300000);
-		long nextBuy = time + wait;
+		long wait = (int) (Math.random()*120000);
+	    nextBuy = time + wait;
 	}
 	
 	public boolean timeToBuy()	{
@@ -42,9 +43,17 @@ public class randomTrader extends stopableThread{
 	
 	public String getRandomInstrument() {
 		int range = verwaltung.getJsonInstrumentsRoot().instruments.size()-1;
+		String output = "";
+		boolean searchCurrency = true;
+		while(searchCurrency) {
 		int index = (int) (Math.random()*range);
-		return verwaltung.getJsonInstrumentsRoot().instruments.get(index).name;
+		if(verwaltung.getJsonInstrumentsRoot().instruments.get(index).type.equals("CURRENCY")) {
+			searchCurrency = false;
+			output = verwaltung.getJsonInstrumentsRoot().instruments.get(index).name;
+		}
+		}
 		
+		return output;
 	}
 	
 	public boolean getRandomLongShort(){

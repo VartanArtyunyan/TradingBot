@@ -28,9 +28,9 @@ public class JsonParser {
 			String instrument = jo.getValue("instrument");
 			double price = Double.parseDouble(jo.getValue("price"));
 			String openTime = jo.getValue("openTime");
-			int initialUnits = Integer.parseInt(jo.getValue("initialUnits"));
+			int initialUnits = 0;//Integer.parseInt(jo.getValue("initialUnits"));
 			String initialMarginRequired = jo.getValue("initialMarginRequired");
-			int currentunits = Integer.parseInt(jo.getValue("currentUnits"));
+			int currentunits = 0;//Integer.parseInt(jo.getValue("currentUnits"));
 			String realizedPL = jo.getValue("realizedPL");
 			String unrealizedPL = jo.getValue("unrealizedPL");
 			String marginUsed = jo.getValue("marginUsed");
@@ -53,10 +53,10 @@ public class JsonParser {
 		output.addString("units", Double.toString(round(units, 0)));
 		// output.addString("price", Double.toString(price));
 		output.openObject("takeProfitOnFill");
-		output.addString("price", Double.toString(takeProfit));
+		output.addString("price", Double.toString(round(takeProfit,3)));
 		output.closeObject();
 		output.openObject("stopLossOnFill");
-		output.addString("price", Double.toString(stopLoss));
+		output.addString("price", Double.toString(round(stopLoss,3)));
 		output.closeObject();
 		output.closeObject();
 
@@ -82,7 +82,7 @@ public class JsonParser {
 		double multiplicant = Math.pow(10, places);
 
 		int i = (int) (input * multiplicant);
-		return ((double) i) / multiplicant;
+		return (double) (i / multiplicant);
 	}
 
 	public double getBalanceFromAccountJson(String json) {

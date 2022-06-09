@@ -69,7 +69,7 @@ public class PyhtonConnection extends stopableThread{
 		JsonObject orderJson = new JsonObject(input);
 		
 		String instrument = orderJson.getValue("instrument");
-		double faktor = Double.parseDouble(orderJson.getValue("faktor"));
+		double faktor = Double.parseDouble(orderJson.getValue("factor"));
 		int volatility = Integer.parseInt(orderJson.getValue("volatility"));
 		boolean longShort = Boolean.parseBoolean(orderJson.getValue("longShort"));
 		

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import API.ApiConnection;
 import Threads.getATRThread;
+import Threads.getBasisKpiThread;
 import Threads.getMACDThread;
 //import sun.security.mscapi.CKeyStore.ROOT;
 import Threads.getParabolicSARThread;
@@ -27,12 +28,12 @@ public class KpiCalculator {
 		JsonCandlesRoot jcr = getCandles(instrument, granularity);
 		
 		// Einfache Kennzahlen und EMA (Exponential Moving Average) berechnen
-		Kpi kpi=getBasisKpi(instrument, emaperiods, granularity,jcr);
+		
 		Kpi kpiTemp;
 		// Parabolic SAR berechnen
 		
 		ArrayList<kpiThread> threads = new ArrayList<>();
-		
+		threads.add(new getBasisKpiThread(instrument, emaperiods, granularity, jcr));
 		threads.add(new getParabolicSARThread(instrument, granularity, periods, startBF, inkrementBF, maxBF,jcr));
 		threads.add(new getMACDThread(instrument, granularity, x, y, z, jcr));
 		threads.add(new getRSIThread(instrument, periods, granularity, jcr));
@@ -53,16 +54,16 @@ public class KpiCalculator {
 		}
 		
 		
+		Kpi kpi=threads.get(0).getErgebnis();
 		
-		
-		kpiTemp= threads.get(0).getErgebnis();
+		kpiTemp= threads.get(1).getErgebnis();
 		kpi.parabolicSAR=kpiTemp.parabolicSAR;
 		kpi.parabolicSARs=kpiTemp.parabolicSARs;
 		kpi.trend=kpiTemp.trend;
 		kpi.trendWechsel=kpiTemp.trendWechsel;
 		
 		// MACD (Moving Average Convergence/Divergence) berechnen 
-		kpiTemp=threads.get(1).getErgebnis();
+		kpiTemp=threads.get(2).getErgebnis();
 		kpi.macd=kpiTemp.macd;
 		kpi.macds=kpiTemp.macds;
 		kpi.macdsTriggert=kpiTemp.macdsTriggert;
@@ -71,19 +72,19 @@ public class KpiCalculator {
 		kpi.macdIntensitys=kpiTemp.macdIntensitys;
 	
 		// Relative Strength Index (RSI) berechnen mit exponentiell gleitenden Durchschnitt
-		kpiTemp=threads.get(2).getErgebnis();
+		kpiTemp=threads.get(3).getErgebnis();
 		kpi.rsi=kpiTemp.rsi;
 		kpi.rsiListe=kpiTemp.rsiListe;
 		
 		// Average True Range (ATR) berechnen
-		kpiTemp=threads.get(3).getErgebnis();
+		kpiTemp=threads.get(4).getErgebnis();
 		kpi.atr=kpiTemp.atr;
 		kpi.atrListe=kpiTemp.atrListe;
 		kpi.IntegerAtr=kpiTemp.IntegerAtr;
 		kpi.IntegerAtrListe=kpiTemp.IntegerAtrListe;
 		
 		// Simple Moving Average (SMA) berechnen
-		kpiTemp=threads.get(4).getErgebnis();
+		kpiTemp=threads.get(5).getErgebnis();
 		kpi.sma=kpiTemp.sma;
 		kpi.smaList=kpiTemp.smaList;
 		

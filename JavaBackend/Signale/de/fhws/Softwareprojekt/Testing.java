@@ -40,7 +40,7 @@ public class Testing {
 	
 //  startMe BeforeAll Methode has to be static
 	@BeforeAll
-	public void first() {
+	public void BeforeAll() {
 
 /*		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
 
@@ -64,7 +64,8 @@ public class Testing {
 		if(instrument.type.compareTo("CURRENCY") == 0)
 			currenciesString.add(instrument.name);
 		}
-		currenciesString.parallelStream().sorted().forEach(k->{currencies.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9));basicKpiList.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15")));});
+		currenciesString.parallelStream().sorted().forEach(k->{currencies.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9));
+		basicKpiList.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15")));});
 		
 	//	currenciesString.parallelStream().sorted().forEach(k->currencies.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15"))))	;
 	//	currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9)));

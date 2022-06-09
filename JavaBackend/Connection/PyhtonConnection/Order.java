@@ -3,14 +3,14 @@ package PyhtonConnection;
 public class Order {
 	
 	String instrument;
-	double faktor;
+	double factor;
 	int volatility; 
 	boolean longShort;
 	
 	
 	public Order(String instrument, double faktor, int volatility, boolean longShort) {
 		this.instrument = instrument;
-		this.faktor = faktor;
+		this.factor = faktor;
 		this.volatility = volatility;
 		this.longShort = longShort;
 	}
@@ -22,7 +22,7 @@ public class Order {
 
 
 	public double getFaktor() {
-		return faktor;
+		return factor;
 	}
 
 
