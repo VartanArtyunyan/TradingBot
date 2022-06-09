@@ -5374,5 +5374,43 @@
     ],
     "baseHomeConversionCost": "0.00000000000000",
     "homeConversionCost": "0.00000000000000"
+  },
+  {
+    "id": "465",
+    "accountID": "101-012-22085247-001",
+    "userID": 22085247,
+    "batchID": "465",
+    "time": "2022-06-02T21:00:00.000000000Z",
+    "type": "DAILY_FINANCING",
+    "financing": "-0.2083",
+    "accountBalance": "99988.4042",
+    "positionFinancings": [
+      {
+        "instrument": "NZD_CHF",
+        "financing": "-0.2083",
+        "baseFinancing": "-0.33971178082192",
+        "accountFinancingMode": "DAILY_INSTRUMENT",
+        "homeConversionFactors": {
+          "gainQuoteHome": null,
+          "lossQuoteHome": null,
+          "gainBaseHome": { "factor": "0.60719234043083" },
+          "lossBaseHome": { "factor": "0.61329477601305" }
+        },
+        "openTradeFinancings": [
+          {
+            "tradeID": "420",
+            "financing": "-0.2083",
+            "baseFinancing": "-0.33971178082192",
+            "financingRate": "-0.0387",
+            "baseHomeConversionCost": "-0.00100996800955",
+            "homeConversionCost": "-0.00100996800955"
+          }
+        ],
+        "baseHomeConversionCost": "-0.00100996800955",
+        "homeConversionCost": "-0.00100996800955"
+      }
+    ],
+    "baseHomeConversionCost": "-0.00100996800955",
+    "homeConversionCost": "-0.00100996800955"
   }
 ]
