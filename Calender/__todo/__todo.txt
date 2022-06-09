@@ -31,6 +31,15 @@ JSON
 3. Double: Faktor (2,3)
 4. Boolean: longShort       #false = short, true = long
 
-Faktor = (Volatility * (ratioDeviation + (Prognose-Abweichung -> Prozent)) - timedelta
+Recommended Pairs for Different News:
 
-        2 * ((1.5+10) - 0.5)
+    USD News: AUDUSD
+    EUR News: EURAUD
+    GBP News: EURGBP
+    CAD News: AUDCAD
+    NZD News: AUDNZD
+    AUD News: EURAUD
+
+"Upcoming": {Volatility: 1 oder 2}, "Instrument" :  {"EUR/USD" "USD/EUR} , time: 12:30:00
+"
+Time?
