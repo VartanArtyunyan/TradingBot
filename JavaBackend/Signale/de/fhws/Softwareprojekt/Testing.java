@@ -1,5 +1,6 @@
 package de.fhws.Softwareprojekt;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -65,7 +66,8 @@ public class Testing {
 			currenciesString.add(instrument.name);
 		}
 		currenciesString.parallelStream().sorted().forEach(k->{currencies.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9));
-		basicKpiList.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15")));});
+		basicKpiList.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15")));
+		});
 		
 	//	currenciesString.parallelStream().sorted().forEach(k->currencies.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15"))))	;
 	//	currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9)));
@@ -79,7 +81,7 @@ public void RSITest()
 	}
 	catch(Exception e)
 	{
-		fail("Hätte keine Ausnahme gefeurt");
+		fail("Hätte keine Ausnahme feurern dürfen");
 	}
 	
 }
@@ -92,7 +94,7 @@ public void RSIIntensityTest()
 	}
 	catch(Exception e)
 	{
-		fail("Hätte keine Ausnahme gefeurt");
+		fail("Hätte keine Ausnahme feuern dürfen");
 	}
 }
 	@Test
@@ -130,10 +132,10 @@ public void parabiolicSarTest()
 public void MacdMacdsTriggertlongCheck()
 {
 	int hauptzaehler=0;
-	int count=0;
+
 for(Kpi k:currencies)
 {	
-	count=0;
+	
 	
 	int zaehler=0;
 	for(int i=k.macds.size()-6;i<k.macds.size();i++)
@@ -141,7 +143,7 @@ for(Kpi k:currencies)
 		if(k.macdsTriggert.get(i-8)>k.macds.get((i)))
 		{
 		zaehler++;
-		count++;
+	
 		}
 
 }
@@ -178,7 +180,7 @@ public void emaTest()
 			assertTrue((k.ema > 0) && (!(k.ema > k.lastPrice * 1.04)) && (!(k.ema < k.lastPrice * 0.96)));
 		}
 	}
-//Beweisen das wenn man getBasicKpi zuverlässig in getAll aufgerufen wird.
+//Beweisen das getBasicKpi zuverlässig in getAll aufgerufen wird.
 	@Test
 	public void getKpiCheck() {
 		   
@@ -193,6 +195,48 @@ public void emaTest()
 		if(zahl<=0.5)
 		fail("Die Zahl lautet" + zahl);  
 	}
+	@Test
+	public void checkPerceicionTest()
+	{
+		
+for(Kpi k:currencies)
+{
+	
+if(k.instrument.compareTo("USB_THB")==0)
+{
+		assertTrue((k.checkPrecision(k.lastPrice, true)>k.lastPrice)&&((k.checkPrecision(k.lastPrice,true)-k.lastPrice<0.001)));
+		assertTrue((k.checkPrecision(k.lastPrice, false)<k.lastPrice)&&((k.checkPrecision(k.lastPrice,true)-k.lastPrice>-0.001)));
+}
+}
+	}
+	@Test
+	public void SmaTest()
+	{
+    for(Kpi k:currencies)
+    {
+    	
+    	if(k.sma>k.lastPrice)
+    	{
+    		assertFalse((k.sma>1.05*k.lastPrice));
+    		
+    	}
+    	if(k.sma<k.lastPrice)
+    		assertFalse(k.lastPrice>1.05*k.sma);
+    	}
+    
+    }
+    public void AtrTest()
+    {
+    	
+    	for(Kpi k:currencies)
+        {		
+    		assertTrue(k.lastPrice>k.atr*100);
+        }
+        
+  
+    }
+
+
 	
 	//Tom Kombination Bereich
 	@Test

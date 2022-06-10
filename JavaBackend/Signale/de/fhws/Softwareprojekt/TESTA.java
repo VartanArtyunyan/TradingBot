@@ -11,7 +11,7 @@ public static void main(String[] args) {
 		int zahl1=7;
 		int zahl2=9;
 		double wert=(double)zahl1/zahl2;
-		System.out.println(wert);
+		//System.out.println(wert);
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
 		ArrayList<String>a=new ArrayList();
@@ -37,10 +37,13 @@ public static void main(String[] args) {
 	
 			if(instrument.type.compareTo("CURRENCY")==0)
 			{
-			
-				//EmaListe es=new EmaListe();
-				Kpi kpi=e.getAll(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
-				System.out.println(kpi.macds.get(kpi.macds.size()-1) +" "+kpi.macdsTriggert.get(kpi.macdsTriggert.size()-1));
+			//	JsonCandlesRoot jcr=e.getCandles("EUR_USD", "M15");
+			//Kpi kpi=e.getSMA(instrument.name,14,"M15", jcr);
+			//System.out.println(kpi.sma);
+				EmaListe es=new EmaListe();
+				Kpi kpi2=e.getAll(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
+				System.out.println(kpi2.sma );
+				System.out.println(kpi2.atr);
 				/*if(kpi.macd>1)
 					System.out.println(kpi.macd);
 				else
@@ -85,11 +88,11 @@ public static void main(String[] args) {
 				System.out.println("abrunden " +kpi.abrunden(kpi.parabolicSAR,3));
 				System.out.println("runden" +kpi.runden(kpi.parabolicSAR, 3));
 				System.out.println(kpi.runden(kpi.parabolicSAR,3)+1/Math.pow(10, 3));*/
-				if(kpi.macdTriggert>kpi.macd)
-				zaehler++;
+	
 				}
+		
 		}
-			System.out.println(zaehler);
+		//	System.out.println(zaehler);
 				//System.out.println("macdTriggert " + kpi.atr +" "+kpi.macds.get(kpi.macds.size()-1));
 		//	System.out.println("macd " +kpi.macd);
 	//		System.out.println("OK");

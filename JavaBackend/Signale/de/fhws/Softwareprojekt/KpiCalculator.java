@@ -409,25 +409,42 @@ public class KpiCalculator {
 	public Kpi getSMA(String instrument, int periods, String granularity,JsonCandlesRoot jcr)
 	{
 		Kpi kpi=getBasisKpi(instrument,periods,granularity,jcr);
-	
+		double ergebnis=0;
 		for(int i=0;i< kpi.root.candles.size();i++)
 		{
-			double ergebnis=0;
+			
 			if(i>=periods-1)
 			{
 			for(int z=i-periods+1;z<=i;z++)
 			{
 			ergebnis+=kpi.root.candles.get(z).mid.c;
 			}
-			ergebnis/=periods;
+			ergebnis/=(double)periods;
 			kpi.sma=ergebnis;
 			kpi.smaList.add(kpi.sma);
+			ergebnis=0;
 			
 			}
 			
 		}
+	/*	int zaehler=0;
+		for(Double p:kpi.lastPrices)
+		{
+			double ergebnis=0;
+			if(zaehler>=periods-1)
+			{
+				for(int x=zaehler-periods+1;x<=zaehler;x++)
+				{
+					ergebnis+=kpi.lastPrices.get(x).doubleValue();
+				}
+				ergebnis=(double)(ergebnis/periods);
+			kpi.sma=ergebnis;
+			kpi.smaList.add(kpi.sma);
+			
+		}
+			zaehler++;
+	}*/
 		return kpi;
-	}
-
+}
 }
 

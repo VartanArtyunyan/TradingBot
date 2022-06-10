@@ -15,7 +15,7 @@ public class getSMAThread extends  kpiThread {
 	
 	
 	public void run() {
-		ergebnis = kpiCalculator.getATR(instrument, periods, granularity, jcr);
+		ergebnis = kpiCalculator.getSMA(instrument, periods, granularity, jcr);
 	}
 
 }
