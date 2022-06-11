@@ -1,6 +1,6 @@
 package Threads;
 
-public class stopableThread extends Thread{
+public class StopableThread extends Thread{
 	
     boolean execute = true;
     

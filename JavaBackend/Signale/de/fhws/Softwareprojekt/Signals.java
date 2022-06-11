@@ -5,10 +5,10 @@ import java.util.HashSet;
 
 import API.ApiConnection;
 import LogFileWriter.LogFileWriter;
-import Threads.stopableThread;
+import Threads.StopableThread;
 import positionen.Verwaltung;
 
-public class Signals extends stopableThread{
+public class Signals extends StopableThread{
 
 	ApiConnection connection;
 	Verwaltung verwaltung;

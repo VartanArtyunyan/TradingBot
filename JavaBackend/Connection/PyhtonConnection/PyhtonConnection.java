@@ -12,12 +12,12 @@ import java.net.Socket;
 
 import JsonParser.JsonBuilder;
 import JsonParser.JsonObject;
-import Threads.stopableThread;
+import Threads.StopableThread;
 import de.fhws.Softwareprojekt.JsonInstrumentsInstrument;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import positionen.Verwaltung;
 
-public class PyhtonConnection extends stopableThread{
+public class PyhtonConnection extends StopableThread{
 	
 	Verwaltung verwaltung;
 	

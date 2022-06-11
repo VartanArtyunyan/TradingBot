@@ -2,11 +2,11 @@ package Threads;
 
 import de.fhws.Softwareprojekt.JsonCandlesRoot;
 
-public class getATRThread extends  kpiThread{
+public class GetATRThread extends  KpiThread{
 	int periods;
 
 	
-	public getATRThread(String instrument,int periods,String granularity,JsonCandlesRoot jcr) {
+	public GetATRThread(String instrument,int periods,String granularity,JsonCandlesRoot jcr) {
 		
 	super(instrument, granularity, jcr);
 	this.periods=periods;

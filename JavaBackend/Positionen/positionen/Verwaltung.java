@@ -6,7 +6,7 @@ import LogFileWriter.LogFileWriter;
 import PyhtonConnection.Order;
 import PyhtonConnection.PyhtonConnection;
 
-import Threads.stopableThread;
+import Threads.StopableThread;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.Signals;
@@ -28,7 +28,7 @@ public class Verwaltung {
 	ArrayList<position> positionen;
 	ArrayList<trade> trades;
 	String granularity;
-	ArrayList<stopableThread> threads = new ArrayList<>();
+	ArrayList<StopableThread> threads = new ArrayList<>();
 
 	double einsatz;
 
@@ -59,18 +59,18 @@ public class Verwaltung {
 	}
 
 	public void startThreads() {
-		for (stopableThread st : threads) {
+		for (StopableThread st : threads) {
 			st.start();
 		}
 	}
 
 	public void stopThreads() {
-		for (stopableThread st : threads) {
+		for (StopableThread st : threads) {
 			st.stopThread();
 		}
 	}
 
-	public void addThread(stopableThread st) {
+	public void addThread(StopableThread st) {
 		threads.add(st);
 	}
 

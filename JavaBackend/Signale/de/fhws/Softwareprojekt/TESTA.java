@@ -44,6 +44,7 @@ public static void main(String[] args) {
 				Kpi kpi2=e.getAll(instrument.name,200, 14, "M15", 0.02, 0.02, 0.02, 12,26,9);
 				System.out.println(kpi2.sma );
 				System.out.println(kpi2.atr);
+				System.out.println(kpi2.ema);
 				/*if(kpi.macd>1)
 					System.out.println(kpi.macd);
 				else
