@@ -2,10 +2,10 @@ package randomTrader;
 
 import java.util.Date;
 
-import Threads.stopableThread;
+import Threads.StopableThread;
 import positionen.Verwaltung;
 
-public class randomTrader extends stopableThread{
+public class randomTrader extends StopableThread{
 	
 	Verwaltung verwaltung;
 	

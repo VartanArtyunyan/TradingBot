@@ -257,8 +257,9 @@ public class Kpi implements Comparable<Kpi> {
 		double wert = sl * lastPrice;
 		return checkPrecision(wert, false);
 	}
-
+//Hilfsmethode zur Ermittlung von StoppLosses und TakeProfits
 	public double checkPrecision(double wert, boolean aufrunden) {
+		
 		if (instrument.contains("USD_THB") || instrument.contains("USD_INR")
 				|| (instrument.contains("JPY") || instrument.contains("HUF"))) {
 			if (aufrunden)
@@ -266,6 +267,7 @@ public class Kpi implements Comparable<Kpi> {
 			else
 				return abrunden(wert, 3);
 		} else
+			//Bei 5 Nachkommastellen spielt es keine Rolle ob aufgerundet oder abgerundet wird.
 			return runden(wert, 5);
 	}
 

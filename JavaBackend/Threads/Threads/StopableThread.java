@@ -1,5 +1,6 @@
 package Threads;
 
+<<<<<<< HEAD:JavaBackend/Threads/Threads/stopableThread.java
 public class stopableThread extends Thread {
 
 	boolean execute;
@@ -55,6 +56,9 @@ public class stopableThread extends Thread {
 	public void onTimer() {
 
 	}
+=======
+public class StopableThread extends Thread{
+>>>>>>> a9f838a13199b95f56a1e48b29bf434dc4df030f:JavaBackend/Threads/Threads/StopableThread.java
 	
 	public void onClose() {
 		

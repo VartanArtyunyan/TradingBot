@@ -2,20 +2,23 @@ package Threads;
 
 import de.fhws.Softwareprojekt.JsonCandlesRoot;
 
-public class getSMAThread extends  kpiThread {
+public class GetATRThread extends  KpiThread{
 	int periods;
 
-
-	public getSMAThread(String instrument, int periods,String granularity,JsonCandlesRoot jcr) {
+	
+	public GetATRThread(String instrument,int periods,String granularity,JsonCandlesRoot jcr) {
+		
 	super(instrument, granularity, jcr);
-		this.periods = periods;
+	this.periods=periods;
 	
 	}
-
 	
 	
-	public void run() {
+	
+	public void run()	{
 		ergebnis = kpiCalculator.getATR(instrument, periods, granularity, jcr);
 	}
+	
+	
 
 }

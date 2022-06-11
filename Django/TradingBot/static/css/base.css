@@ -28,10 +28,7 @@ body {
   scrollbar-width: none;
 }
 
-h2 {
-  color: wheat;
-}
-
+h2,
 h3,
 a {
   color: wheat;
@@ -39,6 +36,15 @@ a {
 
 h2 {
   font-size: 40px;
+  padding-top: 20px;
+  margin: 0;
+}
+
+h4 {
+  color: #c5fdf9;
+  font-size: 25px;
+  margin: 4px;
+  margin-top: 20px;
 }
 
 .logo {
@@ -177,6 +183,38 @@ h2 {
   font-size: 35px;
 }
 
+/* About the Bot Section */
+.about-inner {
+  margin: 50px 0px;
+}
+
+.about-inner div {
+  color: white;
+}
+
+/* Live-Demo Section */
+.first-live {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 60%;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
+.first-live img {
+  margin-right: 60px;
+}
+
+.first-live ul {
+  list-style-type: none;
+}
+
+.pic {
+  width: 500px;
+  height: auto;
+}
+
 /* Sections General */
 .sections {
   display: -webkit-box;
@@ -209,14 +247,20 @@ h2 {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  background-color: green;
+  list-style-type: none;
 }
 
 .personen-liste {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
   margin: 5px 0px;
+}
+
+.personen-liste div {
+  color: white;
+}
+
+.p-left {
+  font-size: 20px;
+  margin: 20px 0px 5px -10px;
 }
 
 hr {
