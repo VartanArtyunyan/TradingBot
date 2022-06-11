@@ -17,76 +17,74 @@ import de.fhws.Softwareprojekt.JsonInstrumentsInstrument;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import positionen.Verwaltung;
 
-public class PyhtonConnection extends stopableThread{
-	
+public class PyhtonConnection extends stopableThread {
+
 	Verwaltung verwaltung;
-	
+
 	int port;
 	ServerSocket ss;
 	Socket connection;
 	BufferedReader br;
 	BufferedWriter bw;
 	String instrumente;
-	
+
 	public PyhtonConnection(Verwaltung verwaltung) {
-		 this.verwaltung = verwaltung;
-		
+		this.verwaltung = verwaltung;
+		port = 12000;
+
 		instrumente = makeInstrumentJson(verwaltung.getJsonInstrumentsRoot());
-	
+
 	}
-	
+
 	@Override
-	public void onStart(){
-		 try {
-				ss = new ServerSocket(port);
-				System.out.println("warte auf Client");
-				connection = ss.accept();
-				System.out.println("Ein Client hat sich verbunden");
-				br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-				bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-				bw.write(instrumente);
-				bw.flush();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	}
-	
-	@Override
-	public void onTick() {
+	public void onStart() {
 		try {
-		String s = br.readLine();
-		System.out.println(s);
-		verwaltung.pushOrder(makeOrder(s));
+			ss = new ServerSocket(port);
+			System.out.println("warte auf Client");
+			connection = ss.accept();
+			System.out.println("Ein Client hat sich verbunden");
+			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+			bw.write(instrumente);
+			bw.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
-	
+
+	@Override
+	public void onTick() {
+		try {
+			String s = br.readLine();
+			System.out.println(s);
+			// verwaltung.pushOrder(makeOrder(s));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 	public Order makeOrder(String input) {
 		JsonObject orderJson = new JsonObject(input);
-		
+
 		String instrument = orderJson.getValue("instrument");
 		double faktor = Double.parseDouble(orderJson.getValue("factor"));
 		int volatility = Integer.parseInt(orderJson.getValue("volatility"));
 		boolean longShort = Boolean.parseBoolean(orderJson.getValue("longShort"));
-		
+
 		return new Order(instrument, faktor, volatility, longShort);
 	}
-	
+
 	public String makeInstrumentJson(JsonInstrumentsRoot jir) {
 		JsonBuilder jsonBuilder = new JsonBuilder();
 		jsonBuilder.openArray("instrumente");
-		for(JsonInstrumentsInstrument jii : jir.instruments) {
+		for (JsonInstrumentsInstrument jii : jir.instruments) {
 			jsonBuilder.addString(null, jii.displayName);
 		}
 		jsonBuilder.closeArray();
 		return jsonBuilder.build();
 	}
-	
-	
-	
-	 
+
 }

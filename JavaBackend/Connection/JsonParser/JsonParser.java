@@ -8,6 +8,7 @@ import de.fhws.Softwareprojekt.JsonCandlesRoot;
 import de.fhws.Softwareprojekt.JsonInstrumentsInstrument;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import positionen.Instrumente;
+import positionen.OrderResponse;
 import positionen.trade;
 
 public class JsonParser {
@@ -207,6 +208,16 @@ public class JsonParser {
 
 		return output;
 	}
+	
+	
+
+	public OrderResponse makeOrderResponseFromJson(String input) {
+		JsonObject responseObject = new JsonObject(input);
+		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction");
+		String id = responseObject.getObject("orderCreateTransaction").getValue("id");
+		return new OrderResponse(wasSuccessfull, id);
+	}
+
 
 
 }

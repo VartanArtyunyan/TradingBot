@@ -96,7 +96,9 @@ public class JsonObject {
 
 	}
 	 
-	
+	public boolean contains(String input) {
+		return content.containsKey(input);
+	}
 	
 	public JsonObject getObject(String input) {
 		return new JsonObject(content.get(input));

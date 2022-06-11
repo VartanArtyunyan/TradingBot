@@ -1,10 +1,12 @@
 import datetime
 import json
+import time
 import Connection
 import ReaderWriter
 import Calculation
 
-#import Client as cl
+
+import Client
     
 
 
@@ -14,6 +16,7 @@ INSTRUMENTS = '{"instrumente":["EUR/USD","GBP/CHF","EUR/JPY"]}'
 class StoreList:
     list_news = None
     list_pairs = None
+    cl = Client()
 
     def __init__(self, list_news, list_pairs):
         self.list_news = list_news
@@ -35,12 +38,13 @@ class StoreList:
     
     def upcoming_events(self):
         #next_event = self.list_news[0]["name"] + " " + self.list_news[0]["dateUtc"] + " " + self.list_news[0]["currencyCode"]
-
+        self.cl.send("hey\n")
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
             if next_time > datetime.datetime.now():
                 upcoming_event = nextEvent["name"] + " " + nextEvent["dateUtc"] + " " + nextEvent["currencyCode"]
                 print(f"{upcoming_event}")
+                self.cl.send(upcoming_event)
         
 
     @staticmethod
@@ -79,9 +83,11 @@ list_news = ReaderWriter.openJsonFile(file_name)
 
 a = StoreList(list_news, list_pairs)
 
+
 a.filterSpeechAndReport()
 
 a.upcoming_events()
+time.sleep(124)
 
 #while (bool(a.data)):
 #a.EventLoop()

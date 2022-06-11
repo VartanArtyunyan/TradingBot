@@ -91,10 +91,10 @@ public class Connection {
 
 	}
 
-	public void placeLimitOrder(String requestJson) {
+	public String placeOrder(String requestJson) {
 		System.out.println(requestJson);
 	
-		 POST((urlPrefix + "/accounts/" + accId + "/orders"), requestJson);
+		 return POST((urlPrefix + "/accounts/" + accId + "/orders"), requestJson);
 	}
 
 	private HttpURLConnection makeConnection(String urlString, String requestMethod) throws IOException {
@@ -113,7 +113,7 @@ public class Connection {
 		try {
 			HttpURLConnection connection = makeConnection(urlString, "GET");
 
-			String output = getResponse(connection);
+			String output = getResponse(connection,false);
 			connection.disconnect();
 			return output;
 		} catch (IOException e) {
@@ -134,7 +134,7 @@ public class Connection {
 			connection.getOutputStream().write(requestJson.getBytes(), 0, requestJson.length());
 			connection.getOutputStream().close();
 
-			String output = getResponse(connection);
+			String output = getResponse(connection,false);
 			connection.disconnect();
 			return output;
 		} catch (IOException e) {
@@ -144,8 +144,15 @@ public class Connection {
 		}
 
 	}
+	
+	public void print(String input) {
+		String[] sArray = input.split(",");
+		for (int i = 0; i < sArray.length; i++) {
+			System.out.println(sArray[i]);
+		}
+	}
 
-	public String getResponse(HttpURLConnection connection) throws IOException {
+	public String getResponse(HttpURLConnection connection, boolean print) throws IOException {
 		String jsonString = "";
 		
 		//System.out.println("Response wurde gstartet mit url: " + url.getPath());
@@ -163,6 +170,9 @@ public class Connection {
 				jsonString += line;
 			}
 			br.close();
+			if(print) {
+				 print(jsonString);
+			}
 		} else {
 			br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
 			while ((line = br.readLine()) != null) {
@@ -170,10 +180,7 @@ public class Connection {
 			}
 			br.close();
 			System.out.println("Fhelercode mit url: " + connection.getURL().getPath() + "ResponseCode: " + status);
-			String[] sArray = jsonString.split(",");
-			for (int i = 0; i < sArray.length; i++) {
-				System.out.println(sArray[i]);
-			}
+			 print(jsonString);
 		}
 		
 		

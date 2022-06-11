@@ -17,7 +17,7 @@ public class Main {
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
 		
-
+		
 		
 		Verwaltung verwaltung = new Verwaltung(connection, granularity, einsatz);
 		

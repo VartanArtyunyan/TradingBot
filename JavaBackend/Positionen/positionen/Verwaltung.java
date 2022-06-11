@@ -17,7 +17,7 @@ import java.util.HashSet;
 
 import API.ApiConnection;
 
-public class Verwaltung {
+public class Verwaltung extends stopableThread{
 
 	ApiConnection connection;
 	GUI gui;
@@ -44,17 +44,47 @@ public class Verwaltung {
 		rngTrader = new randomTrader(this);
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
-
+		
+	}
+	
+	public void onTick() {
+		//System.out.println(postionsHaveChanged());
 	}
 
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
 		return connection.getJsonInstrumentsRoot();
 	}
+	
+	public void updateLog() {
+		if(postionsHaveChanged()) {
+			
+		}
+	}
+	
+	public boolean postionsHaveChanged() {
+		
+		ArrayList<Integer> oldTrades =getTradeIDs();
+		aktualisierePosition();
+		ArrayList<Integer> newTrades = getTradeIDs();
+		
+		return !newTrades.equals(oldTrades);
+	}
+	
+	public ArrayList<Integer> getTradeIDs(){
+		ArrayList<Integer> output = new ArrayList<>();
+		
+		for(trade t: trades) {
+			output.add(t.getId());
+		}
+		
+		return output;
+	}
 
 	public void startTraiding() {
-		// addThread(pythonConnection);
-		// addThread(signals);
+		addThread(pythonConnection);
+		 addThread(signals);
 		addThread(rngTrader);
+		 addThread(this);
 		startThreads();
 	}
 
@@ -98,7 +128,8 @@ public class Verwaltung {
 	}
 
 	public void pushSignal(Kpi kpi) {
-
+		if (containsPosition(kpi.getInstrument()))
+			return;
 		if (!eneoughBalance()) {
 			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
@@ -111,12 +142,16 @@ public class Verwaltung {
 		double curBalance = connection.getBalance();
 		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
 		double units = buyingPrice / kpi.getLastPrice();
-
-		connection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
-
-		logFileWriter.log(kpi.getInstrument(), kpi.getLastTime(), buyingPrice, kpi.getLastPrice(), kpi.getTakeProfit(),
+		
+		OrderResponse order = connection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
+		
+		if(order.wasSuccesfull()) {
+		logFileWriter.log(order.getOrderID(), kpi.getInstrument(), kpi.getLastTime(), buyingPrice, kpi.getLastPrice(), kpi.getTakeProfit(),
 				kpi.getStopLoss(), kpi.getMacd(), kpi.getMacdTriggert(), kpi.getParabolicSAR(), kpi.getEma());
-
+		
+		
+		}
+		else System.out.println("Order was rejected");
 		aktualisierePosition();
 
 	}
