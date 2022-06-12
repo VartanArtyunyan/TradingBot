@@ -3,6 +3,7 @@ import datetime
 import json
 import Connection
 import Calculation
+import Settings
 #import Client as cl
 
 class StoreList:
@@ -19,7 +20,6 @@ class StoreList:
                 self.list_news.remove(nextEvent)
                 
     def EventLoop(self):
-        order = 
         for nextEvent in self.list_news:
             print(nextEvent["name"])
             update = Connection.checkEvent(nextEvent)
@@ -30,11 +30,12 @@ class StoreList:
     
     def upcoming_events(self):
         #next_event = self.list_news[0]["name"] + " " + self.list_news[0]["dateUtc"] + " " + self.list_news[0]["currencyCode"]
-        least_upcoming_time = None
+        #least_upcoming_time = None
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
             if next_time > datetime.datetime.now() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
-                upcoming_event = nextEvent["name"] + " " + nextEvent["dateUtc"] + " " + nextEvent["currencyCode"]
+                upcoming_event = '{"upcoming":  {"instrument": ' + None,"volatility": None,"time":None}}
+                nextEvent["name"] + " " + nextEvent["dateUtc"] + " " + nextEvent["currencyCode"]
                 print(f"{upcoming_event}")
                 #cl.send(upcoming_event)
                 nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines Trades
