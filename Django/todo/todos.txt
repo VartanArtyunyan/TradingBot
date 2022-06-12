@@ -14,3 +14,4 @@ Done:
 11. Make a templates folder and add a index.html file
 12. Add global and local static folders/files
 13. Register the static folders/files in the settings file
+14. 
