@@ -3,7 +3,6 @@ import datetime
 import json
 import Connection
 import Calculation
-import Settings
 #import Client as cl
 
 class StoreList:
@@ -30,36 +29,36 @@ class StoreList:
                 self.list_news.remove(nextEvent)
     
     def upcoming_events(self):
-        #next_event = self.list_news[0]["name"] + " " + self.list_news[0]["dateUtc"] + " " + self.list_news[0]["currencyCode"]
         #least_upcoming_time = None
         pre_string = "upcoming"
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
-            if next_time > datetime.datetime.now() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
+            if Calculation.breakTimer(next_time) > datetime.timedelta(minutes = 10):
+                break
+            elif next_time > datetime.datetime.now() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
                 """ upcoming_event = nextEvent["name"] + " " + nextEvent["dateUtc"] + " " + nextEvent["currencyCode"]
                 print(f"{upcoming_event}") """
+
                 self.handleNextEvent(nextEvent, pre_string)
                 #cl.send(upcoming_event)
                 nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines Trades
-    
+            
 
-    @staticmethod
     def handleNextEvent(self, event, pre_string):
-        volatility_str = str(event["volatility"])
+        volatility_str = "volatility:" + str(event["volatility"])
         specific_string = ""
-        if pre_string is "order":
+        if pre_string == "order":
             specific_string =  Calculation.calculate(event)
         else:
-            specific_string = "time" + str(event["dateUtc"])
+            specific_string = "time:" + str(event["dateUtc"])
         for instrument in self.list_pairs["instrumente"]:
             #"upcoming":["instrument": None,"volatility": None,"time":None]
             #"order":["instrument": "GBP","volatility": 1,"factor": 1,"longShort": True]
             instrument = "instrument:"+str(instrument)
-            if pre_string is "order":
-                print(f"{pre_string}{instrument}{specific_string}]")
-            else:
-                print(f"{pre_string}:[{instrument}{specific_string}]")
-            #sending = f"instrument:{instrument},factor:{factor},volatility:{volatility},longShort:{longShort}"
+            print(event["name"])
+
+            print(f"{pre_string}:[{instrument}{volatility_str}{specific_string}]")
+            
             #cl.send(sending)
 
     def getData(self):
