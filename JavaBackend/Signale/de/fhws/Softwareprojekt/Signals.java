@@ -8,11 +8,9 @@ import LogFileWriter.LogFileWriter;
 import Threads.StopableThread;
 import positionen.Verwaltung;
 
-<<<<<<< HEAD
-public class Signals extends stopableThread {
-=======
-public class Signals extends StopableThread{
->>>>>>> a9f838a13199b95f56a1e48b29bf434dc4df030f
+
+public class Signals extends StopableThread {
+
 
 	ApiConnection connection;
 	Verwaltung verwaltung;
@@ -22,13 +20,14 @@ public class Signals extends StopableThread{
 	ArrayList<JsonInstrumentsInstrument> instrumentsList;
 	JsonInstrumentsRoot instrumentsRoot;
 	HashSet<Kpi> signale;
-<<<<<<< HEAD
+
 	JsonCandlesRoot jcr;
-=======
+
 	boolean signal0 = true;
 	boolean signal1 = true;
 	boolean signal2 = true;
->>>>>>> bfa30a3e20f7ec0e9fab9e8903a8144fda9b7f62
+	boolean signal3 = true;
+
 
 	public Signals(ApiConnection connection, Verwaltung verwaltung, LogFileWriter logFileWriter, String granularity) {
 
@@ -58,69 +57,29 @@ public class Signals extends StopableThread{
 
 		for (JsonInstrumentsInstrument instrument : instrumentsList) {
 			Kpi kpi = e.getAll(instrument.name, 200, 14, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
-			Kpi sma20 = e.getAll(instrument.name, 200, 20, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
-			Kpi sma50 = e.getAll(instrument.name, 200, 50, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
+			JsonCandlesRoot jcr = e.getCandles(instrument.name, granularity);
+			Kpi sma20 = e.getSMA(instrument.name, 20, granularity, jcr);
+			Kpi sma50 = e.getSMA(instrument.name, 50, granularity, jcr);
 			
 			// nach kauf für 6 x granularität insturment sperren
 			if (signal0 | signal1) {
 				int r = kombiniereMACDEMAPSAR(kpi);
-
-<<<<<<< HEAD
-			if (r != 0) {
-				System.out.println(r);
-				//kpi.longShort = (r == 1) ? true : false; //wird temporär geändert, um Signale von der Methode zu überprüfen
-				kpi.longShort = (r == 1) ? false : true;
-				ausgabe("alles", kpi, instrument);
-				verwaltung.pushSignal(kpi);
 				
-				// verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(),
-				// kpi.getShortTakeProfit(), kpi.getShortStopLoss(),kpi.lastPrice);
-				// verwaltung.addManualPosition(instrument.name);
-				
-				// signale.add(kpi);
-				
-			} else {
-				int s = kombiniereMACD_PSAR(kpi);
-				System.out.println(s);
-				kpi.signalStrenght = 0.5;
-				//kpi.longShort = (s == 1) ? true : false;
-				kpi.longShort = (s == 1) ? false : true;
-				ausgabe("alles", kpi, instrument);
-
-				verwaltung.pushSignal(kpi);
-				
-				//andere Kombiniere Methoden
-				int t = kombiniereEMA200ATR(kpi);
-				System.out.println(t);
-				kpi.signalStrenght = 0.25;
-				kpi.longShort = (t == 1) ? true : false;
-				//kpi.longShort = (t == 1) ? false : true;
-				ausgabe("alles", kpi, instrument);
-				verwaltung.pushSignal(kpi);
-				
-				
-				int u = kombiniereMACDSMA(kpi, sma20, sma50);
-				System.out.println(u);
-				kpi.signalStrenght = 0.25;
-				kpi.longShort = (u == 1) ? true : false;
-				//kpi.longShort = (u == 1) ? false : true;
-				ausgabe("alles", kpi, instrument);
-				verwaltung.pushSignal(kpi);
-=======
+			
 				if (r != 0) {
 					System.out.println(r);
-					kpi.signal = 0; // sperrt signal 0 und 1
-					kpi.longShort = (r == 1) ? true : false;
+					//kpi.longShort = (r == 1) ? true : false; //wird temporär geändert, um Signale von der Methode zu überprüfen
+					kpi.longShort = (r == 1) ? false : true;
 					ausgabe("alles", kpi, instrument);
-					if (signal0)
-						verwaltung.pushSignal(kpi);
-
+					if(signal0)
+					verwaltung.pushSignal(kpi);
+					
 					// verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(),
 					// kpi.getShortTakeProfit(), kpi.getShortStopLoss(),kpi.lastPrice);
 					// verwaltung.addManualPosition(instrument.name);
-
+					
 					// signale.add(kpi);
-
+					
 				} else if (signal1) {
 					int s = kombiniereMACD_PSAR(kpi);
 					kpi.signal = 1; // sperrt ebenfalls signal 0 und 1 & signal 2 soll nur signal 2 sperren
@@ -128,10 +87,30 @@ public class Signals extends StopableThread{
 					kpi.signalStrenght = 0.5;
 					kpi.longShort = (s == 1) ? true : false;
 					ausgabe("alles", kpi, instrument);
-
+	
 					verwaltung.pushSignal(kpi);
 				}
->>>>>>> bfa30a3e20f7ec0e9fab9e8903a8144fda9b7f62
+			} 
+			
+				if(signal2) {
+				//andere Kombiniere Methoden
+				int t = kombiniereEMA200ATR(kpi);
+				System.out.println(t);
+				kpi.longShort = (t == 1) ? true : false;
+				//kpi.longShort = (t == 1) ? false : true;
+				ausgabe("alles", kpi, instrument);
+				verwaltung.pushSignal(kpi);
+				}
+				if(signal3) {
+				int u = kombiniereMACDSMA(kpi, sma20, sma50);
+				System.out.println(u);
+				kpi.longShort = (u == 1) ? true : false;
+				//kpi.longShort = (u == 1) ? false : true;
+				ausgabe("alles", kpi, instrument);
+				verwaltung.pushSignal(kpi);
+				}
+				
+
 			}
 		}
 		
@@ -140,7 +119,7 @@ public class Signals extends StopableThread{
 		 * System.out.println("\n\nSIGNALE\n"); for (Kpi s : signale) {
 		 * System.out.println(s.instrument); } System.out.println("\nSIGNALE-ENDE\n\n");
 		 */
-	}
+	
 
 	/*
 	 * public void endPeriod() { //Hier an dieser Stelle soll das Hash Set gemäß der
@@ -722,17 +701,11 @@ public class Signals extends StopableThread{
 		return rueckgabe;
 
 	}
-<<<<<<< HEAD
-	
-	public static int pruefeSMACrossover(Kpi SMA20, Kpi SMA50,  int anzahlVorperioden) {
-		//Baustelle
-		//JsonCandlesRoot jcr = KpiCalculator.getCandles(instrument, granularity);
-		
-=======
+
 
 	public static int pruefeSMACrossover(Kpi SMA20, Kpi SMA50, int anzahlVorperioden) {
 		// Baustelle
->>>>>>> bfa30a3e20f7ec0e9fab9e8903a8144fda9b7f62
+
 		int ausgabe = 99;
 		
 		//Kpi SMA20 = e.getSMA(instrument,20,granularity,jcr);
@@ -741,21 +714,18 @@ public class Signals extends StopableThread{
 		double sma50Aktuell = SMA50.atr;
 		boolean SMA20KleinerSMA50 = false;
 		boolean SMA20GroesserSMA50 = false;
-<<<<<<< HEAD
-		for (int i = 2; i<anzahlVorperioden+2; i++) {
-			double sma20 = SMA20.smaList.get(SMA20.smaList.size()-i);
-			double sma50 = SMA50.smaList.get(SMA50.smaList.size()-i);
-=======
+
+
 		for (int i = 1; i < anzahlVorperioden + 2; i++) {
 			double sma20 = SMA20.smaList.get(SMA20.smaList.size() - i);
 			double sma50 = SMA50.smaList.get(SMA50.smaList.size() - i);
->>>>>>> bfa30a3e20f7ec0e9fab9e8903a8144fda9b7f62
+
 			if (sma20 < sma50) {
 				SMA20KleinerSMA50 = true;
 			} else if (sma20 > sma50) {
 				SMA20GroesserSMA50 = true;
 			}
-<<<<<<< HEAD
+
 			
 			
 			
@@ -772,9 +742,7 @@ public class Signals extends StopableThread{
 		else if ((SMA20KleinerSMA50 == true && SMA20GroesserSMA50 == true) || (SMA20KleinerSMA50 == false && SMA20GroesserSMA50 == false)) {
 			//Mehrere Crossover -->
 			ausgabe = 0;
-=======
 
->>>>>>> bfa30a3e20f7ec0e9fab9e8903a8144fda9b7f62
 		}
 
 		return ausgabe;
@@ -827,6 +795,6 @@ public class Signals extends StopableThread{
 		default: {
 			return millisekunden;
 		}
-		}
+		
 	}
-}
+	}}

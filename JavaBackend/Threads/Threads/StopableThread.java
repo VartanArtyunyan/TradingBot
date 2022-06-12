@@ -1,7 +1,7 @@
 package Threads;
 
-<<<<<<< HEAD:JavaBackend/Threads/Threads/stopableThread.java
-public class stopableThread extends Thread {
+//<<<<<<< HEAD:JavaBackend/Threads/Threads/stopableThread.java
+public class StopableThread extends Thread {
 
 	boolean execute;
 	long period;
@@ -9,13 +9,13 @@ public class stopableThread extends Thread {
 	boolean timerIsSet;
 	int refreshTime;
 
-	public stopableThread() {
+	public StopableThread() {
 		setTickRate(240);
 		execute = true;
 		timerIsSet = false;
 	}
 
-	public stopableThread(int tickrate) {
+	public StopableThread(int tickrate) {
 
 		if (tickrate > 240)
 			setTickRate(240);
@@ -56,9 +56,8 @@ public class stopableThread extends Thread {
 	public void onTimer() {
 
 	}
-=======
-public class StopableThread extends Thread{
->>>>>>> a9f838a13199b95f56a1e48b29bf434dc4df030f:JavaBackend/Threads/Threads/StopableThread.java
+
+
 	
 	public void onClose() {
 		
