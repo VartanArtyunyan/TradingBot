@@ -18,6 +18,7 @@ public class Signals extends stopableThread{
 	ArrayList<JsonInstrumentsInstrument> instrumentsList;
 	JsonInstrumentsRoot instrumentsRoot;
 	HashSet<Kpi> signale;
+	JsonCandlesRoot jcr;
 
 	public Signals(ApiConnection connection, Verwaltung verwaltung, LogFileWriter logFileWriter, String granularity) {
 
@@ -29,7 +30,7 @@ public class Signals extends stopableThread{
 
 		this.instrumentsList = new ArrayList<>();
 		this.instrumentsRoot = e.getInstruments();
-
+		
 		this.signale = new HashSet<>();
 
 		for (JsonInstrumentsInstrument i : instrumentsRoot.instruments) {
@@ -47,12 +48,16 @@ public class Signals extends stopableThread{
 
 		for (JsonInstrumentsInstrument instrument : instrumentsList) {
 			Kpi kpi = e.getAll(instrument.name, 200, 14, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
+			Kpi sma20 = e.getAll(instrument.name, 200, 20, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
+			Kpi sma50 = e.getAll(instrument.name, 200, 50, granularity, 0.02, 0.02, 0.2, 12, 26, 9);
+			
 			// nach kauf für 6 x granularität insturment sperren
 			int r = kombiniereMACDEMAPSAR(kpi);
 
 			if (r != 0) {
 				System.out.println(r);
-				kpi.longShort = (r == 1) ? true : false;
+				//kpi.longShort = (r == 1) ? true : false; //wird temporär geändert, um Signale von der Methode zu überprüfen
+				kpi.longShort = (r == 1) ? false : true;
 				ausgabe("alles", kpi, instrument);
 				verwaltung.pushSignal(kpi);
 				
@@ -66,12 +71,32 @@ public class Signals extends stopableThread{
 				int s = kombiniereMACD_PSAR(kpi);
 				System.out.println(s);
 				kpi.signalStrenght = 0.5;
-				kpi.longShort = (s == 1) ? true : false;
+				//kpi.longShort = (s == 1) ? true : false;
+				kpi.longShort = (s == 1) ? false : true;
 				ausgabe("alles", kpi, instrument);
 
 				verwaltung.pushSignal(kpi);
+				
+				//andere Kombiniere Methoden
+				int t = kombiniereEMA200ATR(kpi);
+				System.out.println(t);
+				kpi.signalStrenght = 0.25;
+				kpi.longShort = (t == 1) ? true : false;
+				//kpi.longShort = (t == 1) ? false : true;
+				ausgabe("alles", kpi, instrument);
+				verwaltung.pushSignal(kpi);
+				
+				
+				int u = kombiniereMACDSMA(kpi, sma20, sma50);
+				System.out.println(u);
+				kpi.signalStrenght = 0.25;
+				kpi.longShort = (u == 1) ? true : false;
+				//kpi.longShort = (u == 1) ? false : true;
+				ausgabe("alles", kpi, instrument);
+				verwaltung.pushSignal(kpi);
 			}
 		}
+		
 
 		/*
 		 * System.out.println("\n\nSIGNALE\n"); for (Kpi s : signale) {
@@ -141,7 +166,23 @@ public class Signals extends stopableThread{
 				+ " SMA: " + kpi.sma + " (" + kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: "
 				+ kpi.avg + "  " + kpi.firstTime + " - " + kpi.lastTime + ")");
 	}
-
+	
+	//nicht fertig
+	public static int kombiniereMACDSMA(Kpi macd, Kpi sma20, Kpi sma50) {
+		//long
+		if (pruefePerioden(macd, "MACD", 6) ==-1) {
+			if (pruefeSMACrossover(sma20, sma50, 6) == 1) {
+				return 1;
+			}
+		}
+		else if (pruefePerioden(macd, "MACD", 6) == -1) {
+			if (pruefeSMACrossover(sma20, sma50, 6) == -1) {
+				return -1;
+			}
+		}
+		return 0;
+	}
+	
 	public static int kombiniereMACD_PSAR(Kpi werte) {
 		if (pruefePerioden(werte, "MACD", 6) == -1) {
 			if (pruefePSAR(werte) == 1) {
@@ -528,12 +569,14 @@ public class Signals extends stopableThread{
 			// System.out.println(MACDAktuell);
 			// Wie ist das aktuelle Verhältnis?:
 			if (i == 1) {
-				if (macdVerhaeltnis <= 0) {
+				if (macdVerhaeltnis < 0) {
 					MACDAktuell = -1;
-					// System.out.println("kleinergleich "+MACDAktuell);
-				} else if (macdVerhaeltnis >= 0) {
+					// System.out.println("kleiner "+MACDAktuell);
+				} else if (macdVerhaeltnis > 0) {
 					MACDAktuell = 1;
-					// System.out.println("größergleich "+MACDAktuell);
+					// System.out.println("größer "+MACDAktuell);
+				} else if (macdVerhaeltnis == 0) {
+					MACDAktuell = 0;
 				}
 
 			}
@@ -555,11 +598,11 @@ public class Signals extends stopableThread{
 				}
 			}
 		}
-		if (verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false && MACDAktuell == 1) {
+		if (verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == false && (MACDAktuell == 1 || MACDAktuell == 0)) {
 			// die letzten MACDs sind negativ und der Aktuelle positiv oder null
 			MACDRueckgabewert = -1;
 
-		} else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true && MACDAktuell == -1) {
+		} else if (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == true && (MACDAktuell == -1 || MACDAktuell == 0)) {
 			// die letzten MACDs sind positiv und der Aktuelle negativ oder null
 			MACDRueckgabewert = 1;
 		} else if ((verhaeltnisVorzeichenNegativ == true && verhaeltnisVorzeichenPositiv == true)
@@ -637,14 +680,19 @@ public class Signals extends stopableThread{
 
 	}
 	
-	public static int pruefeSMACrossover(Kpi SMA20, Kpi SMA50, int anzahlVorperioden) {
+	public static int pruefeSMACrossover(Kpi SMA20, Kpi SMA50,  int anzahlVorperioden) {
 		//Baustelle
+		//JsonCandlesRoot jcr = KpiCalculator.getCandles(instrument, granularity);
+		
 		int ausgabe = 99;
+		
+		//Kpi SMA20 = e.getSMA(instrument,20,granularity,jcr);
+		//Kpi SMA50 = KpiCalculator.getSMA(instrument,50,granularity,jcr);
 		double sma20Aktuell = SMA20.atr;
 		double sma50Aktuell = SMA50.atr;
 		boolean SMA20KleinerSMA50 = false;
 		boolean SMA20GroesserSMA50 = false;
-		for (int i = 1; i<anzahlVorperioden+2; i++) {
+		for (int i = 2; i<anzahlVorperioden+2; i++) {
 			double sma20 = SMA20.smaList.get(SMA20.smaList.size()-i);
 			double sma50 = SMA50.smaList.get(SMA50.smaList.size()-i);
 			if (sma20 < sma50) {
@@ -654,6 +702,21 @@ public class Signals extends stopableThread{
 				SMA20GroesserSMA50 = true;
 			}
 			
+			
+			
+		}
+		if (SMA20KleinerSMA50 == true && SMA20GroesserSMA50 == false && sma20Aktuell >= sma50Aktuell) {
+			//SMA20 nähert sich von unten an den Crossover
+			ausgabe = 1; 
+			
+		}
+		else if (SMA20KleinerSMA50 == false && SMA20GroesserSMA50 == true && sma20Aktuell <= sma50Aktuell) {
+			//SMA20 nähert sich von oben an den Crossover
+			ausgabe = -1;
+		}
+		else if ((SMA20KleinerSMA50 == true && SMA20GroesserSMA50 == true) || (SMA20KleinerSMA50 == false && SMA20GroesserSMA50 == false)) {
+			//Mehrere Crossover -->
+			ausgabe = 0;
 		}
 		
 		
