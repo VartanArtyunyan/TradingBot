@@ -2,40 +2,35 @@ package randomTrader;
 
 import java.util.Date;
 
-import Threads.stopableThread;
+import Threads.StopableThread;
 import positionen.Verwaltung;
 
-public class randomTrader extends stopableThread{
+public class randomTrader extends StopableThread{
 	
 	Verwaltung verwaltung;
-	long nextBuy;
 	
 	public randomTrader(Verwaltung verwaltung) {
 		this.verwaltung = verwaltung;
-		nextBuy = System.currentTimeMillis();
 		caclulateNextBuy();
-		
-		
+	}
+	@Override
+	public void onTick() {
+	
 	}
 	
-	public void onTick() {
-		if(timeToBuy()) {
-			verwaltung.pushRanomOrder(makeRandomOrder());
-			caclulateNextBuy();
-		}
 	
-		
+	@Override
+	public void onTimer() {
+		verwaltung.pushRanomOrder(makeRandomOrder());
+		caclulateNextBuy();
 	}
 	
 	public void caclulateNextBuy() {
-		long time = System.currentTimeMillis();
-		long wait = (int) (Math.random()*120000);
-	    nextBuy = time + wait;
+		long wait = (int) (Math.random()*600000);
+		setTimer(wait);
 	}
 	
-	public boolean timeToBuy()	{
-		return System.currentTimeMillis() > nextBuy;
-	}
+	
 	
 	public RandomOrder makeRandomOrder()	{
 		return new RandomOrder(getRandomInstrument(), getRandomLongShort());

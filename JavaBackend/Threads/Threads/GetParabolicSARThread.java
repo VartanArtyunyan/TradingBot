@@ -2,14 +2,14 @@ package Threads;
 
 import de.fhws.Softwareprojekt.JsonCandlesRoot;
 
-public class getParabolicSARThread extends  kpiThread{
+public class GetParabolicSARThread extends  KpiThread{
 	int periods;
 	double tempBF;
 	double inkrementBF;
 	double maxBF;
 	
 	
-	public getParabolicSARThread(String instrument, String granularity, int periods,
+	public GetParabolicSARThread(String instrument, String granularity, int periods,
 			double tempBF, double inkrementBF, double maxBF, JsonCandlesRoot jcr) {
 	
 		

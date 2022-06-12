@@ -44,9 +44,9 @@ public class EmaListe {
 		//System.out.println(pruefePerioden(test, "MACD", 5));
 		//kombiniereMACDEMAPSAR(connection,test2);
 		//boolean isUsed = false;
-		System.out.println(test.lastPrice);
-		System.out.println(test.convertIntegerATRInDouble(true));
-		System.out.println(test.getLongStopLossATR(2));
+		double testwerte = test.macdsTriggert.get(test.macdsTriggert.size()-1);
+		System.out.println(testwerte);
+		
 		
 		Map<String, Boolean> instrumentenVerfuegbarkeit = new HashMap<>();
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();

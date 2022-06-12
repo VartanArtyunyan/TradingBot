@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import JsonParser.JsonParser;
 import de.fhws.Softwareprojekt.JsonCandlesCandle;
-import de.fhws.Softwareprojekt.JsonCandlesMid;
 import de.fhws.Softwareprojekt.JsonCandlesRoot;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
+import positionen.OrderResponse;
 import positionen.trade;
 
 public class ApiConnection {
@@ -55,6 +55,11 @@ public class ApiConnection {
 		if (availableInstruemts == null) {
 			String apiResponseString = connection.getInstruments();
 			
+			//String[] sArray = apiResponseString.split(",");
+			//for(int i = 0; i < sArray.length; i++) {
+			//	System.out.println(sArray[i]);
+			//}
+			
 			availableInstruemts = jsonParser.convertAPiStringToInstrumentsRootModel(apiResponseString);
 		}
 		return availableInstruemts;
@@ -68,19 +73,27 @@ public class ApiConnection {
 		return lastCandle.mid.c;
 	}
 
-	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
-		if(units == 0) return;
+	public OrderResponse placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
+		if(units == 0) return makeFailedOrderResponse();
 
 		String orderJson = jsonParser.makeOrederRequestJson(instrument, units, takeProfit, stopLoss); //
 
-		connection.placeLimitOrder(orderJson);
+		String responseJson = connection.placeOrder(orderJson);
+		
+		
+		return jsonParser.makeOrderResponseFromJson(responseJson);
+		
+	}
+	
+	private OrderResponse makeFailedOrderResponse() {
+		return new OrderResponse(false,"-1");
 	}
 
 	public void placeOrder(String instrument, double units) {
 
 		String orderJson = jsonParser.makeOrederRequestJson(instrument, units); //
 
-		connection.placeLimitOrder(orderJson);
+		connection.placeOrder(orderJson);
 	}
 
 	public double getBalance() {

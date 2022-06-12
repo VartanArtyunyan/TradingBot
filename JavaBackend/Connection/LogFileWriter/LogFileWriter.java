@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class LogFileWriter implements Closeable {
 
@@ -16,8 +17,9 @@ public class LogFileWriter implements Closeable {
 	String inputPath;
 	String path;
 	boolean writeHeader;
-	LogBuffer lBuffer;
-	String header = "Instrument;last Time;Kaufpreis;last Price;TakeProfit;StopLoss;macd;macdTrigger;parabolicSAR;ema\n";
+	String header = "ID;Instrument;last Time;Kaufpreis;last Price;TakeProfit;StopLoss;macd;macdTrigger;parabolicSAR;ema\n";
+	
+	LogFile file;
 
 	public LogFileWriter() {
 		initialise("siganls.csv");
@@ -26,17 +28,19 @@ public class LogFileWriter implements Closeable {
 	public LogFileWriter(String path) {
 		initialise(path);
 	}
+	
+	public ArrayList<Integer> getMissingIDs(){
+		return file.getMissingIDs();
+	}
 
-	public void log(String instrument, String lastTime, double kaufpreis, double lastPrice, double takeProfit, double stopLoss,
+	public void log(String id, String instrument, String lastTime, double kaufpreis, double lastPrice, double takeProfit, double stopLoss,
 			double macd, double macdTriggert, double parabolicSAR, double ema) {
-		String input = String.format("%s;%s;%f;%f;%f;%f;%f;%f;%f;%f", instrument, lastTime, kaufpreis, lastPrice, takeProfit,
+		String input = String.format("%s;%s;%s;%f;%f;%f;%f;%f;%f;%f;%f",id, instrument, lastTime, kaufpreis, lastPrice, takeProfit,
 				stopLoss, macd, macdTriggert, parabolicSAR, ema);
-		try {
-			lBuffer.flush();
+		try {	
 			bw.write(input + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
-			lBuffer.put(input);
 		}
 		
 		try {
@@ -49,24 +53,25 @@ public class LogFileWriter implements Closeable {
 
 	@Override
 	public void close() throws IOException {
-		lBuffer.close();
+	
 		bw.close();
 	}
 	
 	public void flush() throws IOException {
-		lBuffer.flush();
+	
 		bw.flush();
 	}
 
 	private void initialise(String path) {
 		this.inputPath = path;
 		this.path = inputPath;
+		
 
 		writeHeader = !Files.exists(Paths.get(path));
 
 		openFile(path);
 
-		lBuffer = new LogBuffer(path, bw);
+	
 
 		if (writeHeader) {
 			try {
@@ -84,7 +89,8 @@ public class LogFileWriter implements Closeable {
 		int postfix = 1;
 		do {
 			try {
-				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path, true)));
+				this.file = new LogFile(path);
+				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path)));
 				retry = false;
 			} catch (FileNotFoundException e) {
 				path = addPostfix(inputPath, Integer.toString(postfix));
