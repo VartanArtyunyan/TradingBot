@@ -1,6 +1,24 @@
-import ReaderWriter
-import Calculation
+""" import Client
+import socket
+import time
 
 
-a = ReaderWriter.read()
-print(Calculation.calculate(a[0]))
+
+cl = Client.Client()
+print(cl.read())
+time.sleep(3)
+cl.send("hello")
+
+time.sleep(3) """
+
+
+import json
+import Settings
+
+x = "order":["instrument":None,"factor":None,"volatility":None,"longShort":None]}
+
+# convert into JSON:
+y = json.dumps(x)
+
+# the result is a JSON string:
+print(y)
