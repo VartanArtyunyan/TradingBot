@@ -17,13 +17,13 @@ import de.fhws.Softwareprojekt.JsonInstrumentsInstrument;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import positionen.Verwaltung;
 
-<<<<<<< HEAD
-public class PyhtonConnection extends stopableThread {
 
-=======
+
+
+
 public class PyhtonConnection extends StopableThread{
 	
->>>>>>> a9f838a13199b95f56a1e48b29bf434dc4df030f
+
 	Verwaltung verwaltung;
 
 	int port;
