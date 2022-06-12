@@ -1,3 +1,4 @@
+from ast import List
 import datetime
 import json
 import time
@@ -78,10 +79,10 @@ list_news = ReaderWriter.openJsonFile(file_name)
 List_Storage = StoreList.StoreList(list_news, list_pairs)
 
 
-
 List_Storage.filterSpeechAndReport()
 
 
+List_Storage.upcoming_events()
 
 
 
