@@ -71,7 +71,7 @@ def calculate(event):
     else:
         delta_actprev_percent
 
-    back_string = f",factor:{endfactor},volatility:{volatility},longShort:{longShort}"
+    back_string = f",factor:{endfactor},longShort:{longShort}"
 
     return  back_string
 

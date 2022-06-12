@@ -15,7 +15,7 @@ time.sleep(3) """
 import json
 import Settings
 
-x = "order":["instrument":None,"factor":None,"volatility":None,"longShort":None]}
+x = {"order":{"instrument":None,"factor":None,"volatility":None,"longShort":None}}
 
 # convert into JSON:
 y = json.dumps(x)
