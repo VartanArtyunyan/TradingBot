@@ -34,9 +34,6 @@ class StoreList:
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
             if next_time > datetime.datetime.now() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
-                instrument = 
-                
-                upcoming = f"order:{instrument:{instrument},factor:{factor},volatility:{volatility},longShort:{longShort}"
                 upcoming_event = nextEvent["name"] + " " + nextEvent["dateUtc"] + " " + nextEvent["currencyCode"]
                 print(f"{upcoming_event}")
                 #cl.send(upcoming_event)
