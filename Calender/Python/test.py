@@ -1,6 +1,18 @@
-import ReaderWriter
-import Calculation
+import Client
+import socket
+import time
 
 
-a = ReaderWriter.read()
-print(Calculation.calculate(a[0]))
+
+
+
+
+
+
+
+
+cl = Client.Client()
+print(cl.read())
+cl.send("hello\n")
+
+time.sleep(30)

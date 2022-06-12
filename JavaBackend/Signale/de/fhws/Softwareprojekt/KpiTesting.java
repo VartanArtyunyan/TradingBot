@@ -20,7 +20,7 @@ import positionen.Verwaltung;
 
 //Damit Before-All als nicht statisch deklariert werden kann
 @TestInstance(Lifecycle.PER_CLASS)
-public class Testing {
+public class KpiTesting {
 	ArrayList<Kpi> currencies = new ArrayList<>();
 	// double [] macd=new double[] {1,1,1,1,1};
 	Connection con = new Connection();
@@ -41,7 +41,7 @@ public class Testing {
 	
 //  startMe BeforeAll Methode has to be static
 	@BeforeAll
-	public void BeforeAll() {
+	public void beforeAll() {
 
 /*		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
 
@@ -73,7 +73,7 @@ public class Testing {
 	//	currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9)));
 	}
 @Test
-public void RSITest()
+public void rsiTest()
 {
 	try
 	{
@@ -81,12 +81,12 @@ public void RSITest()
 	}
 	catch(Exception e)
 	{
-		fail("Hätte keine Ausnahme feurern dürfen");
+		fail("Hätte keine Ausnahme feuern dürfen");
 	}
 	
 }
 @Test
-public void RSIIntensityTest()
+public void rsiIntensityTest()
 {
 	try
 	{
@@ -98,7 +98,7 @@ public void RSIIntensityTest()
 	}
 }
 	@Test
-	public void MacdTest() {
+	public void macdTest() {
 		//-1 und 1 sind keine Grenzwerte. Trotzdem wäre es verwunderlich, wenn ein Macd und MacdTriggert in dieser Größenordnung erscheint
 	try
 	{
@@ -129,7 +129,7 @@ public void parabiolicSarTest()
 }
 //Checken dass der macd 4 unter macdTriggert liegt
 @Test
-public void MacdMacdsTriggertlongCheck()
+public void macdMacdsTriggertlongCheck()
 {
 	int hauptzaehler=0;
 
@@ -175,7 +175,7 @@ public void emaTest()
 }
 
 	@Test
-	public void EmaGrenzwerteCheck() {
+	public void emaGrenzwerteCheck() {
 		for (Kpi k : currencies) {
 			assertTrue((k.ema > 0) && (!(k.ema > k.lastPrice * 1.04)) && (!(k.ema < k.lastPrice * 0.96)));
 		}
@@ -210,7 +210,7 @@ if(k.instrument.compareTo("USB_THB")==0)
 }
 	}
 	@Test
-	public void SmaTest()
+	public void smaTest()
 	{
     for(Kpi k:currencies)
     {
@@ -225,7 +225,7 @@ if(k.instrument.compareTo("USB_THB")==0)
     	}
     
     }
-    public void AtrTest()
+    public void atrTest()
     {
     	
     	for(Kpi k:currencies)

@@ -2,12 +2,12 @@ package Threads;
 
 import de.fhws.Softwareprojekt.JsonCandlesRoot;
 
-public class getMACDThread extends  kpiThread{
+public class GetMACDThread extends  KpiThread{
 	int x;
 	int y;
 	int z;
 	
-	public getMACDThread(String instrument, String granularity, int x, int y, int z, JsonCandlesRoot jcr) {
+	public GetMACDThread(String instrument, String granularity, int x, int y, int z, JsonCandlesRoot jcr) {
 		
 		super(instrument, granularity, jcr);
 		this.x = x;

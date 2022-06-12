@@ -2,32 +2,30 @@ import socket
 import time
 
 
-HEADER = 64
-PORT = 12000
-FORMAT = 'utf-8'
-DISCONNECT_MESSAGE = "exit"
-SERVER = "localhost"
-ADDR = (SERVER, PORT)
+class Client():
+    HEADER = 64
+    PORT = 12000
+    FORMAT = 'utf-8'
+    DISCONNECT_MESSAGE = "exit"
+    SERVER = "localhost"
+    ADDR = (SERVER, PORT)
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(ADDR)
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect(ADDR)
 
-def send(msg):
-    message = msg.encode(FORMAT)
-    client.send(message)
+    def send(self,msg):
+        message = msg.encode(self.FORMAT)
+        self.client.sendall(message)
     
 
-def read():
-    input = None
-    while input is None:
-        print(input)
-        input = client.recv(51200).decode(FORMAT)
-    return input
+    def read(self):
+     #  input = None
+    #  while input is None:
+      #    print(input)
+      input = self.client.recv(51200).decode(self.FORMAT)
+      print(input)
+      return input
 
-
-print(read())
-
-send("hey")
 
 
 
@@ -197,9 +195,9 @@ s.add_message('hello world')
 s.start_listen()
 s.add_message('hello world')
 
+"""
 
-time.sleep(2000)
- """
+ 
 
 
 
