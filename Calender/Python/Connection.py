@@ -42,7 +42,7 @@ def handleConnection(URL):
         s = x.decode('utf-8')
         return(s)
     else:
-        print("no connection")
+        print("no connection or no events")
 
 
 def start():
@@ -54,8 +54,8 @@ def start():
     von = (gerade - timedelta(hours=5)).strftime("%H:%M:%S")
     dat = "2022-05-09" """
 
-    dat = date.today()
-    #dat = "2022-06-02"
+    #dat = date.today()
+    dat = "2022-06-13"
     von = "00:00:00"
     bis = "23:59:59"
 

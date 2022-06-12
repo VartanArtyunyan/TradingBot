@@ -1,2 +1,17 @@
-FORMAT_UPCOMING = "upcoming:{instrument:{instrument},volatility:{volatility},time:{time}"
-FORMAT_ORDER = "order:{instrument:{instrument},factor:{factor},volatility:{volatility},longShort:{longShort}"
+FORMAT_UPCOMING = {
+    "upcoming":  {
+        "instrument": None,
+        "volatility": None,
+        "time":None
+    }
+}
+
+
+FORMAT_ORDER = {
+  "order": {
+    "instrument": "GBP",
+    "factor": 1,
+    "volatility": 1,
+    "longShort": True
+  }
+}

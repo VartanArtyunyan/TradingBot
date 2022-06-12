@@ -1,33 +1,48 @@
 import socket
+from threading import *
 import time
 
+class Client:
+    HEADER = 64
+    HOST = "localhost"
+    PORT = 12000
+    FORMAT = 'utf-8'
+    DISCONNECT_MESSAGE = "exit"
 
-HEADER = 64
-PORT = 12000
-FORMAT = 'utf-8'
-DISCONNECT_MESSAGE = "exit"
-SERVER = "localhost"
-ADDR = (SERVER, PORT)
+    ADDR = (HOST, PORT)
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(ADDR)
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.bind(HOST, PORT)
+    client.connect(ADDR)
 
-def send(msg):
-    message = msg.encode(FORMAT)
-    client.send(message)
-    
+    def send(self, msg):
+        msg = f"{msg} /n"
+        message = msg.encode(self.FORMAT)
+        self.client.send(message)
+        
 
-def read():
-    input = None
-    while input is None:
-        print(input)
-        input = client.recv(51200).decode(FORMAT)
-    return input
+    def read(self):
+        #input = None
+        #while input is None:
+            #print(input)
+        input = self.client.recv(51200).decode(self.FORMAT)
+        return input
+
+""" 
+class client(Thread):
+    def __init__(self, socket, address):
+        Thread.__init__(self)
+        self.sock = socket
+        self.addr = address
+        self.start()
+
+    def run(self):
+        while 1:
+            print('Client sent:', self.sock.recv(1024).decode())
+            self.sock.send(b'Oi you sent something to me') """
 
 
-print(read())
 
-send("hey")
 
 
 

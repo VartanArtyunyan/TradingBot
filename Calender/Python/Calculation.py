@@ -1,3 +1,4 @@
+from ast import And
 import datetime
 
 
@@ -5,8 +6,15 @@ FACTOR_VOTALITY_HIGH = 2.0
 FACTOR_VOTALITY_MEDIUM = 1.0
 longShort = True    #true bei long, false bei short
 
+#Nutzung im Faktor möglich
+POP_TRADING_PAIRS = ["EUR/USD", "USD/JPY", "GBP/USD", "AUD/USD", "USD/CAD", "USD/CNY", "USD/CHF", "USD/HKD", "EUR/GBP", "USD/KRW"]
 
 
+def longShort_by_name(event):
+    #Negatives Vorher-Nachher wirkt sich negativ auf Kurs aus -> Kurs 
+    negativ_delta_names = ["Handelsbilanz"]
+    
+    minor_impact_names = ["Importe", "Exporte"]
 
 
 @staticmethod
@@ -53,6 +61,15 @@ def calculate(event):
     #Alternative: trading_factor =  volatity_factor * (delta_actprev_percent + ratioDeviation) - timedeltaFaktor
 
     #return trading_factor
+
+    if (isBetterThanExpected is not None) and (consensus is not None):
+        delta_actual_consensus = actual - consensus
+
+        #bte true?  actual > consensus? -> longShort = True
+        #bte true?  actual < consensus? -> longShort = True
+
+    else:
+        delta_actprev_percent
 
     back_string = f",factor:{endfactor},volatility:{volatility},longShort:{longShort}"
 
