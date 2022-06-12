@@ -17,7 +17,7 @@ import java.util.HashSet;
 
 import API.ApiConnection;
 
-public class Verwaltung extends stopableThread{
+public class Verwaltung extends StopableThread{
 
 	ApiConnection connection;
 	GUI gui;

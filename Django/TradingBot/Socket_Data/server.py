@@ -31,3 +31,5 @@ print("Client has connected")
 # thread has to start before other loop
 t = threading.Thread(target=recv_msg)
 t.start()
+
+# test
