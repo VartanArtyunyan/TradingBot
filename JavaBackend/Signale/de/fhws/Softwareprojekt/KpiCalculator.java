@@ -227,9 +227,9 @@ public class KpiCalculator {
 	}
 
 	public Kpi getMACD(String instrument, String granularity, int x, int y, int z, JsonCandlesRoot jcr) {
-		Kpi kpi1 = getInitialKpi(instrument, x, granularity, jcr);
-		Kpi kpi2 = getInitialKpi(instrument, y, granularity, jcr);
-		Kpi md = getInitialKpi(instrument, z, granularity, jcr);
+		Kpi kpi1 = getBasisKpi(instrument, x, granularity, jcr);
+		Kpi kpi2 = getBasisKpi(instrument, y, granularity, jcr);
+		Kpi md = getBasisKpi(instrument, z, granularity, jcr);
 		double ergebnis = 0;
 		double maxDifferenz = 0;
 		double minDifferenz = 0;
