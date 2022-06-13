@@ -23,13 +23,30 @@ def DateStringToObject(word):
     return word
 
 
-def calc_longShort():
-    return 0
-
-
 @staticmethod
 def breakTimer(EventTime):
     return EventTime - datetime.datetime.now()
+
+
+def calculate_delta_actual_prev(event):
+    actual = float(event["actual"])
+    prev = float(event["previous"])
+    return actual - prev
+
+
+
+def longShort(event):
+    
+    longShort = event["isBetterThanExpected"]
+    delta_act_prev = calculate_delta_actual_prev(event)
+   
+    if longShort == None and delta_act_prev > 0:
+        longShort = True
+    else:
+        longShort = False
+    return longShort
+
+
 
 
 def calculate(event):
@@ -71,7 +88,7 @@ def calculate(event):
     else:
         delta_actprev_percent
 
-    back_string = f",factor:{endfactor},longShort:{longShort}"
+    factor_string = "factor:" + str(endfactor)
 
-    return  back_string
+    return  factor_string
 

@@ -5,7 +5,7 @@ import time
 import Connection
 import ReaderWriter
 import Calculation
-#import Client
+from Client import Client
 from StoreList import StoreList
     
 
@@ -15,11 +15,11 @@ INSTRUMENTS = '{"instrumente":["EUR/USD","GBP/CHF","EUR/JPY"]}'
 
 
 
-file_name = 'jsonCalender1.json'
+file_name = 'jsonCalender5.json'
 
 income_json = Connection.start()
-list_pairs = json.loads(INSTRUMENTS)
-#list_pairs = json.loads(cl.read())
+#list_pairs = json.loads(INSTRUMENTS)
+list_pairs = json.loads(Client.read())
 
 
 

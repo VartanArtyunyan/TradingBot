@@ -3,6 +3,7 @@ from encodings import utf_8
 import http.client
 import gzip
 import json
+import time
 #from pickle import FALSE
 from xmlrpc.client import gzip_decode
 from datetime import date, timedelta
@@ -33,16 +34,17 @@ HEADERS = {
 
 def handleConnection(URL):
 
-    #schleife fehlt noch
     CONN.request("GET", URL, PAYLOAD, HEADERS)
     res = CONN.getresponse()
-    if res.status == 200:       #responseCode / HTTP status < 400 anlegen + Exception schmeißen
-        data = res.read()
-        x = gzip_decode(data)
-        s = x.decode('utf-8')
-        return(s)
-    else:
-        print("no connection or no events")
+    while True:
+        if res.status == 200:      
+            data = res.read()
+            x = gzip_decode(data)
+            s = x.decode('utf-8')
+            return(s)
+        else:
+            print("no connection or no events")
+            time.sleep(5)
 
 
 def start():
@@ -54,8 +56,8 @@ def start():
     von = (gerade - timedelta(hours=5)).strftime("%H:%M:%S")
     dat = "2022-05-09" """
 
-    #dat = date.today()
-    dat = "2022-06-13"
+    dat = date.today()
+    #dat = "2022-06-13"
     von = "00:00:00"
     bis = "23:59:59"
 

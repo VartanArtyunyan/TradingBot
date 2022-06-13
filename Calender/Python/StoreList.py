@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 import datetime
 import json
+from locale import currency
 import Connection
 import Calculation
-#import Client as cl
+from Client import Client
 
 class StoreList:
     list_news = None
@@ -29,7 +30,6 @@ class StoreList:
                 self.list_news.remove(nextEvent)
     
     def upcoming_events(self):
-        #least_upcoming_time = None
         pre_string = "upcoming"
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
@@ -40,26 +40,36 @@ class StoreList:
                 print(f"{upcoming_event}") """
 
                 self.handleNextEvent(nextEvent, pre_string)
-                #cl.send(upcoming_event)
-                nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines Trades
-            
+                nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines upcoming-Trades
+
 
     def handleNextEvent(self, event, pre_string):
-        volatility_str = "volatility:" + str(event["volatility"])
-        specific_string = ""
+        volatility = "volatility:" + str(event["volatility"])
+        core = None
+        currency = event["currencyCode"]
+        
         if pre_string == "order":
-            specific_string =  Calculation.calculate(event)
+            factor = Calculation.calculate(event)
+            longShort = Calculation.longShort(event)
+            core = {"Instrument": None,"volatility": volatility,"factor": factor, "longShort": longShort}
         else:
-            specific_string = "time:" + str(event["dateUtc"])
-        for instrument in self.list_pairs["instrumente"]:
-            #"upcoming":["instrument": None,"volatility": None,"time":None]
-            #"order":["instrument": "GBP","volatility": 1,"factor": 1,"longShort": True]
-            instrument = "instrument:"+str(instrument)
-            print(event["name"])
+            time = event["dateUtc"]
+            core = {"Instrument": None,"volatility": volatility,"time": time}
+        
 
-            print(f"{pre_string}:[{instrument}{volatility_str}{specific_string}]")
+        for instrument in self.list_pairs["instrumente"]:
+            x = instrument.split("/")
+            sending_str = f"{pre_string}:[{core}]"
             
-            #cl.send(sending)
+            if currency not in instrument:
+                break
+            elif x.index(currency) == 1 and pre_string == "order":
+                reverse_longShort = core
+                reverse_longShort["longShort"] = not reverse_longShort["longShort"]
+                sending_str = f"{pre_string}:[{reverse_longShort}]"
+
+            else:
+                Client.send(sending_str)
 
     def getData(self):
             return self.list_news
@@ -67,19 +77,3 @@ class StoreList:
 
 
 
-"""  def EventLoop(self):
-        for nextEvent in self.data:
-            update = Connection.checkEvent(nextEvent)
-            if update["actual"] is not None:
-                Calculation.calculate(nextEvent)
-                list.remove(nextEvent) """
-    
-    
-    
-
-        
-""" nextEventTime = DateStringToObject(nextEvent["dateUtc"])
-        time.sleep(breakTimer(nextEventTime))
-        timedelta = breakTimer(nextEventTime)
-        print(timedelta.total_seconds()<0)
-        print(f"{timedelta} :" + nextEvent["name"]) """
