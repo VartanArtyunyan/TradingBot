@@ -65,10 +65,11 @@ public class KpiTesting {
 		if(instrument.type.compareTo("CURRENCY") == 0)
 			currenciesString.add(instrument.name);
 		}
-		currenciesString.parallelStream().sorted().forEach(k->{currencies.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9));
+		//public Kpi getAll(String instrument, String granularity, Object... signale)
+		currenciesString.parallelStream().sorted().forEach(k->{currencies.add(werte.getAll(k,"M15",200,"ema", 150,"macd",12,26,9,"atr",14,"rsi",14,"sma",14,"parabolicSAR",14,0.02, 0.02, 0.2,"parabolicSAR",14,0.02, 0.02, 0.2));
 		basicKpiList.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15")));
 		});
-		
+		//k,"M15","ema", 200,"sma", 20,"atr",14,"macd",12,26,9,"parabolicSAR",14,0.02, 0.02, 0.2,"atr",14
 	//	currenciesString.parallelStream().sorted().forEach(k->currencies.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15"))))	;
 	//	currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9)));
 	}
@@ -187,12 +188,14 @@ public void emaTest()
 		int zaehler = 0;
 		for (Kpi k : currencies) {
 			for (Kpi l : basicKpiList) {
-				if ((l.ema == k.ema) && (l.avg == k.avg) && (l.lastPrice == k.lastPrice))
+			
+				if (l.ema == k.ema&&k.avg==l.avg) 
+					
 					zaehler++;
 			}
 		}
 		double zahl = (double) zaehler / currencies.size();
-		if(zahl<=0.5)
+		if(zahl<=0.8)
 		fail("Die Zahl lautet" + zahl);  
 	}
 	@Test
