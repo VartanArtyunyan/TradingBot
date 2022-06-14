@@ -17,8 +17,8 @@ public class LogFileWriter implements Closeable {
 	String inputPath;
 	String path;
 	boolean writeHeader;
-	String header = "ID;Instrument;last Time;Kaufpreis;last Price;TakeProfit;StopLoss;macd;macdTrigger;parabolicSAR;ema;VerkaufsPreis\n";
-	
+	String header = "ID;Instrument;last Time;Kaufpreis;last Price;TakeProfit;StopLoss;macd;macdTrigger;parabolicSAR;ema200;SMA20;SMA50;ATR;RSI;VerkaufsPreis\n";
+
 	LogFile file;
 
 	public LogFileWriter() {
@@ -28,15 +28,15 @@ public class LogFileWriter implements Closeable {
 	public LogFileWriter(String path) {
 		initialise(path);
 	}
-	
+
 	public ArrayList<Integer> getMissingIDs(){
 		return file.getMissingIDs();
 	}
 
 	public void log(String id, String instrument, String lastTime, double kaufpreis, double lastPrice, double takeProfit, double stopLoss,
-			double macd, double macdTriggert, double parabolicSAR, double ema) {
+			double macd, double macdTriggert, double parabolicSAR, double ema200, double sma20, double sma50, double ATR, double RSI) {
 		String input = String.format("%s;%s;%s;%f;%f;%f;%f;%f;%f;%f;%f",id, instrument, lastTime, kaufpreis, lastPrice, takeProfit,
-				stopLoss, macd, macdTriggert, parabolicSAR, ema);
+				stopLoss, macd, macdTriggert, parabolicSAR, ema200);
 		try {	
 			bw.write(input + "\n");
 		} catch (IOException e) {
@@ -68,13 +68,11 @@ public class LogFileWriter implements Closeable {
 		
 
 		writeHeader = !Files.exists(Paths.get(path));
-		if(!writeHeader) this.file = new LogFile(path);
-		else this.file = new LogFile();
+		this.file = new LogFile(path);
 		
 		
 		//openFile(path);
 
-	
 
 		if (writeHeader) {
 			try {

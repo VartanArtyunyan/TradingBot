@@ -82,7 +82,7 @@ public class Verwaltung extends StopableThread{
 
 	public void startTraiding() {
 		addThread(pythonConnection);
-		addThread(signals);
+		//addThread(signals);
 		//addThread(rngTrader);
 		addThread(this);
 		startThreads();
@@ -147,7 +147,7 @@ public class Verwaltung extends StopableThread{
 		
 		if(order.wasSuccesfull()) {
 		logFileWriter.log(order.getOrderID(), kpi.getInstrument(), kpi.getLastTime(), buyingPrice, kpi.getLastPrice(), kpi.getTakeProfit(),
-				kpi.getStopLoss(), kpi.getMacd(), kpi.getMacdTriggert(), kpi.getParabolicSAR(), kpi.getEma());
+				kpi.getStopLoss(), kpi.getMacd(), kpi.getMacdTriggert(), kpi.getParabolicSAR(), kpi.getEma(),0,0,0,0);
 		
 		
 		}
