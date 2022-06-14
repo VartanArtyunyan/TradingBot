@@ -4,17 +4,26 @@ import json
 from locale import currency
 import Connection
 import Calculation
-from Client import Client
+#from Client import Client
 
 class StoreList:
     list_news = None
     list_pairs = None
+<<<<<<< HEAD
     cl = None
 
     def __init__(self, list_news, list_pairs, cl):
         self.list_news = list_news
         self.list_pairs = list_pairs
         self.cl = cl
+=======
+    client = None
+    
+    def __init__(self, list_news, list_pairs, client):
+        self.list_news = list_news
+        self.list_pairs = list_pairs
+        self.client = client
+>>>>>>> e4407bb93312e98f30e5ab1623813716525f55b3
 
     def filterSpeechAndReport(self):
         for nextEvent in self.list_news:
@@ -28,7 +37,11 @@ class StoreList:
             update = Connection.checkEvent(nextEvent)
             #print(update["actual"])
             if update["actual"] is not None:
+<<<<<<< HEAD
                 print("update")
+=======
+                print(nextEvent)
+>>>>>>> e4407bb93312e98f30e5ab1623813716525f55b3
                 self.handleNextEvent(update, pre_string)
                 self.list_news.remove(nextEvent)
     
@@ -36,18 +49,24 @@ class StoreList:
         pre_string = "upcoming"
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
+           
             if Calculation.breakTimer(next_time) > datetime.timedelta(minutes = 10):
-                break
+                continue
             elif next_time > datetime.datetime.now() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
+<<<<<<< HEAD
                 """ upcoming_event = nextEvent["name"] + " " + nextEvent["dateUtc"] + " " + nextEvent["currencyCode"]
                 print(f"{upcoming_event}") """
                 print("upcoming:" + str(nextEvent))
+=======
+>>>>>>> e4407bb93312e98f30e5ab1623813716525f55b3
                 self.handleNextEvent(nextEvent, pre_string)
                 nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines upcoming-Trades
+                
+            
 
 
     def handleNextEvent(self, event, pre_string):
-        volatility = "volatility:" + str(event["volatility"])
+        volatility = event["volatility"]
         core = None
         currency = event["currencyCode"]
         
@@ -59,22 +78,31 @@ class StoreList:
             time = event["dateUtc"]
             core = {"Instrument": None,"volatility": volatility,"time": time}
         
-
+        
         for instrument in self.list_pairs["instrumente"]:
-            x = instrument.split("/")
-            sending_str = f"{pre_string}:[{core}]"
             
-            if currency not in instrument:
-                break
-            elif x.index(currency) == 1 and pre_string == "order":
-                reverse_longShort = core
-                reverse_longShort["longShort"] = not reverse_longShort["longShort"]
-                sending_str = f"{pre_string}:[{reverse_longShort}]"
+            x = instrument.split("/")
+            sending_str = core
 
+            if currency not in instrument:
+                continue
+            elif x.index(currency) == 1 and pre_string == "order":
+                sending_str["longShort"] = not sending_str["longShort"]
+                
+
+            sending_str["Instrument"] = instrument
+            sending_str = str(sending_str).replace("{", "[").replace("}", "]")
+            sending_str = "{" + f"'{pre_string}':{sending_str}" + "}"
+            print("send: " + str(sending_str))
+            self.client.send(sending_str)
+
+<<<<<<< HEAD
             else:
                     continue
             print("Ich sende jetzt das hier (hoffentlich): " + sending_str)
             self.cl.send(sending_str)
+=======
+>>>>>>> e4407bb93312e98f30e5ab1623813716525f55b3
 
     def getData(self):
             return self.list_news
