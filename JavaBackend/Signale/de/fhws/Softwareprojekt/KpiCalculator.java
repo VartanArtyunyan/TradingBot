@@ -22,24 +22,65 @@ public class KpiCalculator {
 		this.connection = connection;
 	}
 
-	public Kpi getAll(String instrument, int emaperiods, int periods, String granularity, double startBF,
-			double inkrementBF, double maxBF, int macdX, int macdY, int macdZ) {
-		
-		// Candles von Oanda-Api holen und in Json-Object mappen
+	public Kpi getAll(String instrument, String granularity,int emaperiods, Object... signale) {
+
+// Candles von Oanda-Api holen und in Json-Object mappen
 		JsonCandlesRoot jcr = getCandles(instrument, granularity);
 
-		// Einfache Kennzahlen und EMA (Exponential Moving Average) berechnen
+// Einfache Kennzahlen und EMA (Exponential Moving Average) berechnen
 
-		Kpi kpiTemp;
-		// Parabolic SAR berechnen
-
+// Parabolic SAR berechnen
+		int zaehler = 0;
 		ArrayList<KpiThread> threads = new ArrayList<>();
-		threads.add(new GetBasisKpiThread(instrument, emaperiods, granularity, jcr));
-		threads.add(new GetParabolicSARThread(instrument, granularity, periods, startBF, inkrementBF, maxBF, jcr));
-		threads.add(new GetMACDThread(instrument, granularity, macdX, macdY, macdZ, jcr));
-		threads.add(new GetRSIThread(instrument, periods, granularity, jcr));
-		threads.add(new GetATRThread(instrument, periods, granularity, jcr));
-		threads.add(new GetSMAThread(instrument, periods, granularity, jcr));
+		threads.add(new GetBasisKpiThread(instrument,emaperiods, granularity, jcr));
+		for (int i = 0; i < signale.length; i += zaehler) {
+			
+		try {
+		String	 s = signale[i].toString();
+			zaehler=0;
+			switch (s) {
+			case ("ema"): {
+			
+				threads.add(new GetBasisKpiThread(instrument,(int) signale[i + 1], granularity, jcr));
+				zaehler += 2;
+				break;
+			}
+			
+			case ("macd"): {
+				threads.add(new GetMACDThread(instrument, granularity, (int) signale[i + 1], (int) signale[i + 2],
+						(int) signale[i + 3], jcr));
+				zaehler += 4;
+				break;
+			}
+			case ("parabolicSAR"): {
+				threads.add(new GetParabolicSARThread(instrument, granularity, (int) signale[i + 1],
+						(double) signale[i + 2], (double) signale[i + 3], (double) signale[i + 4], jcr));
+				zaehler += 5;
+				break;
+			}
+			case ("rsi"): {
+				threads.add(new GetRSIThread(instrument, (int) signale[i + 1], granularity, jcr));
+				zaehler += 2;
+				break;
+			}
+			case ("atr"): {
+				threads.add(new GetATRThread(instrument, (int) signale[i + 1], granularity, jcr));
+				zaehler += 2;
+				break;
+			}
+			case ("sma"): {
+				threads.add(new GetSMAThread(instrument, (int) signale[i + 1], granularity, jcr));
+				zaehler += 2;
+				break;
+			}
+
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println(signale[i]+e.getMessage());
+		}
+		}
 
 		for (KpiThread kt : threads) {
 			kt.start();
@@ -53,45 +94,151 @@ public class KpiCalculator {
 				e.printStackTrace();
 			}
 		}
+		Kpi kpiTemp;
+		
 
-		Kpi kpi = threads.get(0).getErgebnis();
+		boolean p = false;
+	
+		boolean s = false;
+		boolean r = false;
+		boolean m = false;
+		boolean a = false;
+Kpi kpi=threads.get(0).getErgebnis();
+		for (int b = 1; b < threads.size(); b++) {
 
-		kpiTemp = threads.get(1).getErgebnis();
-		kpi.parabolicSAR = kpiTemp.parabolicSAR;
-		kpi.parabolicSARs = kpiTemp.parabolicSARs;
-		kpi.trend = kpiTemp.trend;
-		kpi.trendWechsel = kpiTemp.trendWechsel;
-
-		// MACD (Moving Average Convergence/Divergence) berechnen
-		kpiTemp = threads.get(2).getErgebnis();
-		kpi.macd = kpiTemp.macd;
-		kpi.macds = kpiTemp.macds;
-		kpi.macdsTriggert = kpiTemp.macdsTriggert;
-		kpi.macdTriggert = kpiTemp.macdTriggert;
-		kpi.macdIntensity = kpiTemp.macdIntensity;
-		kpi.macdIntensitys = kpiTemp.macdIntensitys;
-
-		// Relative Strength Index (RSI) berechnen mit exponentiell gleitenden
-		// Durchschnitt
-		kpiTemp = threads.get(3).getErgebnis();
-		kpi.rsi = kpiTemp.rsi;
-		kpi.rsiListe = kpiTemp.rsiListe;
-
-		// Average True Range (ATR) berechnen
-		kpiTemp = threads.get(4).getErgebnis();
-		kpi.atr = kpiTemp.atr;
-		kpi.atrListe = kpiTemp.atrListe;
-		kpi.IntegerAtr = kpiTemp.IntegerAtr;
-		kpi.IntegerAtrListe = kpiTemp.IntegerAtrListe;
-
-		// Simple Moving Average (SMA) berechnen
-		kpiTemp = threads.get(5).getErgebnis();
-		kpi.sma = kpiTemp.sma;
-		kpi.smaList = kpiTemp.smaList;
+			kpiTemp = threads.get(b).getErgebnis();
+			if (kpiTemp.emas.size()>0) {
+				
+					
+					kpi.KpiList.add(kpiTemp);
+				}
+			
+			if (kpiTemp.parabolicSARs.size()>0) {
+				if (p == false) {
+					p=true;
+					kpi.parabolicSAR = kpiTemp.parabolicSAR;
+					kpi.parabolicSARs = kpiTemp.parabolicSARs;
+					kpi.trend = kpiTemp.trend;
+					kpi.trendWechsel = kpiTemp.trendWechsel;
+				} else {
+					p = true;
+					kpi.KpiList.add(kpiTemp);
+				}
+			}
+// MACD (Moving Average Convergence/Divergence) berechnen
+			if (kpiTemp.macds.size()>0) {
+				if (m == false) {
+					m=true;
+					kpiTemp = threads.get(b).getErgebnis();
+					kpi.macd = kpiTemp.macd;
+					kpi.macds = kpiTemp.macds;
+					kpi.macdsTriggert = kpiTemp.macdsTriggert;
+					kpi.macdTriggert = kpiTemp.macdTriggert;
+					kpi.macdIntensity = kpiTemp.macdIntensity;
+					kpi.macdIntensitys = kpiTemp.macdIntensitys;
+				} else {
+					kpi.KpiList.add(kpiTemp);
+					m = true;
+				}
+			}
+// Relative Strength Index (RSI) berechnen mit exponentiell gleitenden
+// Durchschnitt
+			if (kpiTemp.rsiListe.size()>0) {
+				if (r == false) {
+					r=true;
+					kpiTemp = threads.get(b).getErgebnis();
+					kpi.rsi = kpiTemp.rsi;
+					kpi.rsiListe = kpiTemp.rsiListe;
+				} else {
+					
+					kpi.KpiList.add(kpiTemp);
+				}
+			}
+// Average True Range (ATR) berechnen
+			if (kpiTemp.atrListe.size()>0) {
+				if (a == false) {
+					a=true;
+					kpiTemp = threads.get(b).getErgebnis();
+					kpi.atr = kpiTemp.atr;
+					kpi.atrListe = kpiTemp.atrListe;
+					kpi.IntegerAtr = kpiTemp.IntegerAtr;
+					kpi.IntegerAtrListe = kpiTemp.IntegerAtrListe;
+				} else {
+					kpi.KpiList.add(kpiTemp);
+				}
+			}
+// Simple Moving Average (SMA) berechnen
+			if (kpiTemp.smaList.size()>0) {
+				if (s == false) {
+					kpiTemp = threads.get(b).getErgebnis();
+					kpi.sma = kpiTemp.sma;
+					kpi.smaList = kpiTemp.smaList;
+					s=true;
+				} else {
+					
+					kpi.KpiList.add(kpiTemp);
+				}
+			}
+	}
 
 		return kpi;
 
 	}
+
+	/*
+	 * public Kpi getAll(String instrument, int emaperiods,int smaperiods, int
+	 * periods, String granularity, double startBF, double inkrementBF, double
+	 * maxBF, int macdX, int macdY, int macdZ) {
+	 * 
+	 * // Candles von Oanda-Api holen und in Json-Object mappen JsonCandlesRoot jcr
+	 * = getCandles(instrument, granularity);
+	 * 
+	 * // Einfache Kennzahlen und EMA (Exponential Moving Average) berechnen
+	 * 
+	 * Kpi kpiTemp; // Parabolic SAR berechnen
+	 * 
+	 * ArrayList<KpiThread> threads = new ArrayList<>(); threads.add(new
+	 * GetBasisKpiThread(instrument, emaperiods, granularity, jcr)); threads.add(new
+	 * GetParabolicSARThread(instrument, granularity, periods, startBF, inkrementBF,
+	 * maxBF, jcr)); threads.add(new GetMACDThread(instrument, granularity, macdX,
+	 * macdY, macdZ, jcr)); threads.add(new GetRSIThread(instrument, periods,
+	 * granularity, jcr)); threads.add(new GetATRThread(instrument, periods,
+	 * granularity, jcr)); threads.add(new GetSMAThread(instrument, smaperiods,
+	 * granularity, jcr));
+	 * 
+	 * for (KpiThread kt : threads) { kt.start(); }
+	 * 
+	 * for (KpiThread kt : threads) { try { kt.join(); } catch (InterruptedException
+	 * e) { // TODO Auto-generated catch block e.printStackTrace(); } }
+	 * 
+	 * Kpi kpi = threads.get(0).getErgebnis();
+	 * 
+	 * kpiTemp = threads.get(1).getErgebnis(); kpi.parabolicSAR =
+	 * kpiTemp.parabolicSAR; kpi.parabolicSARs = kpiTemp.parabolicSARs; kpi.trend =
+	 * kpiTemp.trend; kpi.trendWechsel = kpiTemp.trendWechsel;
+	 * 
+	 * // MACD (Moving Average Convergence/Divergence) berechnen kpiTemp =
+	 * threads.get(2).getErgebnis(); kpi.macd = kpiTemp.macd; kpi.macds =
+	 * kpiTemp.macds; kpi.macdsTriggert = kpiTemp.macdsTriggert; kpi.macdTriggert =
+	 * kpiTemp.macdTriggert; kpi.macdIntensity = kpiTemp.macdIntensity;
+	 * kpi.macdIntensitys = kpiTemp.macdIntensitys;
+	 * 
+	 * // Relative Strength Index (RSI) berechnen mit exponentiell gleitenden //
+	 * Durchschnitt kpiTemp = threads.get(3).getErgebnis(); kpi.rsi = kpiTemp.rsi;
+	 * kpi.rsiListe = kpiTemp.rsiListe;
+	 * 
+	 * // Average True Range (ATR) berechnen kpiTemp = threads.get(4).getErgebnis();
+	 * kpi.atr = kpiTemp.atr; kpi.atrListe = kpiTemp.atrListe; kpi.IntegerAtr =
+	 * kpiTemp.IntegerAtr; kpi.IntegerAtrListe = kpiTemp.IntegerAtrListe;
+	 * 
+	 * // Simple Moving Average (SMA) berechnen kpiTemp =
+	 * threads.get(5).getErgebnis(); kpi.sma = kpiTemp.sma; kpi.smaList =
+	 * kpiTemp.smaList;
+	 * 
+	 * return kpi;
+	 * 
+	 * }
+	 */
 
 	public Kpi getBasisKpi(String instrument, int periods, String granularity, JsonCandlesRoot jcr) {
 
