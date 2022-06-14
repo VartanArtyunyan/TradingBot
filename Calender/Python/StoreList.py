@@ -9,12 +9,12 @@ import Calculation
 class StoreList:
     list_news = None
     list_pairs = None
-    #client = None
+    client = None
     
-    def __init__(self, list_news, list_pairs):
+    def __init__(self, list_news, list_pairs, client):
         self.list_news = list_news
         self.list_pairs = list_pairs
-        #self.client = client
+        self.client = client
 
     def filterSpeechAndReport(self):
         for nextEvent in self.list_news:
@@ -36,17 +36,17 @@ class StoreList:
         pre_string = "upcoming"
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
+           
             if Calculation.breakTimer(next_time) > datetime.timedelta(minutes = 10):
-                break
+                continue
             elif next_time > datetime.datetime.now() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
-                """ upcoming_event = nextEvent["name"] + " " + nextEvent["dateUtc"] + " " + nextEvent["currencyCode"]
-                print(f"{upcoming_event}") """
-                print("upcoming:" + str(nextEvent))
                 self.handleNextEvent(nextEvent, pre_string)
                 nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines upcoming-Trades
+                
+            
 
 
-    def handleNextEvent(list_pairs, event, pre_string,):
+    def handleNextEvent(self, event, pre_string):
         volatility = event["volatility"]
         core = None
         currency = event["currencyCode"]
@@ -59,8 +59,8 @@ class StoreList:
             time = event["dateUtc"]
             core = {"Instrument": None,"volatility": volatility,"time": time}
         
-
-        for instrument in list_pairs["instrumente"]:
+        
+        for instrument in self.list_pairs["instrumente"]:
             
             x = instrument.split("/")
             sending_str = core
@@ -70,13 +70,12 @@ class StoreList:
             elif x.index(currency) == 1 and pre_string == "order":
                 sending_str["longShort"] = not sending_str["longShort"]
                 
-            
 
             sending_str["Instrument"] = instrument
             sending_str = str(sending_str).replace("{", "[").replace("}", "]")
             sending_str = "{" + f"'{pre_string}':{sending_str}" + "}"
-        
-            #self.client.send(sending_str)
+            print("send: " + str(sending_str))
+            self.client.send(sending_str)
 
 
     def getData(self):
