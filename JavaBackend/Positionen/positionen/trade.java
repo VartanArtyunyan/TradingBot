@@ -60,6 +60,10 @@ public class trade {
 		return currentunits;
 	}
 	
+	public double getRealizedPl()	{
+		return Double.parseDouble(realizedPL);
+	}
+	
 	public String toString() {
 		String output = "";
 		

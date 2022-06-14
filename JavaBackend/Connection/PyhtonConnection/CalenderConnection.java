@@ -21,42 +21,19 @@ import positionen.Verwaltung;
 
 
 
-public class PyhtonConnection extends StopableThread{
+public class CalenderConnection extends SocketConnection{
 	
 
 	Verwaltung verwaltung;
 
-	int port;
-	ServerSocket ss;
-	Socket connection;
-	BufferedReader br;
-	BufferedWriter bw;
-	String instrumente;
-
-	public PyhtonConnection(Verwaltung verwaltung) {
+	public CalenderConnection(Verwaltung verwaltung, int port) {
+		super(port);
 		this.verwaltung = verwaltung;
-		port = 12000;
-
+		
 		instrumente = makeInstrumentJson(verwaltung.getJsonInstrumentsRoot());
-
 	}
 
-	@Override
-	public void onStart() {
-		try {
-			ss = new ServerSocket(port);
-			System.out.println("warte auf Client");
-			connection = ss.accept();
-			System.out.println("Ein Client hat sich verbunden");
-			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-			bw.write(instrumente);
-			bw.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 
 	@Override
 	public void onTick() {
