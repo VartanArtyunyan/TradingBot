@@ -12,11 +12,11 @@ class Client:
     ADDR = (HOST, PORT)
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.bind(HOST, PORT)
+    #client.bind(HOST, PORT)
     client.connect(ADDR)
 
     def send(self, msg):
-        msg = f"{msg} /n"
+        msg = f"{msg} \n"
         message = msg.encode(self.FORMAT)
         self.client.send(message)
         

@@ -4,15 +4,17 @@ import json
 from locale import currency
 import Connection
 import Calculation
-from Client import Client
+#from Client import Client
 
 class StoreList:
     list_news = None
     list_pairs = None
-
+    #client = None
+    
     def __init__(self, list_news, list_pairs):
         self.list_news = list_news
         self.list_pairs = list_pairs
+        #self.client = client
 
     def filterSpeechAndReport(self):
         for nextEvent in self.list_news:
@@ -22,10 +24,11 @@ class StoreList:
     def EventLoop(self):
         pre_string = "order"
         for nextEvent in self.list_news:
-            print(nextEvent["name"])
+            #print(nextEvent["name"])
             update = Connection.checkEvent(nextEvent)
-            print(update["actual"])
+            #print(update["actual"])
             if update["actual"] is not None:
+                print(nextEvent)
                 self.handleNextEvent(update, pre_string)
                 self.list_news.remove(nextEvent)
     
@@ -38,13 +41,13 @@ class StoreList:
             elif next_time > datetime.datetime.now() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
                 """ upcoming_event = nextEvent["name"] + " " + nextEvent["dateUtc"] + " " + nextEvent["currencyCode"]
                 print(f"{upcoming_event}") """
-
+                print("upcoming:" + str(nextEvent))
                 self.handleNextEvent(nextEvent, pre_string)
                 nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines upcoming-Trades
 
 
-    def handleNextEvent(self, event, pre_string):
-        volatility = "volatility:" + str(event["volatility"])
+    def handleNextEvent(list_pairs, event, pre_string,):
+        volatility = event["volatility"]
         core = None
         currency = event["currencyCode"]
         
@@ -57,19 +60,24 @@ class StoreList:
             core = {"Instrument": None,"volatility": volatility,"time": time}
         
 
-        for instrument in self.list_pairs["instrumente"]:
-            x = instrument.split("/")
-            sending_str = f"{pre_string}:[{core}]"
+        for instrument in list_pairs["instrumente"]:
             
-            if currency not in instrument:
-                break
-            elif x.index(currency) == 1 and pre_string == "order":
-                reverse_longShort = core
-                reverse_longShort["longShort"] = not reverse_longShort["longShort"]
-                sending_str = f"{pre_string}:[{reverse_longShort}]"
+            x = instrument.split("/")
+            sending_str = core
 
-            else:
-                Client.send(sending_str)
+            if currency not in instrument:
+                continue
+            elif x.index(currency) == 1 and pre_string == "order":
+                sending_str["longShort"] = not sending_str["longShort"]
+                
+            
+
+            sending_str["Instrument"] = instrument
+            sending_str = str(sending_str).replace("{", "[").replace("}", "]")
+            sending_str = "{" + f"'{pre_string}':{sending_str}" + "}"
+        
+            #self.client.send(sending_str)
+
 
     def getData(self):
             return self.list_news
