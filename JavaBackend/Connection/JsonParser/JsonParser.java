@@ -34,16 +34,16 @@ public class JsonParser {
 		JsonBuilder output = new JsonBuilder();
 
 		output.openObject("order");
-		output.addString("type", "MARKET");
-		output.addString("instrument", instrument);
+		output.addValue("type", "MARKET");
+		output.addValue("instrument", instrument);
 
-		output.addString("units", Double.toString(round(units, 0)));
+		output.addValue("units", Double.toString(round(units, 0)));
 		// output.addString("price", Double.toString(price));
 		output.openObject("takeProfitOnFill");
-		output.addString("price", Double.toString(round(takeProfit,3)));
+		output.addValue("price", Double.toString(round(takeProfit,3)));
 		output.closeObject();
 		output.openObject("stopLossOnFill");
-		output.addString("price", Double.toString(round(stopLoss,3)));
+		output.addValue("price", Double.toString(round(stopLoss,3)));
 		output.closeObject();
 		output.closeObject();
 
@@ -54,9 +54,9 @@ public class JsonParser {
 		JsonBuilder output = new JsonBuilder();
 
 		output.openObject("order");
-		output.addString("type", "MARKET");
-		output.addString("instrument", instrument);
-		output.addString("units", Double.toString(round(units, 0)));
+		output.addValue("type", "MARKET");
+		output.addValue("instrument", instrument);
+		output.addValue("units", Double.toString(round(units, 0)));
 		// output.addString("price", Double.toString(price));
 
 		output.closeObject();

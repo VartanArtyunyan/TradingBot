@@ -17,29 +17,37 @@ import de.fhws.Softwareprojekt.JsonInstrumentsInstrument;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import positionen.Verwaltung;
 
-
-
-
-
-public class CalenderConnection extends SocketConnection{
-	
+public class CalenderConnection extends SocketConnection {
 
 	Verwaltung verwaltung;
+	String instrumente;
 
 	public CalenderConnection(Verwaltung verwaltung, int port) {
 		super(port);
 		this.verwaltung = verwaltung;
-		
 		instrumente = makeInstrumentJson(verwaltung.getJsonInstrumentsRoot());
+		System.out.println(instrumente);
 	}
 
-	
+	@Override
+	public void onStart() {
+		try {
+			System.out.println(instrumente);
+			bw.write(instrumente);
+			bw.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	@Override
 	public void onTick() {
 		try {
 			String s = br.readLine();
-			if(s != null)System.out.println(s);
+			if (s != null)
+				System.out.println(s);
 			// verwaltung.pushOrder(makeOrder(s));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -63,7 +71,8 @@ public class CalenderConnection extends SocketConnection{
 		JsonBuilder jsonBuilder = new JsonBuilder();
 		jsonBuilder.openArray("instrumente");
 		for (JsonInstrumentsInstrument jii : jir.instruments) {
-			jsonBuilder.addString(null, jii.displayName);
+			if (jii.type.equals("CURRENCY"))
+				jsonBuilder.addValue(null, jii.displayName);
 		}
 		jsonBuilder.closeArray();
 		return jsonBuilder.build();

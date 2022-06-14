@@ -18,18 +18,16 @@ public class SocketConnection extends StopableThread implements Closeable{
 	Socket connection;
 	BufferedReader br;
 	BufferedWriter bw;
-	String instrumente;
+	
 	
 	
 	
 	
 	public SocketConnection(int port) {
+		
+		
 		this.port = port;
-	}
 	
-	
-	@Override
-	public void onStart() {
 		try {
 			ss = new ServerSocket(port);
 			System.out.println("warte auf Client");
@@ -37,13 +35,15 @@ public class SocketConnection extends StopableThread implements Closeable{
 			System.out.println("Ein Client hat sich verbunden");
 			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-			bw.write(instrumente);
-			bw.flush();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	
+
 	
 	
 	

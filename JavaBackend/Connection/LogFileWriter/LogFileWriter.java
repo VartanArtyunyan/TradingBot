@@ -45,7 +45,7 @@ public class LogFileWriter extends StopableThread implements Closeable {
 		this.webInterfaceConnection = webInterfaceConnection;
 		initialise(path);
 	}
-	
+
 	private void initialise(String path) {
 		this.inputPath = path;
 		this.path = inputPath;
@@ -53,27 +53,27 @@ public class LogFileWriter extends StopableThread implements Closeable {
 		openFile(path);
 
 		readFile();
-		
+
 		setTimer(2000);
-		
+
 	}
-	
+
 	@Override
 	public void onTimer() {
-		if(postionsHaveChanged()) {
+		if (postionsHaveChanged()) {
 			ArrayList<trade> trades = verwaltung.getTrades(getMissingIDs());
-			
-			for(trade t: trades) {
-				if(tradeIsSold(t)) {
-					
-					addSellingPrice(t.getId(),t.getRealizedPl());
-					
+
+			for (trade t : trades) {
+				if (tradeIsSold(t)) {
+
+					addSellingPrice(t.getId(), t.getRealizedPl());
+
 				}
 			}
-			
+
 		}
 	}
-	
+
 	private boolean tradeIsSold(trade t) {
 		return t.getRealizedPl() == 0;
 	}
@@ -82,10 +82,10 @@ public class LogFileWriter extends StopableThread implements Closeable {
 		return loggedOpenTradeIDs;
 	}
 
-	public void logSignal(String orderID, Kpi kpi) {
+	public void logSignal(String orderID,double buyingPrice, Kpi kpi) {
 		int id = Integer.parseInt(orderID);
 		addOpenTradeId(id);
-		webInterfaceConnection.pushSignal(id, kpi);
+		webInterfaceConnection.pushSignal(id,buyingPrice, kpi);
 	}
 
 	public void addSellingPrice(int id, double realizedPL) {
@@ -114,8 +114,6 @@ public class LogFileWriter extends StopableThread implements Closeable {
 		bw.flush();
 	}
 
-
-
 	private void readFile() {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path)))) {
 
@@ -124,9 +122,9 @@ public class LogFileWriter extends StopableThread implements Closeable {
 			String[] ids = input.split(";");
 
 			for (int i = 0; i < ids.length; i++) {
-			
+
 				loggedOpenTradeIDs.add(Integer.parseInt(ids[i]));
-				
+
 			}
 
 			br.close();

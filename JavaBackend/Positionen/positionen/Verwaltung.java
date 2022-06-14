@@ -73,7 +73,7 @@ public class Verwaltung extends StopableThread{
 	}
 
 	public void startTraiding() {
-		//addThread(pythonConnection);
+		addThread(calenderConnection);
 		//addThread(signals);
 		//addThread(rngTrader);
 		//addThread(this);
@@ -138,7 +138,7 @@ public class Verwaltung extends StopableThread{
 		OrderResponse order = connection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
 		
 		if(order.wasSuccesfull()) {
-		logFileWriter.logSignal(order.getOrderID(), kpi);
+		logFileWriter.logSignal(order.getOrderID(), buyingPrice,  kpi);
 		}
 		else System.out.println("Order was rejected");
 		aktualisierePosition();
