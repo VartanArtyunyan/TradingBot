@@ -62,7 +62,7 @@ public class PyhtonConnection extends StopableThread{
 	public void onTick() {
 		try {
 			String s = br.readLine();
-			System.out.println(s);
+			if(s != null)System.out.println(s);
 			// verwaltung.pushOrder(makeOrder(s));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

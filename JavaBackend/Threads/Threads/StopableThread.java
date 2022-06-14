@@ -36,11 +36,7 @@ public class StopableThread extends Thread {
 				onTimer();
 				calculateNextPeriodEnd();
 			}
-			try {
-				this.sleep(refreshTime);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			
 		}
 		onClose();
 	}
@@ -87,7 +83,7 @@ public class StopableThread extends Thread {
 	}
 
 	private void setTickRate(int hz) {
-		refreshTime = 0;
+		refreshTime = hz;
 	}
 
 	public void stopThread() {

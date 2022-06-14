@@ -82,9 +82,9 @@ public class Verwaltung extends StopableThread{
 
 	public void startTraiding() {
 		addThread(pythonConnection);
-		 addThread(signals);
-		addThread(rngTrader);
-		 addThread(this);
+		addThread(signals);
+		//addThread(rngTrader);
+		addThread(this);
 		startThreads();
 	}
 

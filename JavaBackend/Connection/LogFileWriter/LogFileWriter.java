@@ -17,7 +17,7 @@ public class LogFileWriter implements Closeable {
 	String inputPath;
 	String path;
 	boolean writeHeader;
-	String header = "ID;Instrument;last Time;Kaufpreis;last Price;TakeProfit;StopLoss;macd;macdTrigger;parabolicSAR;ema\n";
+	String header = "ID;Instrument;last Time;Kaufpreis;last Price;TakeProfit;StopLoss;macd;macdTrigger;parabolicSAR;ema;VerkaufsPreis\n";
 	
 	LogFile file;
 
@@ -68,8 +68,11 @@ public class LogFileWriter implements Closeable {
 		
 
 		writeHeader = !Files.exists(Paths.get(path));
-
-		openFile(path);
+		if(!writeHeader) this.file = new LogFile(path);
+		else this.file = new LogFile();
+		
+		
+		//openFile(path);
 
 	
 
@@ -89,7 +92,6 @@ public class LogFileWriter implements Closeable {
 		int postfix = 1;
 		do {
 			try {
-				this.file = new LogFile(path);
 				bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path)));
 				retry = false;
 			} catch (FileNotFoundException e) {
