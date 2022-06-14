@@ -717,8 +717,8 @@ public class Signals extends StopableThread {
 		
 		//Kpi SMA20 = e.getSMA(instrument,20,granularity,jcr);
 		//Kpi SMA50 = KpiCalculator.getSMA(instrument,50,granularity,jcr);
-		double sma20Aktuell = kpi.atr;
-		double sma50Aktuell = kpi.KpiList.get(0).atr;
+		double sma20Aktuell = kpi.sma;
+		double sma50Aktuell = kpi.KpiList.get(1).sma;
 		
 
 		boolean SMA20KleinerSMA50 = false;
@@ -727,7 +727,7 @@ public class Signals extends StopableThread {
 
 		for (int i = 1; i < anzahlVorperioden + 2; i++) {
 			double sma20 = kpi.smaList.get(kpi.smaList.size() - i);
-			double sma50 = kpi.KpiList.get(0).smaList.get(kpi.KpiList.get(0).smaList.size() - i);
+			double sma50 = kpi.KpiList.get(1).smaList.get(kpi.KpiList.get(0).smaList.size() - i);
 
 			if (sma20 < sma50) {
 				SMA20KleinerSMA50 = true;

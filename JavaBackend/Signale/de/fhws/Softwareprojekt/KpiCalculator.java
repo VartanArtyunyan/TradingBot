@@ -115,6 +115,7 @@ Kpi kpi=threads.get(0).getErgebnis();
 			
 			if (kpiTemp.parabolicSARs.size()>0) {
 				if (p == false) {
+					p=true;
 					kpi.parabolicSAR = kpiTemp.parabolicSAR;
 					kpi.parabolicSARs = kpiTemp.parabolicSARs;
 					kpi.trend = kpiTemp.trend;
@@ -127,6 +128,7 @@ Kpi kpi=threads.get(0).getErgebnis();
 // MACD (Moving Average Convergence/Divergence) berechnen
 			if (kpiTemp.macds.size()>0) {
 				if (m == false) {
+					m=true;
 					kpiTemp = threads.get(b).getErgebnis();
 					kpi.macd = kpiTemp.macd;
 					kpi.macds = kpiTemp.macds;
@@ -143,24 +145,25 @@ Kpi kpi=threads.get(0).getErgebnis();
 // Durchschnitt
 			if (kpiTemp.rsiListe.size()>0) {
 				if (r == false) {
+					r=true;
 					kpiTemp = threads.get(b).getErgebnis();
 					kpi.rsi = kpiTemp.rsi;
 					kpi.rsiListe = kpiTemp.rsiListe;
 				} else {
-					r = true;
+					
 					kpi.KpiList.add(kpiTemp);
 				}
 			}
 // Average True Range (ATR) berechnen
 			if (kpiTemp.atrListe.size()>0) {
 				if (a == false) {
+					a=true;
 					kpiTemp = threads.get(b).getErgebnis();
 					kpi.atr = kpiTemp.atr;
 					kpi.atrListe = kpiTemp.atrListe;
 					kpi.IntegerAtr = kpiTemp.IntegerAtr;
 					kpi.IntegerAtrListe = kpiTemp.IntegerAtrListe;
 				} else {
-					a = true;
 					kpi.KpiList.add(kpiTemp);
 				}
 			}
@@ -170,8 +173,9 @@ Kpi kpi=threads.get(0).getErgebnis();
 					kpiTemp = threads.get(b).getErgebnis();
 					kpi.sma = kpiTemp.sma;
 					kpi.smaList = kpiTemp.smaList;
+					s=true;
 				} else {
-					s = true;
+					
 					kpi.KpiList.add(kpiTemp);
 				}
 			}
