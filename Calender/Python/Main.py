@@ -11,20 +11,19 @@ from StoreList import StoreList
 
 
 
-INSTRUMENTS = '{"instrumente":["EUR/USD","GBP/CHF","EUR/JPY"]}'
+#INSTRUMENTS = '{"instrumente":["EUR/USD","GBP/CHF","EUR/JPY"]}'
 #JSON_FORMAT =  f"instrument" + {instrument}, "factor" + {factor}, "volatility" + {volatility}, longShort + {longShort}}"
 
 
 
 file_name = 'jsonCalender5.json'
 
-#income_json = Connection.start()
+income_json = Connection.start()
 #list_pairs = json.loads(INSTRUMENTS)
 cl = Client()
-cl.read()
-list_pairs = json.loads(INSTRUMENTS)
+list_pairs = json.loads(cl.read())
 
-print(list_pairs)
+
 
 
 
@@ -44,6 +43,7 @@ while (bool(List_Storage.list_news)):
     List_Storage.upcoming_events()
     #break
 
+print("Finished all events")
 #exit()
 
 
