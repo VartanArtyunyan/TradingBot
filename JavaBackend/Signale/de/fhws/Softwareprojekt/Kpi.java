@@ -223,11 +223,23 @@ public class Kpi implements Comparable<Kpi> {
 		else
 			return getShortTakeProfit();
 	}
-
+	// Muss bearbeitet werden
 	public double getLongStopLoss() {
 		// Hier muss mit der DisplayPrecision
+		if(signal==0)
+		{
 		double wert = lastPrice * 0.9990;
 		return checkPrecision(wert, false);
+		}
+		else if(signal==1)
+			return getLongStopLossATR(1);
+		else if(signal==2)
+		{
+			double wert = lastPrice * 0.9990;
+		
+		return checkPrecision(wert, false);
+		}
+		return 0;
 	}
 
 	public double getLongTakeProfit() {
@@ -244,7 +256,7 @@ public class Kpi implements Comparable<Kpi> {
 		double wert = lastPrice * 0.998;
 		return checkPrecision(wert, false);
 	}
-
+//// Bis hierhin
 	public double convertIntegerATRInDouble(boolean plusMinus) {
 		// ATR dient hier als Stoploss-/Takeprofit-Wert
 		// Es wird der IntegerATR als String umgewandelt, um "0.00" davorzusetzen und zu
