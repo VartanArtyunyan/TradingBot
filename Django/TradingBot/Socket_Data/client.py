@@ -1,11 +1,9 @@
 import socket
-import json
+import threading
 import sys
 
-from trading_B.models import Signal
 
 # Get Message
-
 
 def recv_msg():
     while True:
@@ -13,8 +11,8 @@ def recv_msg():
         if not recv_msg:
             sys.exit(0)
         recv_msg = recv_msg.decode()
-
         print(recv_msg)
+
 
 
 # Main

@@ -34,11 +34,11 @@ public class WebInterfaceConnection extends SocketConnection{
 		message.addValue("stopLoss", kpi.getShortStopLoss());
 		message.addValue("macd", kpi.getMacd());
 		message.addValue("macdTriggered", kpi.getMacdTriggert());
-		message.addValue("parabolicSAR", kpi.getParabolicSAR());
-		message.addValue("ema", kpi.getEma());
-		message.addValue("sma", 0);
-		message.addValue("atr", 0);
-		message.addValue("rsi", 0);
+		message.addValue("parabolicSAR14", kpi.getParabolicSAR());
+		message.addValue("ema200", kpi.getEma());
+		message.addValue("sma20", kpi.getSma());
+		message.addValue("sma50", kpi.getSma2());
+		message.addValue("atr14", kpi.getAtr());
 		message.closeObject();
 		
 		boolean repeat = true;

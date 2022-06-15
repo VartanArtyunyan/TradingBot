@@ -138,6 +138,18 @@ public class Kpi implements Comparable<Kpi> {
 	public void setParabolicSAR(double parabolicSAR) {
 		this.parabolicSAR = parabolicSAR;
 	}
+	
+	public double getSma() {
+		return sma;
+	}
+	
+	public double getSma2() {
+		return KpiList.get(0).sma;
+	}
+	
+	public double getAtr()	{
+		return atr;
+	}
 
 	public boolean isLong() {
 		return longShort;
