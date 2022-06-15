@@ -15,3 +15,15 @@ Done:
 12. Add global and local static folders/files
 13. Register the static folders/files in the settings file
 14. 
+
+
+Do:
+
+Datenbank werte speichern
+
+3 files zu den Werten
+
+Daily get requests
+
+write docu
+

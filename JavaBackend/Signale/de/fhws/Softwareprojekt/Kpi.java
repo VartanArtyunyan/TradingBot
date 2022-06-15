@@ -86,6 +86,22 @@ public class Kpi implements Comparable<Kpi> {
 		return this.instrument.equals(input.instrument);
 
 	}
+	
+	public Kpi resetKpiElements(Kpi kpi, String...werte) {
+		for (String s : werte) {
+			if (s.compareTo("atr") == 0) kpi.atr= 0;
+			if (s.compareTo("sma") == 0) kpi.sma= 0;
+			if (s.compareTo("sma50") == 0) kpi.KpiList.get(0).sma= 0;
+			if (s.compareTo("parabolicSAR") == 0) kpi.parabolicSAR= 0;
+			if (s.compareTo("macd") == 0) kpi.macd= 0;
+			if (s.compareTo("macdTriggert") == 0) kpi.macdTriggert= 0;
+			if (s.compareTo("ema") == 0) kpi.ema= 0;
+			if (s.compareTo("rsi") == 0) kpi.rsi= 0;
+
+		}
+		return kpi;
+	}
+	
 
 	public String getInstrument() {
 		return instrument;
@@ -137,6 +153,18 @@ public class Kpi implements Comparable<Kpi> {
 
 	public void setParabolicSAR(double parabolicSAR) {
 		this.parabolicSAR = parabolicSAR;
+	}
+	
+	public double getSma() {
+		return sma;
+	}
+	
+	public double getSma2() {
+		return KpiList.get(0).sma;
+	}
+	
+	public double getAtr()	{
+		return atr;
 	}
 
 	public boolean isLong() {
