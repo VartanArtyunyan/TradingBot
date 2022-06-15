@@ -79,16 +79,15 @@ def calculate(event):
 
     #return trading_factor
 
-    if (isBetterThanExpected is not None) and (consensus is not None):
+    """  if (isBetterThanExpected is not None) and (consensus is not None):
         delta_actual_consensus = actual - consensus
 
         #bte true?  actual > consensus? -> longShort = True
         #bte true?  actual < consensus? -> longShort = True
 
     else:
-        delta_actprev_percent
+        delta_actprev_percent """
 
-    factor_string = "factor:" + str(endfactor)
+    #factor_string = "factor:" + str(endfactor)
 
-    return  factor_string
-
+    return  endfactor

@@ -12,7 +12,7 @@ from StoreList import StoreList
 
 
 #INSTRUMENTS = '{"instrumente":["EUR/USD","GBP/CHF","EUR/JPY"]}'
-#JSON_FORMAT =  f"instrument" + {instrument}, "factor" + {factor}, "volatility" + {volatility}, longShort + {longShort}}"
+
 
 
 
