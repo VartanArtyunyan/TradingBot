@@ -4,17 +4,17 @@ import json
 from locale import currency
 import Connection
 import Calculation
-#from Client import Client
+from Client import Client
 
 class StoreList:
     list_news = None
     list_pairs = None
-    cl = None
+    client = None
 
-    def __init__(self, list_news, list_pairs, cl):
+    def __init__(self, list_news, list_pairs, client):
         self.list_news = list_news
         self.list_pairs = list_pairs
-        self.cl = cl
+        self.client = client
 
 
     def filterSpeechAndReport(self):
