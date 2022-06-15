@@ -91,7 +91,7 @@ public class Signals extends StopableThread {
 				
 					int s = kombiniereMACD_PSAR(kpi);
 					if (s != 0) {
-						kpi.signal = 1; // sperrt ebenfalls signal 0 und 1 & signal 2 soll nur signal 2 sperren
+					 // sperrt ebenfalls signal 0 und 1 & signal 2 soll nur signal 2 sperren
 						System.out.println(s);
 						kpi.signalStrenght = 0.5;
 						kpi.longShort = (s == 1) ? true : false;
