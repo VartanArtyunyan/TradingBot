@@ -191,7 +191,7 @@ public class Signals extends StopableThread {
 				+ kpi.avg + "  " + kpi.firstTime + " - " + kpi.lastTime + ")");
 	}
 	
-	//nicht fertig
+	
 	public static int kombiniereMACDSMA( Kpi kpi) {
 		//long
 		if (pruefePerioden(kpi, "MACD", 6) ==-1) {
@@ -199,7 +199,8 @@ public class Signals extends StopableThread {
 				return 1;
 			}
 		}
-		else if (pruefePerioden(kpi, "MACD", 6) == -1) {
+		//short
+		else if (pruefePerioden(kpi, "MACD", 6) == 1) {
 			if (pruefeSMACrossover(kpi, 6) == -1) {
 				return -1;
 			}
@@ -272,7 +273,7 @@ public class Signals extends StopableThread {
 		// Verfügbarkeit prüfen -> Wird der
 		// pruefeVorperioden mit aktuellem MACD
 
-		try {
+		
 			if (pruefeEMA200(werte) == 1) {
 				// System.out.println("1.versuch"); // 1. liegt Trend (= 200 EMA) über Kurs?
 				if (pruefePerioden(werte, "MACD", 5) == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter
@@ -305,9 +306,7 @@ public class Signals extends StopableThread {
 
 			// wenn 0
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
 		return rueckgabewert;
 	}
 
@@ -575,8 +574,8 @@ public class Signals extends StopableThread {
 		// sind oder nicht
 		// Dabei werden die Methoden pruefeMACD() und pruefeRSI() zusammengelegt
 		int ausgabe = 99;
-		int MACDRueckgabewert = 99;
-		int RSIRueckgabewert = 99;
+		int MACDRueckgabewert = 101;
+		int RSIRueckgabewert = 102;
 		boolean verhaeltnisVorzeichenNegativ = false;
 		boolean verhaeltnisVorzeichenPositiv = false;
 		boolean RSIOverbought = false; // RSI über 70%
@@ -636,7 +635,9 @@ public class Signals extends StopableThread {
 				|| (verhaeltnisVorzeichenNegativ == false && verhaeltnisVorzeichenPositiv == false)) {
 			// die letzten MACDs haben nicht das gleiche Vorzeichen
 			MACDRueckgabewert = 0;
-		}
+		} else {MACDRueckgabewert = 99;}
+		
+		
 		if (RSIOversold == true && RSIOverbought == false) {
 			// die letzten x RSIs sind Oversold, also unter 30%
 			RSIRueckgabewert = -1;
@@ -646,7 +647,9 @@ public class Signals extends StopableThread {
 		} else if ((RSIOversold == true && RSIOverbought == true) || (RSIOversold == false && RSIOverbought == false)) {
 			// die letzten x RSIs schwanken oder liegen alle zwischen 30 und 70 Prozent
 			RSIRueckgabewert = 0;
-		}
+		} else {RSIRueckgabewert = 99;}
+		
+		
 		if (entscheideSignal == "MACD") {
 			ausgabe = MACDRueckgabewert;
 		} else if (entscheideSignal == "RSI") {
@@ -711,7 +714,7 @@ public class Signals extends StopableThread {
 
 
 	public static int pruefeSMACrossover(Kpi kpi, int anzahlVorperioden) {
-		// Baustelle
+		
 
 		int ausgabe = 99;
 		
@@ -725,7 +728,7 @@ public class Signals extends StopableThread {
 		boolean SMA20GroesserSMA50 = false;
 
 
-		for (int i = 1; i < anzahlVorperioden + 2; i++) {
+		for (int i = 2; i < anzahlVorperioden + 2; i++) {
 			double sma20 = kpi.smaList.get(kpi.smaList.size() - i);
 			double sma50 = kpi.KpiList.get(1).smaList.get(kpi.KpiList.get(0).smaList.size() - i);
 
@@ -734,11 +737,9 @@ public class Signals extends StopableThread {
 			} else if (sma20 > sma50) {
 				SMA20GroesserSMA50 = true;
 			}
-
-			
-			
-			
+	
 		}
+		
 		if (SMA20KleinerSMA50 == true && SMA20GroesserSMA50 == false && sma20Aktuell >= sma50Aktuell) {
 			//SMA20 nähert sich von unten an den Crossover
 			ausgabe = 1; 
@@ -749,10 +750,11 @@ public class Signals extends StopableThread {
 			ausgabe = -1;
 		}
 		else if ((SMA20KleinerSMA50 == true && SMA20GroesserSMA50 == true) || (SMA20KleinerSMA50 == false && SMA20GroesserSMA50 == false)) {
-			//Mehrere Crossover -->
+			//Mehrere Crossover --> keine Prüfung der aktuellen Werte erforderlich
 			ausgabe = 0;
 
-		}
+		} else { // wenn if oder erstes else if die ersten beiden bedingungn wahr sind
+			ausgabe = 0;}
 
 		return ausgabe;
 	}
