@@ -236,6 +236,10 @@ public void KpiList()
 assertTrue(k.KpiList.get(0).sma>0);
 	}
 }
+
+
+
+
 	
 	//Tom Kombination Bereich
 	@Test
@@ -281,14 +285,13 @@ assertTrue(k.KpiList.get(0).sma>0);
 		
 	}
 	
-	
+	//
 	@Test
 	public void pruefeSMACrossoverAllePeriodenTest() {
 		
 		//Über alle Perioden
 		for (Kpi k:currencies) {
-			// Wieso schlägt der Test fehl? - Sollte eigentlich 0 rauskommen 
-			//int laenge = k.smaList.size();
+			//int laenge = k.smaList.size()-2;
 			assertTrue(Signals.pruefeSMACrossover(k, 200) == 0);
 		}
 		
