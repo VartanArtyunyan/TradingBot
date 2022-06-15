@@ -26,7 +26,7 @@ public class CalenderConnection extends SocketConnection {
 		super(port);
 		this.verwaltung = verwaltung;
 		instrumente = makeInstrumentJson(verwaltung.getJsonInstrumentsRoot());
-		System.out.println(instrumente);
+		
 	}
 
 	@Override

@@ -28,7 +28,7 @@ list_pairs = json.loads(cl.read())
 
 
 #Daten können bei Bedarf aus Dokument wieder ausgelesen werden
-#ReaderWriter.writeInDocument(income_json, file_name)
+ReaderWriter.writeInDocument(income_json, file_name)
 list_news = ReaderWriter.openJsonFile(file_name)
 
 

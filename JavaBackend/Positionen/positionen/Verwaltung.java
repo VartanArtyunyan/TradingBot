@@ -40,8 +40,8 @@ public class Verwaltung extends StopableThread{
 		this.connection = connection;
 		// gui = new GUI();
 		calenderConnection = new CalenderConnection(this, 12000);
-		webInterfaceConnection = new WebInterfaceConnection(12001);
-		logFileWriter = new LogFileWriter(this, webInterfaceConnection);
+		//webInterfaceConnection = new WebInterfaceConnection(12001);
+		//logFileWriter = new LogFileWriter(this, webInterfaceConnection);
 		this.granularity = granularity;
 		signals = new Signals(connection, this, logFileWriter, this.granularity);
 		

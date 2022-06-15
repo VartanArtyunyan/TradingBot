@@ -1,4 +1,4 @@
-combineTradingMethods = false
-calenderPort = 12000
-webInterfacePort = 12001
+
+Signale1 = true
+
 
