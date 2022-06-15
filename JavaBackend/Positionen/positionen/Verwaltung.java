@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import GUI.GUI;
 import LogFileWriter.LogFileWriter;
 import PyhtonConnection.Order;
-import PyhtonConnection.PyhtonConnection;
+import PyhtonConnection.WebInterfaceConnection;
+import PyhtonConnection.CalenderConnection;
 
 import Threads.StopableThread;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
@@ -23,7 +24,8 @@ public class Verwaltung extends StopableThread{
 	GUI gui;
 	LogFileWriter logFileWriter;
 	Signals signals;
-	PyhtonConnection pythonConnection;
+	CalenderConnection calenderConnection;
+	WebInterfaceConnection webInterfaceConnection;
 	randomTrader rngTrader;
 	ArrayList<position> positionen;
 	ArrayList<trade> trades;
@@ -37,42 +39,32 @@ public class Verwaltung extends StopableThread{
 		this.einsatz = einsatz;
 		this.connection = connection;
 		// gui = new GUI();
-		logFileWriter = new LogFileWriter();
+		calenderConnection = new CalenderConnection(this, 12000);
+		webInterfaceConnection = new WebInterfaceConnection(12001);
+		logFileWriter = new LogFileWriter(this, webInterfaceConnection);
 		this.granularity = granularity;
 		signals = new Signals(connection, this, logFileWriter, this.granularity);
-		pythonConnection = new PyhtonConnection(this);
+		
 		rngTrader = new randomTrader(this);
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
 		
 	}
 	
+	@Override
 	public void onTick() {
-		//System.out.println(postionsHaveChanged());
+		
 	}
 
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
 		return connection.getJsonInstrumentsRoot();
 	}
 	
-	public void updateLog() {
-		if(postionsHaveChanged()) {
-			
-		}
-	}
 	
-	public boolean postionsHaveChanged() {
-		
-		ArrayList<Integer> oldTrades =getTradeIDs();
-		aktualisierePosition();
-		ArrayList<Integer> newTrades = getTradeIDs();
-		
-		return !newTrades.equals(oldTrades);
-	}
 	
 	public ArrayList<Integer> getTradeIDs(){
+		aktualisierePosition();
 		ArrayList<Integer> output = new ArrayList<>();
-		
 		for(trade t: trades) {
 			output.add(t.getId());
 		}
@@ -81,10 +73,10 @@ public class Verwaltung extends StopableThread{
 	}
 
 	public void startTraiding() {
-		addThread(pythonConnection);
-		addThread(signals);
+		addThread(calenderConnection);
+		//addThread(signals);
 		//addThread(rngTrader);
-		addThread(this);
+		//addThread(this);
 		startThreads();
 	}
 
@@ -146,10 +138,7 @@ public class Verwaltung extends StopableThread{
 		OrderResponse order = connection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
 		
 		if(order.wasSuccesfull()) {
-		logFileWriter.log(order.getOrderID(), kpi.getInstrument(), kpi.getLastTime(), buyingPrice, kpi.getLastPrice(), kpi.getTakeProfit(),
-				kpi.getStopLoss(), kpi.getMacd(), kpi.getMacdTriggert(), kpi.getParabolicSAR(), kpi.getEma());
-		
-		
+		logFileWriter.logSignal(order.getOrderID(), buyingPrice,  kpi);
 		}
 		else System.out.println("Order was rejected");
 		aktualisierePosition();
@@ -266,6 +255,17 @@ public class Verwaltung extends StopableThread{
 				positionen.get(i).addID(t.getId());
 			}
 		}
+	}
+	
+	
+	public ArrayList<trade> getTrades(ArrayList<Integer> IDs){
+			ArrayList<trade> output = new ArrayList<>();
+			
+			for(Integer i: IDs) {
+				output.add(connection.getTrade(i));
+			}
+			
+			return output;
 	}
 
 	public boolean containsPosition(String instrument) {

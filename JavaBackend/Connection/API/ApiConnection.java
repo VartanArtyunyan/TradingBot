@@ -33,6 +33,14 @@ public class ApiConnection {
 
 		return output;
 	}
+	
+	public trade getTrade(int id) {
+		String apiResponseString = connection.getTrade(id);
+		
+		System.out.println(apiResponseString);
+		
+		return jsonParser.convertAPIStringToTrade(apiResponseString);
+	}
 
 	public JsonCandlesRoot getJsonCandlesRoot(int count, String instrument, String from, String to, String price,
 			String granularity) {

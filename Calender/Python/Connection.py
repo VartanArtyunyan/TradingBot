@@ -4,7 +4,6 @@ import http.client
 import gzip
 import json
 import time
-#from pickle import FALSE
 from xmlrpc.client import gzip_decode
 from datetime import date, timedelta
 
@@ -87,7 +86,6 @@ def checkEvent(event):
 
 
 
-start()
 
 
 

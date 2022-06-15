@@ -43,34 +43,20 @@ public class KpiTesting {
 	@BeforeAll
 	public void beforeAll() {
 
-/*		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
-
-			if (instrument.type.compareTo("CURRENCY") == 0) {
-
-				Kpi kpi = werte.getAll(instrument.name, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9);
-				currencies.add(kpi);
-				JsonCandlesRoot jcr = werte.getCandles(instrument.name, "M15");
-
-				basicKpi = werte.getBasisKpi(instrument.name, 200, "M15", jcr);
-				basicKpiList.add(basicKpi);
-			}
-		}*/
-		//ArrayList<String>s=new ArrayList<String>();
-		//Object o=   "currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getBasisKpi(k, 200,\"M15\",werte.getCandles(k, \"M15\"))))";
-		//String b="currenciesString.parallelStream().sorted().forEach(k->currencies.add(werte.getAll(k, 200, 14, \"M15\", 0.02, 0.02, 0.2, 12, 26, 9)))";
-		
-				// "M15",werte.getCandles(k, "M15"))))	;
 		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments)
 		{
 		if(instrument.type.compareTo("CURRENCY") == 0)
 			currenciesString.add(instrument.name);
 		}
-		currenciesString.parallelStream().sorted().forEach(k->{currencies.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9));
+		//public Kpi getAll(String instrument, String granularity, Object... signale)
+		currenciesString.parallelStream().sorted().forEach(k->{currencies.add(werte.getAll(k, "M15", 200, "sma",20,"sma",50,"atr",14,"parabolicSAR",14,0.02,0.02,0.2,"macd",12,26,9,"rsi",14));
 		basicKpiList.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15")));
 		});
-		
+		//k,"M15",200,"atr",14,"rsi",14,"sma",14,"parabolicSAR",14,0.02, 0.02, 0.2,"macd",12,26,9,"parabolicSAR",21,0.02, 0.02, 0.2
+		//k,"M15","ema", 200,"sma", 20,"atr",14,"macd",12,26,9,"parabolicSAR",14,0.02, 0.02, 0.2,"atr",14
 	//	currenciesString.parallelStream().sorted().forEach(k->currencies.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15"))))	;
 	//	currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9)));
+		//Kpi testKpi = werte.getAll(instrument.name, "M15", 200, "sma",20,"sma",50,"atr",14,"parabolicSAR",0.02,0.02,0.2,"macd",12,26,9);
 	}
 @Test
 public void rsiTest()
@@ -102,7 +88,7 @@ public void rsiIntensityTest()
 		//-1 und 1 sind keine Grenzwerte. Trotzdem wäre es verwunderlich, wenn ein Macd und MacdTriggert in dieser Größenordnung erscheint
 	try
 	{
-currencies.forEach(kpi->assertTrue((kpi.macd<1&&kpi.macd>-1)&&(kpi.macdTriggert<1&&kpi.macdTriggert>-1)));
+currencies.forEach(kpi->assertTrue((kpi.macd<2&&kpi.macd>-2)&&(kpi.macdTriggert<2&&kpi.macdTriggert>-2)));
 	}
 	catch(Exception e)
 	{
@@ -187,13 +173,18 @@ public void emaTest()
 		int zaehler = 0;
 		for (Kpi k : currencies) {
 			for (Kpi l : basicKpiList) {
-				if ((l.ema == k.ema) && (l.avg == k.avg) && (l.lastPrice == k.lastPrice))
+			
+				if (l.ema == k.ema&&k.avg==l.avg) 
+					 
 					zaehler++;
 			}
 		}
 		double zahl = (double) zaehler / currencies.size();
-		if(zahl<=0.5)
+		System.out.println(zahl);
+		if(zahl<=0.2)
+		{
 		fail("Die Zahl lautet" + zahl);  
+		}
 	}
 	@Test
 	public void checkPerceicionTest()
@@ -225,6 +216,7 @@ if(k.instrument.compareTo("USB_THB")==0)
     	}
     
     }
+	@Test
     public void atrTest()
     {
     	
@@ -235,13 +227,137 @@ if(k.instrument.compareTo("USB_THB")==0)
         
   
     }
-
-
+@Test
+public void KpiList()
+{
+	for(Kpi k:currencies)
+	{
+	assertTrue(k.KpiList.size()==1);
+assertTrue(k.KpiList.get(0).sma>0);
+	}
+}
 	
 	//Tom Kombination Bereich
 	@Test
-	public void checkSchneiden()
-	{
+	public void kombiniereMACDEMAPSARTest() {
+		for (Kpi k:currencies) {
+			int ausgabe = Signals.kombiniereMACDEMAPSAR(k);
+			assertTrue(ausgabe == 0 || ausgabe == 1 || ausgabe == -1);
+		}
+	}
+	@Test
+	public void kombiniereEMA200ATRTest() {
+		for (Kpi k:currencies) {
+			int ausgabe = Signals.kombiniereEMA200ATR(k);
+			assertTrue(ausgabe == 0 || ausgabe == 1 || ausgabe == -1);
+		}
+	}
+	@Test
+	public void kombiniereMACD_PSARTest() {
+		for (Kpi k:currencies) {
+			int ausgabe = Signals.kombiniereMACD_PSAR(k);
+			assertTrue(ausgabe == 0 || ausgabe == 1 || ausgabe == -1);
+		}
+	}
+	
+	@Test
+	public void kombiniereMACDSMATest() {
+		for(Kpi k: currencies) {
+			int ausgabe = Signals.kombiniereMACDSMA(k);
+			assertTrue(ausgabe == 0 || ausgabe == 1 || ausgabe == -1);
+		}
+	}
+    
+    
+    
+	@Test
+	public void pruefeSMACrossoverNullPeriodenTest() {
+		
+		//Grenzwert 0
+		for (Kpi k:currencies) {
+			// Schleife wird nicht durchlaufen, somit beide Boolean-Werte false --> Ausgabe = 0
+			assertTrue(Signals.pruefeSMACrossover(k, 0)==0);
+		}
+		
+	}
+	
+	
+	@Test
+	public void pruefeSMACrossoverAllePeriodenTest() {
+		
+		//Über alle Perioden
+		for (Kpi k:currencies) {
+			// Wieso schlägt der Test fehl? - Sollte eigentlich 0 rauskommen 
+			//int laenge = k.smaList.size();
+			assertTrue(Signals.pruefeSMACrossover(k, 200) == 0);
+		}
+		
+	}
+	
+	@Test
+	public void pruefeATRTest() {
+		for (Kpi k:currencies) {
+			// der Rückgabewert kann nur 1 oder -1 sein
+			assertFalse(Signals.pruefeATR(k) == 0);
+		}
+	}
+	
+	@Test
+	public void pruefePeriodenEntscheideSignalWrongInputTest() {
+		
+		for (Kpi k:currencies) {
+			//entscheideSignal nicht wie in Methode gefordert
+			assertTrue(Signals.pruefePerioden(k, "macd", 2) == 99);
+			assertTrue(Signals.pruefePerioden(k, "rsi", 2) == 99);
+
+		}
+	}
+	
+	@Test
+	public void pruefePeriodenAnzahlVorperiodenWrongInputTest() {
+		
+		for (Kpi k:currencies) {
+			//anzahlVorperioden nicht >1
+			assertTrue(Signals.pruefePerioden(k, "MACD", -10) == 99);
+
+		}
+	}
+	
+
+	
+	@Test
+	public void pruefePeriodenMACDRightInputTest() {
+		for (Kpi k:currencies) {
+			//Es kann nur 99, 1, 0, und -1 rauskommen
+			//101 wird durch die else in den if-Bedingungen überschrieben
+			int ausgabe = Signals.pruefePerioden(k, "MACD", 5);
+			assertTrue(ausgabe == 99 || ausgabe == 1 || ausgabe == 0 || ausgabe == -1);
+		}
+	}
+
+	
+	@Test
+	public void pruefePeriodenRSIRightInputTest() {
+		for (Kpi k:currencies) {
+			//Es kann nur 99, 1, 0, und -1 rauskommen
+			//102 wird durch die else in den if-Bedingungen überschrieben
+			int ausgabe = Signals.pruefePerioden(k, "RSI", 5);
+			assertTrue(ausgabe == 99 || ausgabe == 1 || ausgabe == 0 || ausgabe == -1);
+		}
+	}
+	
+	@Test
+	public void pruefePSARTest() {
+		for (Kpi k:currencies) {
+			assertTrue(Signals.pruefePSAR(k)!= 99);
+		}
+	}
+	
+	@Test
+	public void pruefeEMA200Test() {
+		for (Kpi k:currencies) {
+			assertTrue(Signals.pruefeEMA200(k)!= 99);
+		}
 	}
 }
 

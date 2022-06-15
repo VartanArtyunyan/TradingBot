@@ -19,9 +19,10 @@ public class Main {
 		
 		
 		
+		
 		Verwaltung verwaltung = new Verwaltung(connection, granularity, einsatz);
 		
-		verwaltung.startTraiding();
+		//verwaltung.startTraiding();
 		
 
 	}

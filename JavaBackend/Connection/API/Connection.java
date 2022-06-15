@@ -50,6 +50,10 @@ public class Connection {
 	public String getTrades() {
 		return GET(urlPrefix + "/accounts/" + accId + "/" + "trades");
 	}
+	
+	public String getTrade(int id) {
+		return GET(urlPrefix + "/accounts/" + accId + "/" + "trades/" + id);
+	}
 
 	public String getInstruments() {
 		return GET(urlPrefix + "/accounts/" + accId + "/" + "instruments");

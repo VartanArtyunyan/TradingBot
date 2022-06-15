@@ -13,10 +13,13 @@ public class LogFile {
 	
 	HashMap<Integer, LogLine> lines;
 	
+	String notSoldText;
 	
-	public LogFile(String path) {
+	
+	public LogFile(String path, String notSoldText) {
 		
 		lines = new HashMap<>();
+		this.notSoldText = notSoldText;
 		
 		try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path)))){
 			
@@ -34,15 +37,16 @@ public class LogFile {
 						
 				}
 				
-			   if(items[items.length-1].equals("Noch Nicht Verkauft")) line.sellingPriceIsMissing = true;
+			   if(items[items.length-1].equals(notSoldText)) line.sellingPriceIsMissing = true;
 			   else {line.sellingPriceIsMissing = false;
 			   		line.sellingPrice = items[items.length-1];
-			   }
+			   } 
+			  
 			   lines.put(line.id, line);
-			   br.readLine();
+			   input = br.readLine();
 			}
 			
-			
+			br.close();
 			
 		} catch (FileNotFoundException e) {
 			lines = new HashMap<>();
@@ -58,8 +62,9 @@ public class LogFile {
 		
 	}
 	
-	public LogFile() {
+	public LogFile(String notSoldText) {
 		lines = new HashMap<>();
+		this.notSoldText = notSoldText;
 	}
 	
 	
@@ -93,7 +98,10 @@ public class LogFile {
 			String output = "";
 			
 			output+=id + ";" + content;
-			if(!sellingPriceIsMissing) output += sellingPrice + ";";
+			if(!sellingPriceIsMissing) {
+				output += sellingPrice + ";";
+				System.out.print("selling Price is there ");
+			}
 			output += "\n";
 			
 			return output;

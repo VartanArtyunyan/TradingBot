@@ -23,21 +23,7 @@ public class JsonParser {
 
 		for (int i = 0; i < input.length(); i++) {
 
-			JsonObject jo = new JsonObject(input.get(i));
-
-			int id = Integer.parseInt(jo.getValue("id"));
-			String instrument = jo.getValue("instrument");
-			double price = Double.parseDouble(jo.getValue("price"));
-			String openTime = jo.getValue("openTime");
-			int initialUnits = 0;//Integer.parseInt(jo.getValue("initialUnits"));
-			String initialMarginRequired = jo.getValue("initialMarginRequired");
-			int currentunits = 0;//Integer.parseInt(jo.getValue("currentUnits"));
-			String realizedPL = jo.getValue("realizedPL");
-			String unrealizedPL = jo.getValue("unrealizedPL");
-			String marginUsed = jo.getValue("marginUsed");
-
-			output.add(new trade(id, instrument, price, openTime, initialUnits, initialMarginRequired, currentunits,
-					realizedPL, unrealizedPL, marginUsed));
+			output.add(convertAPIStringToTrade(input.get(i)));
 
 		}
 
@@ -48,16 +34,16 @@ public class JsonParser {
 		JsonBuilder output = new JsonBuilder();
 
 		output.openObject("order");
-		output.addString("type", "MARKET");
-		output.addString("instrument", instrument);
+		output.addValue("type", "MARKET");
+		output.addValue("instrument", instrument);
 
-		output.addString("units", Double.toString(round(units, 0)));
+		output.addValue("units", Double.toString(round(units, 0)));
 		// output.addString("price", Double.toString(price));
 		output.openObject("takeProfitOnFill");
-		output.addString("price", Double.toString(round(takeProfit,3)));
+		output.addValue("price", Double.toString(round(takeProfit,3)));
 		output.closeObject();
 		output.openObject("stopLossOnFill");
-		output.addString("price", Double.toString(round(stopLoss,3)));
+		output.addValue("price", Double.toString(round(stopLoss,3)));
 		output.closeObject();
 		output.closeObject();
 
@@ -68,9 +54,9 @@ public class JsonParser {
 		JsonBuilder output = new JsonBuilder();
 
 		output.openObject("order");
-		output.addString("type", "MARKET");
-		output.addString("instrument", instrument);
-		output.addString("units", Double.toString(round(units, 0)));
+		output.addValue("type", "MARKET");
+		output.addValue("instrument", instrument);
+		output.addValue("units", Double.toString(round(units, 0)));
 		// output.addString("price", Double.toString(price));
 
 		output.closeObject();
@@ -209,12 +195,36 @@ public class JsonParser {
 		return output;
 	}
 	
+	public trade convertAPIStringToTrade(String json) {
+		
+		JsonObject jo = new JsonObject(json);
+		
+		if(jo.contains("trade")) jo = jo.getObject("trade");
+		
+		int id = Integer.parseInt(jo.getValue("id"));
+		String instrument = jo.getValue("instrument");
+		double price = Double.parseDouble(jo.getValue("price"));
+		String openTime = jo.getValue("openTime");
+		int initialUnits = 0;//Integer.parseInt(jo.getValue("initialUnits"));
+		String initialMarginRequired = jo.getValue("initialMarginRequired");
+		int currentunits = 0;//Integer.parseInt(jo.getValue("currentUnits"));
+		String realizedPL = jo.getValue("realizedPL");
+		String unrealizedPL = jo.getValue("unrealizedPL");
+		String marginUsed = jo.getValue("marginUsed");
+					
+		return new trade(id, instrument, price, openTime, initialUnits, initialMarginRequired, currentunits,
+				realizedPL, unrealizedPL, marginUsed);
+	}
+	
 	
 
 	public OrderResponse makeOrderResponseFromJson(String input) {
 		JsonObject responseObject = new JsonObject(input);
 		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction");
-		String id = responseObject.getObject("orderCreateTransaction").getValue("id");
+		JsonObject orderFillTransaction = responseObject.getObject("orderFillTransaction");
+		JsonObject tradeOpened = orderFillTransaction.getObject("tradeOpened");
+		String id = tradeOpened.getValue("tradeID");
+
 		return new OrderResponse(wasSuccessfull, id);
 	}
 

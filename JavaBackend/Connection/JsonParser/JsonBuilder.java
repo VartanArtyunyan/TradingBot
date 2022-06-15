@@ -15,10 +15,24 @@ public class JsonBuilder {
 		
 	}
 
-	public void addString(String name, String string) {
+	public void addValue(String name, String string) {
 		if (inArray()) json += "\"" + string + "\",";
-			
-		json += "\"" + name + "\":\"" + string + "\",";
+		else json += "\"" + name + "\":\"" + string + "\",";
+	}
+	
+	public void addValue(String name, double value) {
+		if (inArray()) json +=  value + ",";
+		else json += "\"" + name + "\":" + value + ",";
+	}
+	
+	public void addValue(String name, int value) {
+		if (inArray()) json +=  value + ",";
+		else json += "\"" + name + "\":" + value + ",";
+	}
+	
+	public void addValue(String name, boolean value) {
+		if (inArray()) json +=  value + ",";
+		else json += "\"" + name + "\":" + value + ",";
 	}
 
 	private void pushObject() {

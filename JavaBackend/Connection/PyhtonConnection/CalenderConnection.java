@@ -17,52 +17,37 @@ import de.fhws.Softwareprojekt.JsonInstrumentsInstrument;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import positionen.Verwaltung;
 
-
-
-
-
-public class PyhtonConnection extends StopableThread{
-	
+public class CalenderConnection extends SocketConnection {
 
 	Verwaltung verwaltung;
-
-	int port;
-	ServerSocket ss;
-	Socket connection;
-	BufferedReader br;
-	BufferedWriter bw;
 	String instrumente;
 
-	public PyhtonConnection(Verwaltung verwaltung) {
+	public CalenderConnection(Verwaltung verwaltung, int port) {
+		super(port);
 		this.verwaltung = verwaltung;
-		port = 12000;
-
 		instrumente = makeInstrumentJson(verwaltung.getJsonInstrumentsRoot());
-
+		System.out.println(instrumente);
 	}
 
 	@Override
 	public void onStart() {
 		try {
-			ss = new ServerSocket(port);
-			System.out.println("warte auf Client");
-			connection = ss.accept();
-			System.out.println("Ein Client hat sich verbunden");
-			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+			System.out.println(instrumente);
 			bw.write(instrumente);
 			bw.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 	@Override
 	public void onTick() {
 		try {
 			String s = br.readLine();
-			if(s != null)System.out.println(s);
+			if (s != null)
+				System.out.println(s);
 			// verwaltung.pushOrder(makeOrder(s));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -86,7 +71,8 @@ public class PyhtonConnection extends StopableThread{
 		JsonBuilder jsonBuilder = new JsonBuilder();
 		jsonBuilder.openArray("instrumente");
 		for (JsonInstrumentsInstrument jii : jir.instruments) {
-			jsonBuilder.addString(null, jii.displayName);
+			if (jii.type.equals("CURRENCY"))
+				jsonBuilder.addValue(null, jii.displayName);
 		}
 		jsonBuilder.closeArray();
 		return jsonBuilder.build();

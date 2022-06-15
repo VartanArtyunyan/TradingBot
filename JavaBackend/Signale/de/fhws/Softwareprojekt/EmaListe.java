@@ -39,7 +39,7 @@ public class EmaListe {
 		;*/
 		
 		KpiCalculator e = new KpiCalculator(connection);
-		Kpi test = e.getAll("EUR_USD", 200, 14, "H1",0.02, 0.02, 0.2, 12, 26, 9);
+		Kpi test = e.getAll("EUR_USD", 200,20, 14, "H1",0.02, 0.02, 0.2, 12, 26, 9);
 		//Kpi test2 = e.aufrufAlles("USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 		//System.out.println(pruefePerioden(test, "MACD", 5));
 		//kombiniereMACDEMAPSAR(connection,test2);

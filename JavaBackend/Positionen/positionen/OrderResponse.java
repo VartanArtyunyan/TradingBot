@@ -3,11 +3,11 @@ package positionen;
 public class OrderResponse {
 	
 	private boolean succesfull;
-	private String orderID;
+	private String tradeID;
 
 	public OrderResponse(boolean succesfull, String orderID) {
 		this.succesfull = succesfull;
-		this.orderID = orderID;
+		this.tradeID = orderID;
 	}
 
 	public boolean wasSuccesfull() {
@@ -15,7 +15,7 @@ public class OrderResponse {
 	}
 
 	public String getOrderID() {
-		return orderID;
+		return tradeID;
 	}
 
 }
