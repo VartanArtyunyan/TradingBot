@@ -9,21 +9,13 @@ import Calculation
 class StoreList:
     list_news = None
     list_pairs = None
-<<<<<<< HEAD
     cl = None
 
     def __init__(self, list_news, list_pairs, cl):
         self.list_news = list_news
         self.list_pairs = list_pairs
         self.cl = cl
-=======
-    client = None
-    
-    def __init__(self, list_news, list_pairs, client):
-        self.list_news = list_news
-        self.list_pairs = list_pairs
-        self.client = client
->>>>>>> e4407bb93312e98f30e5ab1623813716525f55b3
+
 
     def filterSpeechAndReport(self):
         for nextEvent in self.list_news:
@@ -37,11 +29,7 @@ class StoreList:
             update = Connection.checkEvent(nextEvent)
             #print(update["actual"])
             if update["actual"] is not None:
-<<<<<<< HEAD
-                print("update")
-=======
-                print(nextEvent)
->>>>>>> e4407bb93312e98f30e5ab1623813716525f55b3
+
                 self.handleNextEvent(update, pre_string)
                 self.list_news.remove(nextEvent)
     
@@ -53,12 +41,7 @@ class StoreList:
             if Calculation.breakTimer(next_time) > datetime.timedelta(minutes = 10):
                 continue
             elif next_time > datetime.datetime.now() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
-<<<<<<< HEAD
-                """ upcoming_event = nextEvent["name"] + " " + nextEvent["dateUtc"] + " " + nextEvent["currencyCode"]
-                print(f"{upcoming_event}") """
-                print("upcoming:" + str(nextEvent))
-=======
->>>>>>> e4407bb93312e98f30e5ab1623813716525f55b3
+
                 self.handleNextEvent(nextEvent, pre_string)
                 nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines upcoming-Trades
                 
@@ -91,18 +74,11 @@ class StoreList:
                 
 
             sending_str["Instrument"] = instrument
-            sending_str = str(sending_str).replace("{", "[").replace("}", "]")
+            sending_str = str(sending_str)
             sending_str = "{" + f"'{pre_string}':{sending_str}" + "}"
             print("send: " + str(sending_str))
             self.client.send(sending_str)
 
-<<<<<<< HEAD
-            else:
-                    continue
-            print("Ich sende jetzt das hier (hoffentlich): " + sending_str)
-            self.cl.send(sending_str)
-=======
->>>>>>> e4407bb93312e98f30e5ab1623813716525f55b3
 
     def getData(self):
             return self.list_news
