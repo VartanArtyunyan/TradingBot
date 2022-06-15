@@ -43,32 +43,16 @@ public class KpiTesting {
 	@BeforeAll
 	public void beforeAll() {
 
-/*		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
-
-			if (instrument.type.compareTo("CURRENCY") == 0) {
-
-				Kpi kpi = werte.getAll(instrument.name, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9);
-				currencies.add(kpi);
-				JsonCandlesRoot jcr = werte.getCandles(instrument.name, "M15");
-
-				basicKpi = werte.getBasisKpi(instrument.name, 200, "M15", jcr);
-				basicKpiList.add(basicKpi);
-			}
-		}*/
-		//ArrayList<String>s=new ArrayList<String>();
-		//Object o=   "currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getBasisKpi(k, 200,\"M15\",werte.getCandles(k, \"M15\"))))";
-		//String b="currenciesString.parallelStream().sorted().forEach(k->currencies.add(werte.getAll(k, 200, 14, \"M15\", 0.02, 0.02, 0.2, 12, 26, 9)))";
-		
-				// "M15",werte.getCandles(k, "M15"))))	;
 		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments)
 		{
 		if(instrument.type.compareTo("CURRENCY") == 0)
 			currenciesString.add(instrument.name);
 		}
 		//public Kpi getAll(String instrument, String granularity, Object... signale)
-		currenciesString.parallelStream().sorted().forEach(k->{currencies.add(werte.getAll(k,"M15",200,"ema", 150,"macd",12,26,9,"atr",14,"rsi",14,"sma",14,"parabolicSAR",14,0.02, 0.02, 0.2,"parabolicSAR",14,0.02, 0.02, 0.2));
+		currenciesString.parallelStream().sorted().forEach(k->{currencies.add(werte.getAll(k, "M15", 200, "sma",20,"sma",50,"atr",14,"parabolicSAR",14,0.02,0.02,0.2,"macd",12,26,9,"rsi",14));
 		basicKpiList.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15")));
 		});
+		//k,"M15",200,"atr",14,"rsi",14,"sma",14,"parabolicSAR",14,0.02, 0.02, 0.2,"macd",12,26,9,"parabolicSAR",21,0.02, 0.02, 0.2
 		//k,"M15","ema", 200,"sma", 20,"atr",14,"macd",12,26,9,"parabolicSAR",14,0.02, 0.02, 0.2,"atr",14
 	//	currenciesString.parallelStream().sorted().forEach(k->currencies.add(werte.getBasisKpi(k, 200, "M15",werte.getCandles(k, "M15"))))	;
 	//	currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getAll(k, 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9)));
@@ -104,7 +88,7 @@ public void rsiIntensityTest()
 		//-1 und 1 sind keine Grenzwerte. Trotzdem wäre es verwunderlich, wenn ein Macd und MacdTriggert in dieser Größenordnung erscheint
 	try
 	{
-currencies.forEach(kpi->assertTrue((kpi.macd<1&&kpi.macd>-1)&&(kpi.macdTriggert<1&&kpi.macdTriggert>-1)));
+currencies.forEach(kpi->assertTrue((kpi.macd<2&&kpi.macd>-2)&&(kpi.macdTriggert<2&&kpi.macdTriggert>-2)));
 	}
 	catch(Exception e)
 	{
@@ -191,13 +175,16 @@ public void emaTest()
 			for (Kpi l : basicKpiList) {
 			
 				if (l.ema == k.ema&&k.avg==l.avg) 
-					
+					 
 					zaehler++;
 			}
 		}
 		double zahl = (double) zaehler / currencies.size();
-		if(zahl<=0.8)
+		System.out.println(zahl);
+		if(zahl<=0.2)
+		{
 		fail("Die Zahl lautet" + zahl);  
+		}
 	}
 	@Test
 	public void checkPerceicionTest()
@@ -229,6 +216,7 @@ if(k.instrument.compareTo("USB_THB")==0)
     	}
     
     }
+	@Test
     public void atrTest()
     {
     	
@@ -239,8 +227,15 @@ if(k.instrument.compareTo("USB_THB")==0)
         
   
     }
-
-
+@Test
+public void KpiList()
+{
+	for(Kpi k:currencies)
+	{
+	assertTrue(k.KpiList.size()==1);
+assertTrue(k.KpiList.get(0).sma>0);
+	}
+}
 	
 	//Tom Kombination Bereich
 	@Test
