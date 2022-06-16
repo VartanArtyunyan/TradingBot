@@ -70,8 +70,8 @@ public class Kpi implements Comparable<Kpi> {
 	ArrayList<Double> rsiListe = new ArrayList<>();
 	//Wenn zwei unterschiedliche Perioden eines Indikators verglichen werden sollen.Wird die kpi ab dem 2 Vorkommen des Indikators ergänzt
 	ArrayList<Kpi>KpiList=new ArrayList<>();
-	//Signal 
-	int signal; 
+	//verkaufslimits
+	int verkaufslimit; 
 
 	// Die Eindeutigkeit der Kpi wird allein durch das Instrument bestimmt
 	@Override
@@ -226,7 +226,7 @@ public class Kpi implements Comparable<Kpi> {
 	// Muss bearbeitet werden
 	public double getLongStopLoss() {
 		// Hier muss mit der DisplayPrecision
-		if(signal==0)
+		/*if(signal==0)
 		{
 		double wert = lastPrice * 0.9990;
 		return checkPrecision(wert, false);
@@ -239,7 +239,9 @@ public class Kpi implements Comparable<Kpi> {
 		
 		return checkPrecision(wert, false);
 		}
-		return 0;
+		return 0;*/
+		double wert = lastPrice * 0.9990;
+		return checkPrecision(wert, false);
 	}
 
 	public double getLongTakeProfit() {

@@ -68,7 +68,7 @@ public class Signals extends StopableThread {
 			// nach kauf für 6 x granularität insturment sperren
 			if (signal0 | signal1) {
 				int r = kombiniereMACDEMAPSAR(kpi);
-              kpi.signal=0;
+              kpi.verkaufslimit=0;
 				if (r != 0) {
 					System.out.println(r);
 					// kpi.longShort = (r == 1) ? true : false; //wird temporär geändert, um Signale
@@ -103,7 +103,7 @@ public class Signals extends StopableThread {
 			}
 
 			if (signal2) {
-				kpi.signal=1;
+				kpi.verkaufslimit=1;
 				// andere Kombiniere Methoden
 				int t = kombiniereEMA200ATR(kpi);
 				if (t != 0) {
@@ -118,7 +118,7 @@ public class Signals extends StopableThread {
 				}
 			}
 			if (signal3) {
-				kpi.signal=2;
+				kpi.verkaufslimit=2;
 				int u = kombiniereMACDSMA(kpi);
 				if (u != 0) {
 					System.out.println(u);
