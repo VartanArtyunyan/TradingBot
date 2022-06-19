@@ -226,14 +226,14 @@ public class Kpi implements Comparable<Kpi> {
 	// Muss bearbeitet werden
 	public double getLongStopLoss() { //soll n boolean übergeben werden & Multiplikator für ATR -> alles in Signals übergeben
 		// Hier muss mit der DisplayPrecision
-		/*if(signal==0)
+		/*if(verkaufslimit==0)
 		{
 		double wert = lastPrice * 0.9990;
 		return checkPrecision(wert, false);
 		}
-		else if(signal==1)
+		else if(verkaufslimit==1)
 			return getLongStopLossATR(1);
-		else if(signal==2)
+		else if(verkaufslimit==2)
 		{
 			double wert = lastPrice * 0.9990;
 		
