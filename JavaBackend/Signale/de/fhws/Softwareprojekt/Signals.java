@@ -57,6 +57,8 @@ public class Signals extends StopableThread {
 			// 12, 26, 9);
 			Kpi kpi = e.getAll(instrument.name, "M15", 200, "sma", 20, "sma", 50, "atr", 14, "parabolicSAR", 0.02, 0.02,
 					0.2, "macd", 12, 26, 9);
+			//für TP/SL-Entscheidung
+			boolean containsATR = false;
 			/*
 			 * JsonCandlesRoot jcr = e.getCandles(instrument.name, granularity); Kpi sma20 =
 			 * e.getSMA(instrument.name, 20, granularity, jcr); Kpi sma50 =
@@ -102,6 +104,8 @@ public class Signals extends StopableThread {
 				kpi.verkaufslimit = 1;
 				// andere Kombiniere Methoden
 				int t = kombiniereEMA200ATR(kpi);
+				containsATR = true;
+				
 				if (t != 0) {
 					System.out.println(t);
 					kpi.signalStrenght = 0.5;
