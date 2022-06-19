@@ -224,7 +224,7 @@ public class Kpi implements Comparable<Kpi> {
 			return getShortTakeProfit();
 	}
 	// Muss bearbeitet werden
-	public double getLongStopLoss() {
+	public double getLongStopLoss() { //soll n boolean übergeben werden & Multiplikator für ATR -> alles in Signals übergeben
 		// Hier muss mit der DisplayPrecision
 		/*if(signal==0)
 		{
