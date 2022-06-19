@@ -734,7 +734,9 @@ public class Signals extends StopableThread {
 
 		for (int i = 2; i < anzahlVorperioden +2; i++) {
 			double sma20 = kpi.smaList.get(kpi.smaList.size() - i);
-			double sma50 = kpi.KpiList.get(0).smaList.get(kpi.KpiList.get(0).smaList.size() - i);
+		double sma50 = kpi.KpiList.get(0).smaList.get(kpi.KpiList.get(0).smaList.size() - i);
+		/*	Kpi kpi2=kpi.KpiList.get(0);
+			double sma50=kpi2.smaList.get(kpi2.smaList.size() - i);*/
 			if (sma20 < sma50) {
 				SMA20KleinerSMA50 = true;
 			} else if (sma20 > sma50) {

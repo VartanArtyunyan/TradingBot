@@ -275,7 +275,8 @@ public class KpiTesting {
 
 		// Über alle Perioden
 		for (Kpi k : currencies) {
-			int laenge = k.smaList.size();
+		//	int laenge = k.smaList.size()-1;
+			int laenge=k.KpiList.get(0).smaList.size()-1;
 			assertTrue(Signals.pruefeSMACrossover(k, laenge) == 0);
 		}
 
