@@ -44,9 +44,7 @@ public class Signals extends StopableThread {
 				instrumentsList.add(i);
 		}
 	}
-	
 
-	
 	@Override
 	public void onTick() {
 		runSignals(granularity);
@@ -68,7 +66,7 @@ public class Signals extends StopableThread {
 			// nach kauf für 6 x granularität insturment sperren
 			if (signal0 | signal1) {
 				int r = kombiniereMACDEMAPSAR(kpi);
-              kpi.verkaufslimit=0;
+				kpi.verkaufslimit = 0;
 				if (r != 0) {
 					System.out.println(r);
 					// kpi.longShort = (r == 1) ? true : false; //wird temporär geändert, um Signale
@@ -78,8 +76,6 @@ public class Signals extends StopableThread {
 					kpi = kpi.resetKpiElements(kpi, "atr", "sma", "sma50", "rsi");
 					if (signal0)
 						verwaltung.pushSignal(kpi);
-					
-					
 
 					// verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(),
 					// kpi.getShortTakeProfit(), kpi.getShortStopLoss(),kpi.lastPrice);
@@ -88,10 +84,10 @@ public class Signals extends StopableThread {
 					// signale.add(kpi);
 
 				} else if (signal1) {
-				
+
 					int s = kombiniereMACD_PSAR(kpi);
 					if (s != 0) {
-					 // sperrt ebenfalls signal 0 und 1 & signal 2 soll nur signal 2 sperren
+						// sperrt ebenfalls signal 0 und 1 & signal 2 soll nur signal 2 sperren
 						System.out.println(s);
 						kpi.signalStrenght = 0.5;
 						kpi.longShort = (s == 1) ? true : false;
@@ -103,7 +99,7 @@ public class Signals extends StopableThread {
 			}
 
 			if (signal2) {
-				kpi.verkaufslimit=1;
+				kpi.verkaufslimit = 1;
 				// andere Kombiniere Methoden
 				int t = kombiniereEMA200ATR(kpi);
 				if (t != 0) {
@@ -113,12 +109,12 @@ public class Signals extends StopableThread {
 					// kpi.longShort = (t == 1) ? false : true;
 					ausgabe("alles", kpi, instrument);
 					kpi = kpi.resetKpiElements(kpi, "sma", "sma50", "rsi", "macd", "macdTriggert");
-			
+
 					verwaltung.pushSignal(kpi);
 				}
 			}
 			if (signal3) {
-				kpi.verkaufslimit=2;
+				kpi.verkaufslimit = 2;
 				int u = kombiniereMACDSMA(kpi);
 				if (u != 0) {
 					System.out.println(u);
@@ -736,10 +732,9 @@ public class Signals extends StopableThread {
 		boolean SMA20KleinerSMA50 = false;
 		boolean SMA20GroesserSMA50 = false;
 
-		for (int i = 2; i < anzahlVorperioden + 2; i++) {
+		for (int i = 2; i < anzahlVorperioden +2; i++) {
 			double sma20 = kpi.smaList.get(kpi.smaList.size() - i);
 			double sma50 = kpi.KpiList.get(0).smaList.get(kpi.KpiList.get(0).smaList.size() - i);
-
 			if (sma20 < sma50) {
 				SMA20KleinerSMA50 = true;
 			} else if (sma20 > sma50) {

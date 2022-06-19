@@ -39,18 +39,19 @@ public class EmaListe {
 		;*/
 		
 		KpiCalculator e = new KpiCalculator(connection);
-		Kpi test = e.getAll("EUR_USD", 200,20, 14, "H1",0.02, 0.02, 0.2, 12, 26, 9);
+		Kpi kpi = e.getAll("EUR_USD", "M15", 200, "sma", 20, "sma", 50, "atr", 14, "parabolicSAR", 0.02, 0.02,
+				0.2, "macd", 12, 26, 9);
 		//Kpi test2 = e.aufrufAlles("USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
 		//System.out.println(pruefePerioden(test, "MACD", 5));
 		//kombiniereMACDEMAPSAR(connection,test2);
 		//boolean isUsed = false;
-		double testwerte = test.macdsTriggert.get(test.macdsTriggert.size()-1);
-		System.out.println(testwerte);
+		//double testwerte = kpi.macdsTriggert.get(kpi.macdsTriggert.size()-1);
+		System.out.println(pruefeSMACrossover(kpi, 200));
 		
 		
-		Map<String, Boolean> instrumentenVerfuegbarkeit = new HashMap<>();
+		/*Map<String, Boolean> instrumentenVerfuegbarkeit = new HashMap<>();
 		JsonInstrumentsRoot instrumentsRoot = e.getInstruments();
-		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {
+		for (JsonInstrumentsInstrument instrument : instrumentsRoot.instruments) {*/
 			
 			/*if (instrument.type.compareTo("CURRENCY")==0) {
 			if (instrument.name.toUpperCase().contains(filter) || instrument.displayName.toUpperCase().contains(filter)
@@ -69,9 +70,52 @@ public class EmaListe {
 			kombiniereMACDEMAPSAR(connection,werte);
 	
 		}*/
+		//}
+		
+		
+	}
+	public static int pruefeSMACrossover(Kpi kpi, int anzahlVorperioden) {
+
+		int ausgabe = 99;
+
+		// Kpi SMA20 = e.getSMA(instrument,20,granularity,jcr);
+		// Kpi SMA50 = KpiCalculator.getSMA(instrument,50,granularity,jcr);
+		double sma20Aktuell = kpi.sma;
+		double sma50Aktuell = kpi.KpiList.get(0).sma;
+
+		boolean SMA20KleinerSMA50 = false;
+		boolean SMA20GroesserSMA50 = false;
+		int zaehler =0;
+
+		for (int i = 2; i < anzahlVorperioden -2; i++) {
+			double sma20 = kpi.smaList.get(kpi.smaList.size() - i);
+			double sma50 = kpi.KpiList.get(0).smaList.get(kpi.KpiList.get(0).smaList.size() - i);
+			zaehler++;
+			if (sma20 < sma50) {
+				SMA20KleinerSMA50 = true;
+			} else if (sma20 > sma50) {
+				SMA20GroesserSMA50 = true;
+			}
+
+		}
+
+		if (SMA20KleinerSMA50 == true && SMA20GroesserSMA50 == false && sma20Aktuell >= sma50Aktuell) {
+			// SMA20 nähert sich von unten an den Crossover
+			ausgabe = 1;
+
+		} else if (SMA20KleinerSMA50 == false && SMA20GroesserSMA50 == true && sma20Aktuell <= sma50Aktuell) {
+			// SMA20 nähert sich von oben an den Crossover
+			ausgabe = -1;
+		} else if ((SMA20KleinerSMA50 == true && SMA20GroesserSMA50 == true)
+				|| (SMA20KleinerSMA50 == false && SMA20GroesserSMA50 == false)) {
+			// Mehrere Crossover --> keine Prüfung der aktuellen Werte erforderlich
+			ausgabe = 0;
+
+		} else { // wenn if oder erstes else if die ersten beiden bedingungn wahr sind
+			ausgabe = 0;
 		}
 		
-		
+		return zaehler;
 	}
 
 	public static void ausgabe(String emaName, Kpi kpi, JsonInstrumentsInstrument instrument) {
