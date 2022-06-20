@@ -104,7 +104,7 @@ public class Signals extends StopableThread {
 				kpi.verkaufslimit = 1;
 				// andere Kombiniere Methoden
 				int t = kombiniereEMA200ATR(kpi);
-				containsATR = true;
+				kpi.useATRAsSLTP = true;
 				
 				if (t != 0) {
 					System.out.println(t);
@@ -116,6 +116,7 @@ public class Signals extends StopableThread {
 
 					verwaltung.pushSignal(kpi);
 				}
+				kpi.useATRAsSLTP = false;
 			}
 			if (signal3) {
 				kpi.verkaufslimit = 2;

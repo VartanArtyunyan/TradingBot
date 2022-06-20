@@ -4,17 +4,21 @@ import java.util.ArrayList;
 
 public class Kpi implements Comparable<Kpi> {
 
-	public Kpi(String instrument,String granularity, int periods) {
+	public Kpi(String instrument, String granularity, int periods) {
 		this.instrument = instrument;
 		this.granularity = granularity;
 		this.periods = periods;
 	}
-	public Kpi(String instrument,String granularity) {
+
+	public Kpi(String instrument, String granularity) {
 		this.instrument = instrument;
 		this.granularity = granularity;
-		
+
 	}
 
+	boolean useATRAsSLTP = false;
+	int ATRMulitiplierSL = 2;
+	int ATRMulitiplierTP = 3;
 	// werden in der Signals Klasse gefüllt
 	boolean longShort; // false = short, long = true
 	double signalStrenght = 1;
@@ -68,10 +72,11 @@ public class Kpi implements Comparable<Kpi> {
 	// Rsi
 	double rsi = 0;
 	ArrayList<Double> rsiListe = new ArrayList<>();
-	//Wenn zwei unterschiedliche Perioden eines Indikators verglichen werden sollen.Wird die kpi ab dem 2 Vorkommen des Indikators ergänzt
-	ArrayList<Kpi>KpiList=new ArrayList<>();
-	//verkaufslimits
-	int verkaufslimit; 
+	// Wenn zwei unterschiedliche Perioden eines Indikators verglichen werden
+	// sollen.Wird die kpi ab dem 2 Vorkommen des Indikators ergänzt
+	ArrayList<Kpi> KpiList = new ArrayList<>();
+	// verkaufslimits
+	int verkaufslimit;
 
 	// Die Eindeutigkeit der Kpi wird allein durch das Instrument bestimmt
 	@Override
@@ -86,22 +91,29 @@ public class Kpi implements Comparable<Kpi> {
 		return this.instrument.equals(input.instrument);
 
 	}
-	
-	public Kpi resetKpiElements(Kpi kpi, String...werte) {
+
+	public Kpi resetKpiElements(Kpi kpi, String... werte) {
 		for (String s : werte) {
-			if (s.compareTo("atr") == 0) kpi.atr= 0;
-			if (s.compareTo("sma") == 0) kpi.sma= 0;
-			if (s.compareTo("sma50") == 0) kpi.KpiList.get(0).sma= 0;
-			if (s.compareTo("parabolicSAR") == 0) kpi.parabolicSAR= 0;
-			if (s.compareTo("macd") == 0) kpi.macd= 0;
-			if (s.compareTo("macdTriggert") == 0) kpi.macdTriggert= 0;
-			if (s.compareTo("ema") == 0) kpi.ema= 0;
-			if (s.compareTo("rsi") == 0) kpi.rsi= 0;
+			if (s.compareTo("atr") == 0)
+				kpi.atr = 0;
+			if (s.compareTo("sma") == 0)
+				kpi.sma = 0;
+			if (s.compareTo("sma50") == 0)
+				kpi.KpiList.get(0).sma = 0;
+			if (s.compareTo("parabolicSAR") == 0)
+				kpi.parabolicSAR = 0;
+			if (s.compareTo("macd") == 0)
+				kpi.macd = 0;
+			if (s.compareTo("macdTriggert") == 0)
+				kpi.macdTriggert = 0;
+			if (s.compareTo("ema") == 0)
+				kpi.ema = 0;
+			if (s.compareTo("rsi") == 0)
+				kpi.rsi = 0;
 
 		}
 		return kpi;
 	}
-	
 
 	public String getInstrument() {
 		return instrument;
@@ -154,16 +166,16 @@ public class Kpi implements Comparable<Kpi> {
 	public void setParabolicSAR(double parabolicSAR) {
 		this.parabolicSAR = parabolicSAR;
 	}
-	
+
 	public double getSma() {
 		return sma;
 	}
-	
+
 	public double getSma2() {
 		return KpiList.get(0).sma;
 	}
-	
-	public double getAtr()	{
+
+	public double getAtr() {
 		return atr;
 	}
 
@@ -211,35 +223,48 @@ public class Kpi implements Comparable<Kpi> {
 	}
 
 	public double getStopLoss() {
-		if (isLong())
-			return getLongStopLoss();
-		else
-			return getShortStopLoss();
+		if (useATRAsSLTP = true) {
+			if (isLong())
+				return getLongStopLossATR();
+			else
+				return getShortStopLossATR();
+		} else {
+			if (isLong())
+				return getLongStopLoss();
+			else
+				return getShortStopLoss();
+		}
 	}
 
 	public double getTakeProfit() {
-		if (isLong())
-			return getLongTakeProfit();
-		else
-			return getShortTakeProfit();
-	}
-	// Muss bearbeitet werden
-	public double getLongStopLoss() { //soll n boolean übergeben werden & Multiplikator für ATR -> alles in Signals übergeben
-		// Hier muss mit der DisplayPrecision
-		/*if(verkaufslimit==0)
-		{
-		double wert = lastPrice * 0.9990;
-		return checkPrecision(wert, false);
+		if (useATRAsSLTP = true) {
+
+			if (isLong())
+				return getLongTakeProfitATR();
+			else
+				return getShortTakeProfitATR();
+			
+		} else {
+			if (isLong())
+				return getLongTakeProfit();
+			else
+				return getShortTakeProfit();
 		}
-		else if(verkaufslimit==1)
-			return getLongStopLossATR(1);
-		else if(verkaufslimit==2)
-		{
-			double wert = lastPrice * 0.9990;
 		
-		return checkPrecision(wert, false);
-		}
-		return 0;*/
+	}
+
+	// Muss bearbeitet werden
+	public double getLongStopLoss() { // soll n boolean übergeben werden & Multiplikator für ATR -> alles in Signals
+										// übergeben
+		// Hier muss mit der DisplayPrecision
+		/*
+		 * if(verkaufslimit==0) { double wert = lastPrice * 0.9990; return
+		 * checkPrecision(wert, false); } else if(verkaufslimit==1) return
+		 * getLongStopLossATR(1); else if(verkaufslimit==2) { double wert = lastPrice *
+		 * 0.9990;
+		 * 
+		 * return checkPrecision(wert, false); } return 0;
+		 */
 		double wert = lastPrice * 0.9990;
 		return checkPrecision(wert, false);
 	}
@@ -258,6 +283,7 @@ public class Kpi implements Comparable<Kpi> {
 		double wert = lastPrice * 0.998;
 		return checkPrecision(wert, false);
 	}
+
 //// Bis hierhin
 	public double convertIntegerATRInDouble(boolean plusMinus) {
 		// ATR dient hier als Stoploss-/Takeprofit-Wert
@@ -281,32 +307,33 @@ public class Kpi implements Comparable<Kpi> {
 
 	// ATR-Wert als Prozentsatz mit lastPrice und einem übergebenen Multiplikator
 	// multipliziert:
-	public double getLongStopLossATR(double multiplier) {
-		double sl = 1 - (convertIntegerATRInDouble(false) * multiplier);
+	public double getLongStopLossATR() {
+		double sl = 1 - (convertIntegerATRInDouble(false) * ATRMulitiplierSL);
 		double wert = sl * lastPrice;
 		return checkPrecision(wert, false);
 	}
 
-	public double getLongTakeProfitATR(double multiplier) {
-		double sl = 1 + (convertIntegerATRInDouble(false) * multiplier);
+	public double getLongTakeProfitATR() {
+		double sl = 1 + (convertIntegerATRInDouble(true) * ATRMulitiplierTP);
 		double wert = sl * lastPrice;
 		return checkPrecision(wert, true);
 	}
 
-	public double getShortStopLossATR(double multiplier) {
-		double sl = 1 + (convertIntegerATRInDouble(false) * multiplier);
+	public double getShortStopLossATR() {
+		double sl = 1 + (convertIntegerATRInDouble(true) * ATRMulitiplierSL);
 		double wert = sl * lastPrice;
 		return checkPrecision(wert, true);
 	}
 
-	public double getShortTakeProfitATR(double multiplier) {
-		double sl = 1 - (convertIntegerATRInDouble(false) * multiplier);
+	public double getShortTakeProfitATR() {
+		double sl = 1 - (convertIntegerATRInDouble(false) * ATRMulitiplierTP);
 		double wert = sl * lastPrice;
 		return checkPrecision(wert, false);
 	}
+
 //Hilfsmethode zur Ermittlung von StoppLosses und TakeProfits
 	public double checkPrecision(double wert, boolean aufrunden) {
-		
+
 		if (instrument.contains("USD_THB") || instrument.contains("USD_INR")
 				|| (instrument.contains("JPY") || instrument.contains("HUF"))) {
 			if (aufrunden)
@@ -314,7 +341,8 @@ public class Kpi implements Comparable<Kpi> {
 			else
 				return abrunden(wert, 3);
 		} else
-			//Bei 5 Nachkommastellen spielt es keine Rolle ob aufgerundet oder abgerundet wird.
+			// Bei 5 Nachkommastellen spielt es keine Rolle ob aufgerundet oder abgerundet
+			// wird.
 			return runden(wert, 5);
 	}
 
