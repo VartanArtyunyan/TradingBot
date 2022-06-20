@@ -19,20 +19,27 @@ public class SocketConnection extends StopableThread implements Closeable{
 	BufferedReader br;
 	BufferedWriter bw;
 	
+	String preConnectionText;
+	String postConnectionText;
 	
 	
-	
-	
-	public SocketConnection(int port) {
+	public SocketConnection(int port, String preConnectionText, String postConnectionText) {
 		
 		
 		this.port = port;
+		this.preConnectionText = preConnectionText;
+		this.postConnectionText = postConnectionText;
 	
+		
+	}
+	
+	@Override 
+	public void onStart() {
 		try {
 			ss = new ServerSocket(port);
-			System.out.println("warte auf Client");
+			System.out.println(preConnectionText);
 			connection = ss.accept();
-			System.out.println("Ein Client hat sich verbunden");
+			System.out.println(postConnectionText);
 			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
 			

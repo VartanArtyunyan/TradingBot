@@ -20,7 +20,8 @@ import API.ApiConnection;
 
 public class Verwaltung extends StopableThread{
 
-	ApiConnection connection;
+	ApiConnection mainConnection;
+	ApiConnection randomConnection;
 	GUI gui;
 	LogFileWriter logFileWriter;
 	Signals signals;
@@ -34,14 +35,14 @@ public class Verwaltung extends StopableThread{
 
 	double einsatz;
 
-	public Verwaltung(ApiConnection connection, String granularity, double einsatz) {
-
+	public Verwaltung(ApiConnection connection, ApiConnection randomConnection, String granularity, double einsatz) {
+		
 		this.einsatz = einsatz;
-		this.connection = connection;
+		this.mainConnection = connection;
 		// gui = new GUI();
 		calenderConnection = new CalenderConnection(this, 12000);
-		//webInterfaceConnection = new WebInterfaceConnection(12001);
-		//logFileWriter = new LogFileWriter(this, webInterfaceConnection);
+		webInterfaceConnection = new WebInterfaceConnection(12001);
+		logFileWriter = new LogFileWriter(this, webInterfaceConnection);
 		this.granularity = granularity;
 		signals = new Signals(connection, this, logFileWriter, this.granularity);
 		
@@ -57,7 +58,7 @@ public class Verwaltung extends StopableThread{
 	}
 
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
-		return connection.getJsonInstrumentsRoot();
+		return mainConnection.getJsonInstrumentsRoot();
 	}
 	
 	
@@ -73,10 +74,11 @@ public class Verwaltung extends StopableThread{
 	}
 
 	public void startTraiding() {
-		addThread(calenderConnection);
-		//addThread(signals);
+		//addThread(webInterfaceConnection);
+		//addThread(calenderConnection);
+		addThread(signals);
 		//addThread(rngTrader);
-		//addThread(this);
+	    addThread(this);
 		startThreads();
 	}
 
@@ -97,7 +99,7 @@ public class Verwaltung extends StopableThread{
 	}
 
 	public boolean eneoughBalance() {
-		double curBalance = connection.getBalance();
+		double curBalance = mainConnection.getBalance();
 
 		return curBalance > 100.0;
 	}
@@ -109,13 +111,13 @@ public class Verwaltung extends StopableThread{
 			return;
 		}
 
-		double curBalance = connection.getBalance();
+		double curBalance = mainConnection.getBalance();
 		double factor = einsatz * (order.isLong() ? 1 : -1);
 		double buyingPrice = curBalance * factor * order.getFaktor();
-		double kurs = connection.getKurs(order.getInstrument());
+		double kurs = mainConnection.getKurs(order.getInstrument());
 		double units = buyingPrice / kurs;
 
-		connection.placeOrder(order.getInstrument(), units);
+		mainConnection.placeOrder(order.getInstrument(), units);
 		aktualisierePosition();
 	}
 
@@ -131,11 +133,11 @@ public class Verwaltung extends StopableThread{
 		if (kpi.isShort())
 			factor = factor * -1;
 
-		double curBalance = connection.getBalance();
+		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
 		double units = buyingPrice / kpi.getLastPrice();
 		
-		OrderResponse order = connection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
+		OrderResponse order = mainConnection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
 		
 		if(order.wasSuccesfull()) {
 		logFileWriter.logSignal(order.getOrderID(), buyingPrice,  kpi);
@@ -152,7 +154,7 @@ public class Verwaltung extends StopableThread{
 		if (randomOrder.isShort())
 			factor = factor * -1;
 
-		double curBalance = connection.getBalance();
+		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * factor;
 		double kurs = getKurs(randomOrder.getInstrument());
 		double units = buyingPrice / kurs;
@@ -163,7 +165,7 @@ public class Verwaltung extends StopableThread{
 		double takeProfit = kurs * (randomOrder.isLong() ? upperBorder : lowerBorder);
 		double stopLoss = kurs * (randomOrder.isShort() ? upperBorder : lowerBorder);
 
-		connection.placeOrder(randomOrder.getInstrument(), units, takeProfit, stopLoss);
+		mainConnection.placeOrder(randomOrder.getInstrument(), units, takeProfit, stopLoss);
 		aktualisierePosition();
 	}
 
@@ -174,14 +176,14 @@ public class Verwaltung extends StopableThread{
 			return;
 		}
 
-		connection.placeOrder(instrument, units, takeProfit, stopLoss);
+		mainConnection.placeOrder(instrument, units, takeProfit, stopLoss);
 
 		aktualisierePosition();
 
 	}
 
 	public double getKurs(String instrument) {
-		return connection.getKurs(instrument);
+		return mainConnection.getKurs(instrument);
 	}
 
 	public void addManualPosition(String instrument) { // GAANZ WICHTIG! in der finalen Version nicht mehr verwenden
@@ -196,19 +198,19 @@ public class Verwaltung extends StopableThread{
 
 	public void closeWholePosition(String i) {
 
-		connection.closeWholePosition(i);
+		mainConnection.closeWholePosition(i);
 
 		aktualisierePosition();
 	}
 
 	public void closePosition(String i, int anzahl) {
-		connection.closePosition(i, anzahl);
+		mainConnection.closePosition(i, anzahl);
 
 		aktualisierePosition();
 	}
 
 	public void aktualisierePosition() {
-		trades = connection.getTrades();
+		trades = mainConnection.getTrades();
 
 		HashSet<String> erstelltePosition = new HashSet<>();
 		for (int i = 0; i < trades.size(); i++) {
@@ -262,7 +264,7 @@ public class Verwaltung extends StopableThread{
 			ArrayList<trade> output = new ArrayList<>();
 			
 			for(Integer i: IDs) {
-				output.add(connection.getTrade(i));
+				output.add(mainConnection.getTrade(i));
 			}
 			
 			return output;

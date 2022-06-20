@@ -8,16 +8,18 @@ import de.fhws.Softwareprojekt.Kpi;
 public class WebInterfaceConnection extends SocketConnection{
 	
 	
-
+	
 	public WebInterfaceConnection(int port) {
-		super(port);
+		super(port, "Warte auf WebInterface", "WebInterface hat sich verbunden");
 		// TODO Auto-generated constructor stub
 	}
 	
 	private void sendMessage(String message) throws IOException {
+		if(bw != null && !connection.isOutputShutdown()) {
 		bw.write(message);
 		bw.newLine();
 		bw.flush();
+		}
 	}
 	
 	public void pushSignal(int orderID, double buyingPrice, Kpi kpi) {
@@ -31,7 +33,7 @@ public class WebInterfaceConnection extends SocketConnection{
 		message.addValue("buyingPrice", buyingPrice);
 		message.addValue("lastPrice", kpi.getLastPrice());
 		message.addValue("takeProfit", kpi.getTakeProfit());
-		message.addValue("stopLoss", kpi.getShortStopLoss());
+		message.addValue("stopLoss", kpi.getStopLoss());
 		message.addValue("macd", kpi.getMacd());
 		message.addValue("macdTriggered", kpi.getMacdTriggert());
 		message.addValue("parabolicSAR14", kpi.getParabolicSAR());
