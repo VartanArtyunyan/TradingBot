@@ -56,7 +56,7 @@ public class Signals extends StopableThread {
 			// Kpi kpi = e.getAll(instrument.name, 200,20, 14, granularity, 0.02, 0.02, 0.2,
 			// 12, 26, 9);
 			Kpi kpi = e.getAll(instrument.name, "M15", 200, "sma", 20, "sma", 50, "atr", 14, "parabolicSAR",14, 0.02, 0.02,
-					0.2, "macd", 12, 26, 9);
+					0.2, "macd", 12, 26, 9,"rsi",14);
 			//für TP/SL-Entscheidung
 			boolean containsATR = false;
 			/*
