@@ -16,14 +16,14 @@ public class Kpi implements Comparable<Kpi> {
 
 	}
 
-	boolean useATRAsSLTP = false;
+	
 	int ATRMulitiplierSL = 2;
 	int ATRMulitiplierTP = 3;
 	// werden in der Signals Klasse gefüllt
 	boolean longShort; // false = short, long = true
 	double signalStrenght = 1;
 	JsonCandlesRoot root;
-
+	boolean useATRAsSLTP = false;
 	// Konstruktor
 	public String instrument;
 	public String granularity;
