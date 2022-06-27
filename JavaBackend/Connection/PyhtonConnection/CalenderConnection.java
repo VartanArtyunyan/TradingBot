@@ -55,8 +55,8 @@ public class CalenderConnection extends SocketConnection {
 			String s = null;
 			if(!connection.isInputShutdown()) {
 			if(br != null) s = br.readLine();
-			if (s != null) System.out.println(s);
-			push(s);
+			 System.out.println(s);
+			if (s != null) push(s);
 			}
 			// verwaltung.pushOrder(makeOrder(s));
 		} catch (IOException e) {

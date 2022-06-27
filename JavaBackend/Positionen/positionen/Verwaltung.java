@@ -76,7 +76,7 @@ public class Verwaltung extends StopableThread{
 
 	public void startTraiding() {
 		//addThread(webInterfaceConnection);
-		//addThread(calenderConnection);
+		addThread(calenderConnection);
 		addThread(signals);
 		//addThread(rngTrader);
 	    addThread(this);
@@ -107,6 +107,10 @@ public class Verwaltung extends StopableThread{
 	
 	public void pushUpcommingEvent(UpcomingEvent upcomingEvent) {
 		
+		if (!eneoughBalance()) {
+			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			return;
+		}
 		
 		double kurs = getKurs(upcomingEvent.getInstrument());
 		
@@ -116,8 +120,12 @@ public class Verwaltung extends StopableThread{
 		double tsUpperLimt = kurs * 1.0045;
 		double tsLowerLimit = kurs * 0.9955;
 		
+		double curBalance = mainConnection.getBalance();
+		double buyingPrice = curBalance * einsatz;
+		double units = buyingPrice / kurs;
 		
-		
+		mainConnection.placeLimitOrder(upcomingEvent.getInstrument(), upcomingEvent.getTime(), units, upperLimit, tsUpperLimt, lowerLimit);
+		mainConnection.placeLimitOrder(upcomingEvent.getInstrument(), upcomingEvent.getTime(), units*-1, lowerLimit, tsLowerLimit, upperLimit);
 	}
 	
 	public void pushCalenderOrder(CalenderOrder calenderOrder) {
