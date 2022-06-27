@@ -56,6 +56,7 @@ public class CalenderConnection extends SocketConnection {
 			if(!connection.isInputShutdown()) {
 			if(br != null) s = br.readLine();
 			if (s != null) System.out.println(s);
+			push(s);
 			}
 			// verwaltung.pushOrder(makeOrder(s));
 		} catch (IOException e) {
@@ -64,16 +65,38 @@ public class CalenderConnection extends SocketConnection {
 		}
 		
 	}
+	
+	private void push(String input) {
+		JsonObject order = new JsonObject(input);
+		
+		if(order.contains("order")) {
+			verwaltung.pushCalenderOrder(makeOrder(order));
+		}
+		if(order.contains("upcomingEvent")) {
+			verwaltung.pushUpcommingEvent(makeUpcomingEven(order));
+		}
+	}
 
-	public Order makeOrder(String input) {
-		JsonObject orderJson = new JsonObject(input);
+	private CalenderOrder makeOrder(JsonObject orderJson) {
+		
 
 		String instrument = orderJson.getValue("instrument");
 		double faktor = Double.parseDouble(orderJson.getValue("factor"));
 		int volatility = Integer.parseInt(orderJson.getValue("volatility"));
 		boolean longShort = Boolean.parseBoolean(orderJson.getValue("longShort"));
 
-		return new Order(instrument, faktor, volatility, longShort);
+		return new CalenderOrder(instrument, faktor, volatility, longShort);
+	}
+	
+	private UpcomingEvent makeUpcomingEven(JsonObject orderJson) {
+		
+		String instrument = orderJson.getValue("instrument");
+		String time = orderJson.getValue("time");
+		int volatility = Integer.parseInt(orderJson.getValue("volatility"));
+		
+		
+		return new UpcomingEvent(instrument, time, volatility);
+		
 	}
 
 	public String makeInstrumentJson(JsonInstrumentsRoot jir) {

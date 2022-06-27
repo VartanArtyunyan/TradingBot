@@ -93,6 +93,10 @@ public class ApiConnection {
 		
 	}
 	
+	public void placeLimitOrder(String instrument, double units, double limit, double takeProfit, double stopLoss) {
+		
+	}
+	
 	private OrderResponse makeFailedOrderResponse() {
 		return new OrderResponse(false,"-1");
 	}
