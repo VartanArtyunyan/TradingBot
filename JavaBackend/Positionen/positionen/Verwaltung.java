@@ -115,7 +115,7 @@ public class Verwaltung extends StopableThread{
 		double factor = einsatz * (order.isLong() ? 1 : -1);
 		double buyingPrice = curBalance * factor * order.getFaktor();
 		double kurs = mainConnection.getKurs(order.getInstrument());
-		double units = buyingPrice / kurs;
+		double units = buyingPrice * kurs;
 
 		mainConnection.placeOrder(order.getInstrument(), units);
 		aktualisierePosition();
