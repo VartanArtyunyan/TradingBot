@@ -91,7 +91,7 @@ class StoreList:
 
             sending_str["Instrument"] = instrument
             sending_str = str(sending_str)
-            sending_str = "{" + f"{pre_string}:{sending_str}" + "}"
+            sending_str = "{" + f"\'{pre_string}\':{sending_str}" + "}"
             print("send: " + str(sending_str))
             self.client.send(sending_str)
 
