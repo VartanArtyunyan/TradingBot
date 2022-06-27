@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import GUI.GUI;
 import LogFileWriter.LogFileWriter;
 import PyhtonConnection.Order;
+import PyhtonConnection.UpcomingEvent;
 import PyhtonConnection.WebInterfaceConnection;
 import PyhtonConnection.CalenderConnection;
-
+import PyhtonConnection.CalenderOrder;
 import Threads.StopableThread;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import de.fhws.Softwareprojekt.Kpi;
@@ -103,6 +104,25 @@ public class Verwaltung extends StopableThread{
 
 		return curBalance > 100.0;
 	}
+	
+	public void pushUpcommingEvent(UpcomingEvent upcomingEvent) {
+		
+		
+		double kurs = getKurs(upcomingEvent.getInstrument());
+		
+		double upperLimit = kurs * 1.0015;
+		double lowerLimit = kurs * 0.9985;
+		
+		double tsUpperLimt = kurs * 1.0045;
+		double tsLowerLimit = kurs * 0.9955;
+		
+		
+		
+	}
+	
+	public void pushCalenderOrder(CalenderOrder calenderOrder) {
+		
+	}
 
 	public void pushOrder(Order order) {
 
@@ -114,7 +134,7 @@ public class Verwaltung extends StopableThread{
 		double curBalance = mainConnection.getBalance();
 		double factor = einsatz * (order.isLong() ? 1 : -1);
 		double buyingPrice = curBalance * factor * order.getFaktor();
-		double kurs = mainConnection.getKurs(order.getInstrument());
+		double kurs = getKurs(order.getInstrument());
 		double units = buyingPrice / kurs;
 
 		mainConnection.placeOrder(order.getInstrument(), units);

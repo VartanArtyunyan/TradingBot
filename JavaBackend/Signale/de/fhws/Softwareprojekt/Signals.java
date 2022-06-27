@@ -72,7 +72,7 @@ public class Signals extends StopableThread {
 					System.out.println(r);
 					// kpi.longShort = (r == 1) ? true : false; //wird temporär geändert, um Signale
 					// von der Methode zu überprüfen
-					kpi.longShort = (r == 1) ? false : true;
+					kpi.longShort = (r == 1) ? true : false;
 					ausgabe("alles", kpi, instrument);
 					kpi = kpi.resetKpiElements(kpi, "atr", "sma", "sma50", "rsi");
 					if (signal0)
