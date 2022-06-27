@@ -25,10 +25,11 @@ class StoreList:
     def filterOldEvents(self):
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
+            
             if next_time < datetime.datetime.utcnow():
                 self.list_news.remove(nextEvent)
                 continue
-            if nextEvent["actual"] is not None:     #dürfte nicht gebraucht werden, da die Zeit sowieso verglichen wurde
+            elif nextEvent["actual"] is not None:     #dürfte nicht gebraucht werden, da die Zeit sowieso verglichen wurde
                 self.list_news.remove(nextEvent)
                 
     def EventLoop(self):
@@ -38,7 +39,7 @@ class StoreList:
             update = Connection.checkEvent(nextEvent)
             #print(update["actual"])
             if update["actual"] is not None:
-
+                print("new actual:" + str (nextEvent))
                 self.handleNextEvent(update, pre_string)
                 self.list_news.remove(nextEvent)
     
