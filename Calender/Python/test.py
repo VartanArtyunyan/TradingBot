@@ -73,8 +73,9 @@ x = handleNextEvent(list_pairs, event, pre_string)
 print(x) """
 import datetime
 
-now = datetime.datetime.now()
+now = datetime.datetime.utcnow()
 
 out = (now + datetime.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
+print(now)
 print(out)

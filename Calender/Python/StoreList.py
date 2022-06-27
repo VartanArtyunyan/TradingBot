@@ -25,7 +25,7 @@ class StoreList:
     def filterOldEvents(self):
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
-            if next_time < datetime.datetime.now():
+            if next_time < datetime.datetime.utcnow():
                 self.list_news.remove(nextEvent)
                 
     def EventLoop(self):
@@ -46,9 +46,10 @@ class StoreList:
            
             if Calculation.breakTimer(next_time) > datetime.timedelta(minutes = 10):
                 continue
-            elif next_time > datetime.datetime.now() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
+            elif next_time > datetime.datetime.utcnow() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
 
                 self.handleNextEvent(nextEvent, pre_string)
+                print("Upcoming: " + str (nextEvent))
                 nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines upcoming-Trades
                 
             

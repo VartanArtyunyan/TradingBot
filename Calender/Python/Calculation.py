@@ -25,7 +25,7 @@ def DateStringToObject(word):
 
 @staticmethod
 def breakTimer(EventTime):
-    return EventTime - datetime.datetime.now()
+    return EventTime - datetime.datetime.utcnow()
 
 
 def calculate_delta_actual_prev(event):
