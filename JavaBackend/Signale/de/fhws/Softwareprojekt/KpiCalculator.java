@@ -3,7 +3,6 @@ package de.fhws.Softwareprojekt;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import API.ApiConnection;
 import Threads.GetATRThread;
 import Threads.GetBasisKpiThread;
 import Threads.GetMACDThread;
@@ -12,14 +11,15 @@ import Threads.GetParabolicSARThread;
 import Threads.GetRSIThread;
 import Threads.GetSMAThread;
 import Threads.KpiThread;
+import positionen.Verwaltung;
 
 public class KpiCalculator {
 
-	private ApiConnection connection;
+	private Verwaltung verwaltung;
 
-	public KpiCalculator(ApiConnection connection) {
+	public KpiCalculator(Verwaltung verwaltung) {
 
-		this.connection = connection;
+		this.verwaltung = verwaltung;
 	}
 
 	public Kpi getAll(String instrument, String granularity, int emaperiods, Object... signale) {
@@ -34,10 +34,10 @@ public class KpiCalculator {
 		for (int i = 0; i < signale.length; i += zaehler) {
 
 			try {
-				//Inizial für jeweiligen Indikator holen
+				// Inizial für jeweiligen Indikator holen
 				String s = signale[i].toString();
 				zaehler = 0;
-				//Erstellung von einen Thread für die entsprechenden Indikatoren
+				// Erstellung von einen Thread für die entsprechenden Indikatoren
 				switch (s) {
 				case ("ema"): {
 
@@ -99,7 +99,7 @@ public class KpiCalculator {
 			}
 		}
 		Kpi kpiTemp;
-		//Vereinigung zu einem großen KpiObjekt
+		// Vereinigung zu einem großen KpiObjekt
 //Wenn ein Indikator zwei mal aufgerufen wurde. Dann wird die Kpi in die KpiList geschrieben.
 
 		boolean p = false;
@@ -107,19 +107,18 @@ public class KpiCalculator {
 		boolean r = false;
 		boolean m = false;
 		boolean a = false;
-	
+
 		Kpi kpi = threads.get(0).getErgebnis();
 		for (int b = 1; b < threads.size(); b++) {
 
 			kpiTemp = threads.get(b).getErgebnis();
 			if ((kpiTemp.emas.size() > 0) && (kpiTemp.macd == 0)) {
-				
 
 				kpi.KpiList.add(kpiTemp);
 			}
 
 			if (kpiTemp.parabolicSARs.size() > 0) {
-				
+
 				if (p == false) {
 					p = true;
 					kpi.parabolicSAR = kpiTemp.parabolicSAR;
@@ -133,7 +132,7 @@ public class KpiCalculator {
 			}
 
 			if (kpiTemp.macds.size() > 0) {
-			
+
 				if (m == false) {
 					m = true;
 					kpiTemp = threads.get(b).getErgebnis();
@@ -150,7 +149,7 @@ public class KpiCalculator {
 			}
 
 			if (kpiTemp.rsiListe.size() > 0) {
-				
+
 				if (r == false) {
 					r = true;
 					kpiTemp = threads.get(b).getErgebnis();
@@ -163,7 +162,7 @@ public class KpiCalculator {
 			}
 
 			if (kpiTemp.atrListe.size() > 0) {
-			
+
 				if (a == false) {
 					a = true;
 					kpiTemp = threads.get(b).getErgebnis();
@@ -177,7 +176,7 @@ public class KpiCalculator {
 			}
 
 			if (kpiTemp.smaList.size() > 0) {
-				
+
 				if (s == false) {
 					kpiTemp = threads.get(b).getErgebnis();
 					kpi.sma = kpiTemp.sma;
@@ -261,7 +260,7 @@ public class KpiCalculator {
 		// String jsonString = getResponse(connection);
 		// JSON in Objekte mappen
 		// ObjectMapper om = new ObjectMapper();
-		JsonCandlesRoot root = connection.getJsonCandlesRoot(4900, instrument, startDate(granularity), null, "M",
+		JsonCandlesRoot root = verwaltung.getJsonCandlesRoot(4900, instrument, startDate(granularity), null, "M",
 				granularity);
 		return root;
 	}
@@ -273,7 +272,7 @@ public class KpiCalculator {
 		double extrempunkt = 0;
 		double extrempunktAlt = 0;
 		double faktor = 0;
-	
+
 		int count = 0;
 		kpi.trend = "bull";
 		String vortrend = "bull";
@@ -334,11 +333,12 @@ public class KpiCalculator {
 		double minDifferenz = 0;
 
 		for (int i = 0; i < md.emas.size(); i++) {
-			//Berechnung macd
+			// Berechnung macd
 			md.macd = (kpi1.emas.get(i) - kpi2.emas.get(i));
 			md.macds.add(md.macd);
 			if (i >= z - 1) {
-				//Berechnung macdTriggert. Arithmetische Mittel aus den letzten z macds(auch aktueller dabei)
+				// Berechnung macdTriggert. Arithmetische Mittel aus den letzten z macds(auch
+				// aktueller dabei)
 				for (int j = i - z + 1; j <= i; j++) {
 
 					ergebnis += md.macds.get(j);
@@ -429,7 +429,7 @@ public class KpiCalculator {
 		// String jsonString = getResponse(connection);
 		// JSON in Objekte mappen
 		// ObjectMapper om = new ObjectMapper();
-		return connection.getJsonInstrumentsRoot();
+		return verwaltung.getJsonInstrumentsRoot();
 		// } catch (Exception e) {
 		// System.out.println(e.getMessage());
 		// }
@@ -457,7 +457,7 @@ public class KpiCalculator {
 					: kpi.root.candles.get(i - 1).mid.c - kpi.root.candles.get(i).mid.l + prev;
 
 			if (i > periods) {
-				//Berechnung des atr mitexponentiell gleitender Durchschnitt 
+				// Berechnung des atr mitexponentiell gleitender Durchschnitt
 				wert = (((wert * (periods - 1) + betrag) / periods));
 				kpi.atr = wert;
 				kpi.atrListe.add(kpi.atr);

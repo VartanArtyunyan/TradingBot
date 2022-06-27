@@ -26,13 +26,13 @@ public class Signals extends StopableThread {
 	boolean signal2 = true;
 	boolean signal3 = true;
 
-	public Signals(ApiConnection connection, Verwaltung verwaltung, LogFileWriter logFileWriter, String granularity) {
+	public Signals(Verwaltung verwaltung, LogFileWriter logFileWriter, String granularity) {
 
-		this.connection = connection;
+	
 		this.verwaltung = verwaltung;
 		this.logFileWriter = logFileWriter;
 		this.granularity = granularity;
-		this.e = new KpiCalculator(connection);
+		this.e = new KpiCalculator(verwaltung);
 
 		this.instrumentsList = new ArrayList<>();
 		this.instrumentsRoot = e.getInstruments();
@@ -72,10 +72,11 @@ public class Signals extends StopableThread {
 					System.out.println(r);
 					// kpi.longShort = (r == 1) ? true : false; //wird temporär geändert, um Signale
 					// von der Methode zu überprüfen
-					kpi.longShort = (r == 1) ? false : true;
+					kpi.longShort = (r == 1) ? true : false;
 					ausgabe("alles", kpi, instrument);
 					kpi = kpi.resetKpiElements(kpi, "atr", "sma", "sma50", "rsi");
 					if (signal0)
+						kpi.signalTyp = 1;
 						verwaltung.pushSignal(kpi);
 
 					// verwaltung.placeShortOrder(kpi.instrument,kpi.getLimitPrice(),
@@ -93,6 +94,7 @@ public class Signals extends StopableThread {
 						kpi.signalStrenght = 0.5;
 						kpi.longShort = (s == 1) ? true : false;
 						ausgabe("alles", kpi, instrument);
+						kpi.signalTyp = 1;
 						kpi = kpi.resetKpiElements(kpi, "atr", "sma", "sma50", "rsi", "ema");
 						verwaltung.pushSignal(kpi);
 					}
@@ -111,7 +113,7 @@ public class Signals extends StopableThread {
 					// kpi.longShort = (t == 1) ? false : true;
 					ausgabe("alles", kpi, instrument);
 					kpi = kpi.resetKpiElements(kpi, "sma", "sma50", "rsi", "macd", "macdTriggert");
-
+					kpi.signalTyp = 2;
 					verwaltung.pushSignal(kpi);
 				}
 				kpi.useATRAsSLTP = false;
@@ -125,6 +127,7 @@ public class Signals extends StopableThread {
 					// kpi.longShort = (u == 1) ? false : true;
 					ausgabe("alles", kpi, instrument);
 					kpi = kpi.resetKpiElements(kpi, "rsi", "atr", "parabolicSAR", "ema");
+					kpi.signalTyp = 3;
 					verwaltung.pushSignal(kpi);
 				}
 			}

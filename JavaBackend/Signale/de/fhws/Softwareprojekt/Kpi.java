@@ -15,7 +15,8 @@ public class Kpi implements Comparable<Kpi> {
 		this.granularity = granularity;
 
 	}
-
+	
+	int signalTyp;
 	
 	int ATRMulitiplierSL = 2;
 	int ATRMulitiplierTP = 3;
@@ -113,6 +114,10 @@ public class Kpi implements Comparable<Kpi> {
 
 		}
 		return kpi;
+	}
+	
+	public int getSignalTyp() {
+		return signalTyp;
 	}
 
 	public String getInstrument() {

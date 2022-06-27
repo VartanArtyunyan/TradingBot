@@ -37,18 +37,17 @@ public class JsonParser {
 		output.addValue("type", "MARKET");
 		output.addValue("instrument", instrument);
 		output.addValue("units", Double.toString(round(units, 0)));
-		
+
 		output.openObject("takeProfitOnFill");
-		output.addValue("price", Double.toString(round(takeProfit,3)));
+		output.addValue("price", Double.toString(round(takeProfit, 3)));
 		output.closeObject();
 		output.openObject("stopLossOnFill");
-		output.addValue("price", Double.toString(round(stopLoss,3)));
+		output.addValue("price", Double.toString(round(stopLoss, 3)));
 		output.closeObject();
 		output.closeObject();
 
 		return output.build();
 	}
-	
 
 	public String makeOrederRequestJson(String instrument, double units) {
 		JsonBuilder output = new JsonBuilder();
@@ -63,27 +62,27 @@ public class JsonParser {
 
 		return output.build();
 	}
-	
-	public String makeLimitOrderRequestJson(String instrument, String cancleTime, double units, double limit, double takeProfit, double stopLoss) {
+
+	public String makeLimitOrderRequestJson(String instrument, String cancleTime, double units, double limit,
+			double takeProfit, double stopLoss) {
 		JsonBuilder output = new JsonBuilder();
-		
+
 		output.openObject("order");
 		output.addValue("type", "LIMIT");
 		output.addValue("instrument", instrument);
-		
-		
+
 		output.addValue("units", Double.toString(round(units, 0)));
 		output.addValue("price", Double.toString(round(limit, 3)));
 		output.addValue("gtdTime", cancleTime);
-		
+
 		output.openObject("takeProfitOnFill");
-		output.addValue("price", Double.toString(round(takeProfit,3)));
+		output.addValue("price", Double.toString(round(takeProfit, 3)));
 		output.closeObject();
 		output.openObject("stopLossOnFill");
-		output.addValue("price", Double.toString(round(stopLoss,3)));
+		output.addValue("price", Double.toString(round(stopLoss, 3)));
 		output.closeObject();
 		output.closeObject();
-		
+
 		return output.build();
 	}
 
@@ -198,62 +197,62 @@ public class JsonParser {
 
 			JsonInstrumentsInstrument jii = new JsonInstrumentsInstrument();
 
-			jii.displayName = instrument.getValue("displayName");
-			jii.displayPrecision = Integer.parseInt(instrument.getValue("displayPrecision"));
-			jii.marginRate = instrument.getValue("marginRate");
-			jii.maximumOrderUnits = instrument.getValue("maximumOrderUnits");
-			jii.maximumPositionSize = instrument.getValue("maximumPositionSize");
-			jii.maximumTrailingStopDistance = instrument.getValue("maximumTrailingStopDistance");
-			jii.minimumTradeSize = instrument.getValue("minimumTradeSize");
-			jii.minimumTrailingStopDistance = instrument.getValue("minimumTrailingStopDistance");
-			jii.name = instrument.getValue("name");
-			jii.pipLocation = Integer.parseInt(instrument.getValue("pipLocation"));
-			jii.tradeUnitsPrecision = Integer.parseInt(instrument.getValue("tradeUnitsPrecision"));
-			jii.type = instrument.getValue("type");
+			if (!instrument.getValue("displayName").contains("TRY")) {
 
-			output.instruments.add(jii);
+				jii.displayName = instrument.getValue("displayName");
+				jii.displayPrecision = Integer.parseInt(instrument.getValue("displayPrecision"));
+				jii.marginRate = instrument.getValue("marginRate");
+				jii.maximumOrderUnits = instrument.getValue("maximumOrderUnits");
+				jii.maximumPositionSize = instrument.getValue("maximumPositionSize");
+				jii.maximumTrailingStopDistance = instrument.getValue("maximumTrailingStopDistance");
+				jii.minimumTradeSize = instrument.getValue("minimumTradeSize");
+				jii.minimumTrailingStopDistance = instrument.getValue("minimumTrailingStopDistance");
+				jii.name = instrument.getValue("name");
+				jii.pipLocation = Integer.parseInt(instrument.getValue("pipLocation"));
+				jii.tradeUnitsPrecision = Integer.parseInt(instrument.getValue("tradeUnitsPrecision"));
+				jii.type = instrument.getValue("type");
 
+				output.instruments.add(jii);
+			}
 		}
 
 		return output;
 	}
-	
+
 	public trade convertAPIStringToTrade(String json) {
-		
+
 		JsonObject jo = new JsonObject(json);
-		
-		if(jo.contains("trade")) jo = jo.getObject("trade");
-		
+
+		if (jo.contains("trade"))
+			jo = jo.getObject("trade");
+
 		int id = Integer.parseInt(jo.getValue("id"));
 		String instrument = jo.getValue("instrument");
 		double price = Double.parseDouble(jo.getValue("price"));
 		String openTime = jo.getValue("openTime");
-		int initialUnits = 0;//Integer.parseInt(jo.getValue("initialUnits"));
+		int initialUnits = 0;// Integer.parseInt(jo.getValue("initialUnits"));
 		String initialMarginRequired = jo.getValue("initialMarginRequired");
-		int currentunits = 0;//Integer.parseInt(jo.getValue("currentUnits"));
+		int currentunits = 0;// Integer.parseInt(jo.getValue("currentUnits"));
 		String realizedPL = jo.getValue("realizedPL");
 		String unrealizedPL = jo.getValue("unrealizedPL");
 		String marginUsed = jo.getValue("marginUsed");
-					
-		return new trade(id, instrument, price, openTime, initialUnits, initialMarginRequired, currentunits,
-				realizedPL, unrealizedPL, marginUsed);
+
+		return new trade(id, instrument, price, openTime, initialUnits, initialMarginRequired, currentunits, realizedPL,
+				unrealizedPL, marginUsed);
 	}
-	
-	
 
 	public OrderResponse makeOrderResponseFromJson(String input) {
 		JsonObject responseObject = new JsonObject(input);
-		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction") && !responseObject.contains("orderFillTransaction") && !responseObject.contains("tradeOpened");
+		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction")
+				&& !responseObject.contains("orderFillTransaction") && !responseObject.contains("tradeOpened");
 		String id = null;
-		if(wasSuccessfull) {
+		if (wasSuccessfull) {
 			JsonObject orderFillTransaction = responseObject.getObject("orderFillTransaction");
 			JsonObject tradeOpened = orderFillTransaction.getObject("tradeOpened");
-			 id = tradeOpened.getValue("tradeID");
+			id = tradeOpened.getValue("tradeID");
 		}
-	
+
 		return new OrderResponse(wasSuccessfull, id);
 	}
-
-
 
 }
