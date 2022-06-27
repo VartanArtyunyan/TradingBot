@@ -39,8 +39,9 @@ list_news = ReaderWriter.openJsonFile(file_name)
 List_Storage = StoreList(list_news, list_pairs, cl)
 
 List_Storage.filterSpeechAndReport()
+print(len(List_Storage.list_news))
 List_Storage.filterOldEvents()
-
+print(len(List_Storage.list_news))
 
 while (bool(List_Storage.list_news)):
     List_Storage.EventLoop()
