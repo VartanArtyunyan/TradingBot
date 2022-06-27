@@ -55,7 +55,7 @@ public class CalenderConnection extends SocketConnection {
 			String s = null;
 			if(!connection.isInputShutdown()) {
 			if(br != null) s = br.readLine();
-			 System.out.println(s);
+			if (s != null) System.out.println(s);
 			if (s != null) push(s);
 			}
 			// verwaltung.pushOrder(makeOrder(s));
@@ -81,13 +81,14 @@ public class CalenderConnection extends SocketConnection {
 		
 		for(int i = 0; i < jsonCharArray.length; i++) {
 			if(jsonCharArray[i] == '\'') jsonCharArray[i] = '\"';
+			if(jsonCharArray[i] == '/') jsonCharArray[i] = '_';
 		}
 		
 		json = new String(jsonCharArray);
 		System.out.println(json);
 		JsonObject order = new JsonObject(json);
 		
-		
+		System.out.println("Orderjson:" + order);
 		
 		if(order.contains("order")) {
 			verwaltung.pushCalenderOrder(makeOrder(order));
@@ -99,20 +100,24 @@ public class CalenderConnection extends SocketConnection {
 
 	private CalenderOrder makeOrder(JsonObject orderJson) {
 		
+		JsonObject order = orderJson.getObject("order");
+		
 
-		String instrument = orderJson.getValue("instrument");
-		double faktor = Double.parseDouble(orderJson.getValue("factor"));
-		String volatility = orderJson.getValue("volatility");
-		boolean longShort = Boolean.parseBoolean(orderJson.getValue("longShort"));
+		String instrument = order.getValue("instrument");
+		double faktor = Double.parseDouble(order.getValue("factor"));
+		String volatility = order.getValue("volatility");
+		boolean longShort = Boolean.parseBoolean(order.getValue("longShort"));
 
 		return new CalenderOrder(instrument, faktor, volatility, longShort);
 	}
 	
 	private UpcomingEvent makeUpcomingEven(JsonObject orderJson) {
 		
-		String instrument = orderJson.getValue("instrument");
-		String time = orderJson.getValue("time");
-		int volatility = Integer.parseInt(orderJson.getValue("volatility"));
+		JsonObject order = orderJson.getObject("upcomingEvent");
+		
+		String instrument = order.getValue("instrument");
+		String time = order.getValue("time");
+		int volatility = Integer.parseInt(order.getValue("volatility"));
 		
 		
 		return new UpcomingEvent(instrument, time, volatility);

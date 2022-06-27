@@ -76,8 +76,8 @@ public class Verwaltung extends StopableThread{
 
 	public void startTraiding() {
 		//addThread(webInterfaceConnection);
-		addThread(calenderConnection);
-		//addThread(signals);
+		//addThread(calenderConnection);
+		addThread(signals);
 		//addThread(rngTrader);
 	    addThread(this);
 		startThreads();
@@ -148,14 +148,14 @@ public class Verwaltung extends StopableThread{
 		double stopLoss = 1.0;
 		
 		if(calenderOrder.isLong()) {
-			takeProfit += tsAbweichung;
-			stopLoss -= tsAbweichung;
+			takeProfit = (takeProfit + tsAbweichung) * kurs;
+			stopLoss = (stopLoss - tsAbweichung) * kurs;
 		}else {
-			takeProfit -= tsAbweichung;
-			stopLoss += tsAbweichung;
+			takeProfit = (takeProfit - tsAbweichung) * kurs;
+			stopLoss = (stopLoss + tsAbweichung) * kurs;
 			units *= -1;
 		}
-		
+		System.out.println("pushCalenderOrder");
 		mainConnection.placeOrder(calenderOrder.getInstrument(), units, takeProfit, stopLoss);
 		
 	}
