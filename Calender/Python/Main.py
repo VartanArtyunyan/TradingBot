@@ -11,7 +11,7 @@ from StoreList import StoreList
 
 
 
-INSTRUMENTS = '{"instrumente":["EUR/USD","GBP/CHF","EUR/JPY"]}'
+#INSTRUMENTS = '{"instrumente":["EUR/USD","GBP/CHF","EUR/JPY"]}'
 
 
 
