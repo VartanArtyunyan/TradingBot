@@ -64,7 +64,7 @@ class StoreList:
             longShort = Calculation.longShort(event)
             core = {"Instrument": None,"volatility": volatility,"factor": factor, "longShort": longShort}
         else:
-            time = event["dateUtc"]
+            time = (Calculation.DateStringToObject(event["dateUtc"]) + datetime.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
             core = {"Instrument": None,"volatility": volatility,"time": time}
         
         
