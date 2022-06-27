@@ -1,4 +1,5 @@
-import json
+""" import json
+
 
 event = {
     "id": "ff1f3d8f-9bd5-4447-ac57-c8a8efd88935",
@@ -69,4 +70,12 @@ def handleNextEvent(list_pairs, event, pre_string,):
 
 
 x = handleNextEvent(list_pairs, event, pre_string)
-print(x)
+print(x) """
+import datetime
+
+now = datetime.datetime.utcnow()
+
+out = (now + datetime.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+print(now)
+print(out)

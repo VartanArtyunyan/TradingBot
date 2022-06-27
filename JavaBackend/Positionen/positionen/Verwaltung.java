@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import GUI.GUI;
 import LogFileWriter.LogFileWriter;
 import PyhtonConnection.Order;
+import PyhtonConnection.UpcomingEvent;
 import PyhtonConnection.WebInterfaceConnection;
 import PyhtonConnection.CalenderConnection;
-
+import PyhtonConnection.CalenderOrder;
 import Threads.StopableThread;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import de.fhws.Softwareprojekt.Kpi;
@@ -103,6 +104,61 @@ public class Verwaltung extends StopableThread{
 
 		return curBalance > 100.0;
 	}
+	
+	public void pushUpcommingEvent(UpcomingEvent upcomingEvent) {
+		
+		if (!eneoughBalance()) {
+			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			return;
+		}
+		
+		double kurs = getKurs(upcomingEvent.getInstrument());
+		
+		double upperLimit = kurs * 1.0015;
+		double lowerLimit = kurs * 0.9985;
+		
+		double tsUpperLimt = kurs * 1.0045;
+		double tsLowerLimit = kurs * 0.9955;
+		
+		double curBalance = mainConnection.getBalance();
+		double buyingPrice = curBalance * einsatz;
+		double units = buyingPrice / kurs;
+		
+		mainConnection.placeLimitOrder(upcomingEvent.getInstrument(), upcomingEvent.getTime(), units, upperLimit, tsUpperLimt, lowerLimit);
+		mainConnection.placeLimitOrder(upcomingEvent.getInstrument(), upcomingEvent.getTime(), units*-1, lowerLimit, tsLowerLimit, upperLimit);
+	}
+	
+	public void pushCalenderOrder(CalenderOrder calenderOrder) {
+		
+		//{order:{instument:"EUR_UID",factor:2.3,volatility:2,longShort:true}}
+		
+		double kurs = getKurs(calenderOrder.getInstrument());
+		double curBalance = mainConnection.getBalance();
+		double buyingPrice = curBalance * einsatz;
+		double units = buyingPrice / kurs;
+		
+		double volatility = (calenderOrder.getVolatility().equals("Medium")) ? 1  : 2;
+		
+		
+		units = units * calenderOrder.getFaktor() * volatility;
+		
+		double tsAbweichung = 0.0015 * volatility;
+		
+		double takeProfit = 1.0;
+		double stopLoss = 1.0;
+		
+		if(calenderOrder.isLong()) {
+			takeProfit = (takeProfit + tsAbweichung) * kurs;
+			stopLoss = (stopLoss - tsAbweichung) * kurs;
+		}else {
+			takeProfit = (takeProfit - tsAbweichung) * kurs;
+			stopLoss = (stopLoss + tsAbweichung) * kurs;
+			units *= -1;
+		}
+		System.out.println("pushCalenderOrder");
+		mainConnection.placeOrder(calenderOrder.getInstrument(), units, takeProfit, stopLoss);
+		
+	}
 
 	public void pushOrder(Order order) {
 
@@ -114,8 +170,13 @@ public class Verwaltung extends StopableThread{
 		double curBalance = mainConnection.getBalance();
 		double factor = einsatz * (order.isLong() ? 1 : -1);
 		double buyingPrice = curBalance * factor * order.getFaktor();
+<<<<<<< HEAD
 		double kurs = mainConnection.getKurs(order.getInstrument());
 		double units = buyingPrice * kurs;
+=======
+		double kurs = getKurs(order.getInstrument());
+		double units = buyingPrice / kurs;
+>>>>>>> c8964d7fa0d2c8f3b7c7862d366c84e6c4841e7c
 
 		mainConnection.placeOrder(order.getInstrument(), units);
 		aktualisierePosition();

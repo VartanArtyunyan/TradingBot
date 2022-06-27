@@ -85,11 +85,14 @@ public class JsonObject {
 				}
 
 		}
-		//System.out.println("nach schleife");
+		
 		String lastVar = varCache.toString();
+		//System.out.println(lastVar);
+		//int cutoff = lastVar.length() -1;
 		
 		lastVar = lastVar.substring(0, lastVar.length() - 1);
 		content.put(nameCache.toString(), lastVar);
+		
 		
 		
 		//System.out.println(contents.size());

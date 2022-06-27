@@ -16,11 +16,14 @@ from StoreList import StoreList
 
 
 
-file_name = 'jsonCalender5.json'
+file_name = 'jsonCalenderToday.json'
+
+
 
 income_json = Connection.start()
 #list_pairs = json.loads(INSTRUMENTS)
 cl = Client()
+
 list_pairs = json.loads(cl.read())
 
 
@@ -35,13 +38,20 @@ list_news = ReaderWriter.openJsonFile(file_name)
 
 List_Storage = StoreList(list_news, list_pairs, cl)
 
-
 List_Storage.filterSpeechAndReport()
+List_Storage.filterSpeechAndReport()
+List_Storage.filterSpeechAndReport()
+print(len(List_Storage.list_news))
+#List_Storage.filterOldEvents()
+#List_Storage.filterOldEvents()
+#List_Storage.filterOldEvents()
+#List_Storage.filterOldEvents()
+print(len(List_Storage.list_news))
 
 while (bool(List_Storage.list_news)):
     List_Storage.EventLoop()
     List_Storage.upcoming_events()
-    #break
+
 
 print("Finished all events")
 #exit()

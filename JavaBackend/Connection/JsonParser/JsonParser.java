@@ -36,9 +36,8 @@ public class JsonParser {
 		output.openObject("order");
 		output.addValue("type", "MARKET");
 		output.addValue("instrument", instrument);
-
 		output.addValue("units", Double.toString(round(units, 0)));
-		// output.addString("price", Double.toString(price));
+		
 		output.openObject("takeProfitOnFill");
 		output.addValue("price", Double.toString(round(takeProfit,3)));
 		output.closeObject();
@@ -49,6 +48,7 @@ public class JsonParser {
 
 		return output.build();
 	}
+	
 
 	public String makeOrederRequestJson(String instrument, double units) {
 		JsonBuilder output = new JsonBuilder();
@@ -61,6 +61,29 @@ public class JsonParser {
 
 		output.closeObject();
 
+		return output.build();
+	}
+	
+	public String makeLimitOrderRequestJson(String instrument, String cancleTime, double units, double limit, double takeProfit, double stopLoss) {
+		JsonBuilder output = new JsonBuilder();
+		
+		output.openObject("order");
+		output.addValue("type", "LIMIT");
+		output.addValue("instrument", instrument);
+		
+		
+		output.addValue("units", Double.toString(round(units, 0)));
+		output.addValue("price", Double.toString(round(limit, 3)));
+		output.addValue("gtdTime", cancleTime);
+		
+		output.openObject("takeProfitOnFill");
+		output.addValue("price", Double.toString(round(takeProfit,3)));
+		output.closeObject();
+		output.openObject("stopLossOnFill");
+		output.addValue("price", Double.toString(round(stopLoss,3)));
+		output.closeObject();
+		output.closeObject();
+		
 		return output.build();
 	}
 
@@ -220,11 +243,14 @@ public class JsonParser {
 
 	public OrderResponse makeOrderResponseFromJson(String input) {
 		JsonObject responseObject = new JsonObject(input);
-		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction");
-		JsonObject orderFillTransaction = responseObject.getObject("orderFillTransaction");
-		JsonObject tradeOpened = orderFillTransaction.getObject("tradeOpened");
-		String id = tradeOpened.getValue("tradeID");
-
+		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction") && !responseObject.contains("orderFillTransaction") && !responseObject.contains("tradeOpened");
+		String id = null;
+		if(wasSuccessfull) {
+			JsonObject orderFillTransaction = responseObject.getObject("orderFillTransaction");
+			JsonObject tradeOpened = orderFillTransaction.getObject("tradeOpened");
+			 id = tradeOpened.getValue("tradeID");
+		}
+	
 		return new OrderResponse(wasSuccessfull, id);
 	}
 

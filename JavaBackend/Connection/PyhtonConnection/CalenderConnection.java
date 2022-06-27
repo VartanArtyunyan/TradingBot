@@ -56,6 +56,7 @@ public class CalenderConnection extends SocketConnection {
 			if(!connection.isInputShutdown()) {
 			if(br != null) s = br.readLine();
 			if (s != null) System.out.println(s);
+			if (s != null) push(s);
 			}
 			// verwaltung.pushOrder(makeOrder(s));
 		} catch (IOException e) {
@@ -64,16 +65,63 @@ public class CalenderConnection extends SocketConnection {
 		}
 		
 	}
+	
+	private void push(String input) {
+		
+		
+		String[] sArray = input.split(" ");
+		
+		String json = "";
+		
+		for(int i = 0; i < sArray.length; i++) {
+			json += sArray[i];
+		}
+		
+		char[] jsonCharArray = json.toCharArray();
+		
+		for(int i = 0; i < jsonCharArray.length; i++) {
+			if(jsonCharArray[i] == '\'') jsonCharArray[i] = '\"';
+			if(jsonCharArray[i] == '/') jsonCharArray[i] = '_';
+		}
+		
+		json = new String(jsonCharArray);
+		System.out.println(json);
+		JsonObject order = new JsonObject(json);
+		
+		System.out.println("Orderjson:" + order);
+		
+		if(order.contains("order")) {
+			verwaltung.pushCalenderOrder(makeOrder(order));
+		}
+		if(order.contains("upcomingEvent")) {
+			verwaltung.pushUpcommingEvent(makeUpcomingEven(order));
+		}
+	}
 
-	public Order makeOrder(String input) {
-		JsonObject orderJson = new JsonObject(input);
+	private CalenderOrder makeOrder(JsonObject orderJson) {
+		
+		JsonObject order = orderJson.getObject("order");
+		
 
-		String instrument = orderJson.getValue("instrument");
-		double faktor = Double.parseDouble(orderJson.getValue("factor"));
-		int volatility = Integer.parseInt(orderJson.getValue("volatility"));
-		boolean longShort = Boolean.parseBoolean(orderJson.getValue("longShort"));
+		String instrument = order.getValue("instrument");
+		double faktor = Double.parseDouble(order.getValue("factor"));
+		String volatility = order.getValue("volatility");
+		boolean longShort = Boolean.parseBoolean(order.getValue("longShort"));
 
-		return new Order(instrument, faktor, volatility, longShort);
+		return new CalenderOrder(instrument, faktor, volatility, longShort);
+	}
+	
+	private UpcomingEvent makeUpcomingEven(JsonObject orderJson) {
+		
+		JsonObject order = orderJson.getObject("upcomingEvent");
+		
+		String instrument = order.getValue("instrument");
+		String time = order.getValue("time");
+		int volatility = Integer.parseInt(order.getValue("volatility"));
+		
+		
+		return new UpcomingEvent(instrument, time, volatility);
+		
 	}
 
 	public String makeInstrumentJson(JsonInstrumentsRoot jir) {

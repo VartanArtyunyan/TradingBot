@@ -21,6 +21,20 @@ class StoreList:
         for nextEvent in self.list_news:
             if nextEvent["isSpeech"] or nextEvent["isReport"]:
                 self.list_news.remove(nextEvent)
+
+    def filterOldEvents(self):
+        for nextEvent in self.list_news:
+            next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
+            
+            if next_time < datetime.datetime.utcnow():
+                self.list_news.remove(nextEvent)
+                continue
+            if nextEvent["actual"] is not None:     #dürfte nicht gebraucht werden, da die Zeit sowieso verglichen wurde
+                self.list_news.remove(nextEvent)
+                
+            
+                
+            
                 
     def EventLoop(self):
         pre_string = "order"
@@ -29,7 +43,7 @@ class StoreList:
             update = Connection.checkEvent(nextEvent)
             #print(update["actual"])
             if update["actual"] is not None:
-
+                print("new actual:" + str (nextEvent))
                 self.handleNextEvent(update, pre_string)
                 self.list_news.remove(nextEvent)
     
@@ -40,9 +54,11 @@ class StoreList:
            
             if Calculation.breakTimer(next_time) > datetime.timedelta(minutes = 10):
                 continue
-            elif next_time > datetime.datetime.now() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
-
+            elif next_time > datetime.datetime.utcnow() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
+                
+                print("Upcoming: " + str (nextEvent))
                 self.handleNextEvent(nextEvent, pre_string)
+                
                 nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines upcoming-Trades
                 
             
@@ -56,10 +72,10 @@ class StoreList:
         if pre_string == "order":
             factor = Calculation.calculate(event)
             longShort = Calculation.longShort(event)
-            core = {"Instrument": None,"volatility": volatility,"factor": factor, "longShort": longShort}
+            core = {"instrument":None,"volatility":volatility,"factor":factor, "longShort":longShort}
         else:
-            time = event["dateUtc"]
-            core = {"Instrument": None,"volatility": volatility,"time": time}
+            time = (Calculation.DateStringToObject(event["dateUtc"]) + datetime.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            core = {"instrument":None,"volatility":volatility,"time":time}
         
         
         for instrument in self.list_pairs["instrumente"]:
@@ -73,9 +89,9 @@ class StoreList:
                 sending_str["longShort"] = not sending_str["longShort"]
                 
 
-            sending_str["Instrument"] = instrument
+            sending_str["instrument"] = instrument
             sending_str = str(sending_str)
-            sending_str = "{" + f"'{pre_string}':{sending_str}" + "}"
+            sending_str = "{" + f"\'{pre_string}\':{sending_str}" + "}"
             print("send: " + str(sending_str))
             self.client.send(sending_str)
 
