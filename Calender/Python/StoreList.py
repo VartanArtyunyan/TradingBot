@@ -47,9 +47,10 @@ class StoreList:
             if Calculation.breakTimer(next_time) > datetime.timedelta(minutes = 10):
                 continue
             elif next_time > datetime.datetime.utcnow() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
-
-                self.handleNextEvent(nextEvent, pre_string)
+                
                 print("Upcoming: " + str (nextEvent))
+                self.handleNextEvent(nextEvent, pre_string)
+                
                 nextEvent["isTentative"] = True     #Nachricht wurde gesendet. Verhindert das erneutige Senden und Auslösen eines upcoming-Trades
                 
             
