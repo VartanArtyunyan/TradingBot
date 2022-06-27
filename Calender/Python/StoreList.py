@@ -67,10 +67,10 @@ class StoreList:
         if pre_string == "order":
             factor = Calculation.calculate(event)
             longShort = Calculation.longShort(event)
-            core = {"\"Instrument\"":None,"\"volatility\"":volatility,"\"factor\"":factor, "\"longShort\"":longShort}
+            core = {"Instrument":None,"volatility":volatility,"factor":factor, "longShort":longShort}
         else:
             time = (Calculation.DateStringToObject(event["dateUtc"]) + datetime.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-            core = {"\"Instrument\"":None,"\"volatility\"":volatility,"\"time\"":time}
+            core = {"Instrument":None,"volatility":volatility,"time":time}
         
         
         for instrument in self.list_pairs["instrumente"]:
@@ -86,7 +86,7 @@ class StoreList:
 
             sending_str["Instrument"] = instrument
             sending_str = str(sending_str)
-            sending_str = "{" + f"\"{pre_string}\":{sending_str}" + "}"
+            sending_str = "{" + f"{pre_string}:{sending_str}" + "}"
             print("send: " + str(sending_str))
             self.client.send(sending_str)
 
