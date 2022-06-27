@@ -5,11 +5,11 @@ public class CalenderOrder {
 	
 	String instrument;
 	double factor;
-	int volatility;
+	String volatility;
 	boolean longShort;
 	
 	
-	public CalenderOrder(String instrument, double faktor, int volatility, boolean longShort) {
+	public CalenderOrder(String instrument, double faktor, String volatility, boolean longShort) {
 		this.instrument = instrument;
 		this.factor = faktor;
 		this.volatility = volatility;
@@ -27,7 +27,7 @@ public class CalenderOrder {
 	}
 
 
-	public int getVolatility() {
+	public String getVolatility() {
 		return volatility;
 	}
 

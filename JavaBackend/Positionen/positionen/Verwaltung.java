@@ -77,7 +77,7 @@ public class Verwaltung extends StopableThread{
 	public void startTraiding() {
 		//addThread(webInterfaceConnection);
 		addThread(calenderConnection);
-		addThread(signals);
+		//addThread(signals);
 		//addThread(rngTrader);
 	    addThread(this);
 		startThreads();
@@ -129,6 +129,34 @@ public class Verwaltung extends StopableThread{
 	}
 	
 	public void pushCalenderOrder(CalenderOrder calenderOrder) {
+		
+		//{order:{instument:"EUR_UID",factor:2.3,volatility:2,longShort:true}}
+		
+		double kurs = getKurs(calenderOrder.getInstrument());
+		double curBalance = mainConnection.getBalance();
+		double buyingPrice = curBalance * einsatz;
+		double units = buyingPrice / kurs;
+		
+		double volatility = (calenderOrder.getVolatility().equals("Medium")) ? 1  : 2;
+		
+		
+		units = units * calenderOrder.getFaktor() * volatility;
+		
+		double tsAbweichung = 0.0015 * volatility;
+		
+		double takeProfit = 1.0;
+		double stopLoss = 1.0;
+		
+		if(calenderOrder.isLong()) {
+			takeProfit += tsAbweichung;
+			stopLoss -= tsAbweichung;
+		}else {
+			takeProfit -= tsAbweichung;
+			stopLoss += tsAbweichung;
+			units *= -1;
+		}
+		
+		mainConnection.placeOrder(calenderOrder.getInstrument(), units, takeProfit, stopLoss);
 		
 	}
 

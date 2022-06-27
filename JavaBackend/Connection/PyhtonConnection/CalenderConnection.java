@@ -67,7 +67,27 @@ public class CalenderConnection extends SocketConnection {
 	}
 	
 	private void push(String input) {
-		JsonObject order = new JsonObject(input);
+		
+		
+		String[] sArray = input.split(" ");
+		
+		String json = "";
+		
+		for(int i = 0; i < sArray.length; i++) {
+			json += sArray[i];
+		}
+		
+		char[] jsonCharArray = json.toCharArray();
+		
+		for(int i = 0; i < jsonCharArray.length; i++) {
+			if(jsonCharArray[i] == '\'') jsonCharArray[i] = '\"';
+		}
+		
+		json = new String(jsonCharArray);
+		System.out.println(json);
+		JsonObject order = new JsonObject(json);
+		
+		
 		
 		if(order.contains("order")) {
 			verwaltung.pushCalenderOrder(makeOrder(order));
@@ -82,7 +102,7 @@ public class CalenderConnection extends SocketConnection {
 
 		String instrument = orderJson.getValue("instrument");
 		double faktor = Double.parseDouble(orderJson.getValue("factor"));
-		int volatility = Integer.parseInt(orderJson.getValue("volatility"));
+		String volatility = orderJson.getValue("volatility");
 		boolean longShort = Boolean.parseBoolean(orderJson.getValue("longShort"));
 
 		return new CalenderOrder(instrument, faktor, volatility, longShort);
