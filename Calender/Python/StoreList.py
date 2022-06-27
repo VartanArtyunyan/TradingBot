@@ -28,7 +28,7 @@ class StoreList:
             if next_time < datetime.datetime.utcnow():
                 self.list_news.remove(nextEvent)
                 continue
-            if nextEvent["actual"] is not None:     #dürfte nicht gebraucht werden, da die Zeit sowieso verglichen wurde
+            elif nextEvent["actual"] is not None:     #dürfte nicht gebraucht werden, da die Zeit sowieso verglichen wurde
                 self.list_news.remove(nextEvent)
                 
     def EventLoop(self):
