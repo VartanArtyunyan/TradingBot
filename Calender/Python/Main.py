@@ -36,7 +36,7 @@ list_news = ReaderWriter.openJsonFile(file_name)
 
 
 
-List_Storage = StoreList(list_news, list_pairs)
+List_Storage = StoreList(list_news, list_pairs, cl)
 
 List_Storage.filterSpeechAndReport()
 List_Storage.filterOldEvents()
