@@ -26,11 +26,13 @@ class StoreList:
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
             
-            if nextEvent["actual"] is not None:     #dürfte nicht gebraucht werden, da die Zeit sowieso verglichen wurde
+            if next_time < datetime.datetime.utcnow():
                 self.list_news.remove(nextEvent)
                 continue
-            elif next_time < datetime.datetime.utcnow():
+            if nextEvent["actual"] is not None:     #dürfte nicht gebraucht werden, da die Zeit sowieso verglichen wurde
                 self.list_news.remove(nextEvent)
+                
+            
                 
             
                 
