@@ -33,12 +33,12 @@ public class ApiConnection {
 
 		return output;
 	}
-	
+
 	public trade getTrade(int id) {
 		String apiResponseString = connection.getTrade(id);
-		
+
 		System.out.println(apiResponseString);
-		
+
 		return jsonParser.convertAPIStringToTrade(apiResponseString);
 	}
 
@@ -53,7 +53,6 @@ public class ApiConnection {
 			apiResponseString = connection.getCandleStickData(count, instrument, from, to, price, granularity);
 			candleCache.update(jsonParser.convertAPiStringToCandlesRootModel(apiResponseString));
 		}
-			
 
 		return candleCache.get(instrument, lastCandle);
 		// return jsonParser.convertAPiStringToCandlesRootModel(apiResponseString);
@@ -62,12 +61,12 @@ public class ApiConnection {
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
 		if (availableInstruemts == null) {
 			String apiResponseString = connection.getInstruments();
-			
-			//String[] sArray = apiResponseString.split(",");
-			//for(int i = 0; i < sArray.length; i++) {
-			//	System.out.println(sArray[i]);
-			//}
-			
+
+			// String[] sArray = apiResponseString.split(",");
+			// for(int i = 0; i < sArray.length; i++) {
+			// System.out.println(sArray[i]);
+			// }
+
 			availableInstruemts = jsonParser.convertAPiStringToInstrumentsRootModel(apiResponseString);
 		}
 		return availableInstruemts;
@@ -82,23 +81,31 @@ public class ApiConnection {
 	}
 
 	public OrderResponse placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
-		if(units == 0) return makeFailedOrderResponse();
+		if (units == 0)
+			return makeFailedOrderResponse();
 
 		String orderJson = jsonParser.makeOrederRequestJson(instrument, units, takeProfit, stopLoss); //
 
 		String responseJson = connection.placeOrder(orderJson);
-		
-		
+
 		return jsonParser.makeOrderResponseFromJson(responseJson);
-		
+
 	}
-	
-	public void placeLimitOrder(String instrument, double units, double limit, double takeProfit, double stopLoss) {
-		
+
+	public void placeLimitOrder(String instrument, String cancleTime, double units, double limit, double takeProfit,
+			double stopLoss) {
+		// if(units == 0) return makeFailedOrderResponse();
+
+		String orderJson = jsonParser.makeLimitOrderRequestJson(instrument, cancleTime, units, limit, takeProfit,
+				stopLoss); //
+
+		String responseJson = connection.placeOrder(orderJson);
+
+		// return jsonParser.makeOrderResponseFromJson(responseJson);
 	}
-	
+
 	private OrderResponse makeFailedOrderResponse() {
-		return new OrderResponse(false,"-1");
+		return new OrderResponse(false, "-1");
 	}
 
 	public void placeOrder(String instrument, double units) {
