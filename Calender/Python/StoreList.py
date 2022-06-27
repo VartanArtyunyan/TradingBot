@@ -21,6 +21,12 @@ class StoreList:
         for nextEvent in self.list_news:
             if nextEvent["isSpeech"] or nextEvent["isReport"]:
                 self.list_news.remove(nextEvent)
+
+    def filterOldEvents(self):
+        for nextEvent in self.list_news:
+            next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
+            if next_time < datetime.datetime.now():
+                self.list_news.remove(nextEvent)
                 
     def EventLoop(self):
         pre_string = "order"
