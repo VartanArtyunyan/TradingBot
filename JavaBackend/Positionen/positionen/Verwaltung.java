@@ -37,7 +37,7 @@ public class Verwaltung extends StopableThread {
 	ArrayList<trade> trades;
 	String granularity;
 	ArrayList<StopableThread> threads = new ArrayList<>();
-	HashMap<String, InstrumentOrderIdPair> blockedSignals;
+	ArrayList<InstrumentOrderIdPair> blockedSignals;
 
 	double einsatz;
 
@@ -45,7 +45,7 @@ public class Verwaltung extends StopableThread {
 
 		this.einsatz = einsatz;
 		this.mainConnection = connection;
-		blockedSignals = new HashMap<>();
+		blockedSignals = new ArrayList<>();
 		// gui = new GUI();
 		calenderConnection = new CalenderConnection(this, 12000);
 		webInterfaceConnection = new WebInterfaceConnection(12001);
@@ -80,8 +80,8 @@ public class Verwaltung extends StopableThread {
 
 	public void startTraiding() {
 		// addThread(webInterfaceConnection);
-		// addThread(calenderConnection);
-		addThread(signals);
+		addThread(calenderConnection);
+		 addThread(signals);
 		// addThread(rngTrader);
 		addThread(this);
 		startThreads();
@@ -183,8 +183,12 @@ public class Verwaltung extends StopableThread {
 	}
 
 	public void pushSignal(Kpi kpi) {
+		if (containsPosition(kpi.getInstrument()))
+			return;
+
 		if (signalIsBlocked(kpi.getInstrument(), kpi.getSignalTyp()))
 			return;
+
 		if (!eneoughBalance()) {
 			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
@@ -199,14 +203,14 @@ public class Verwaltung extends StopableThread {
 		double units = buyingPrice * kpi.getLastPrice();
 
 		OrderResponse order = mainConnection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
-		blockSignal(kpi.getInstrument(), kpi.getSignalTyp(), "");
+
 		if (order.wasSuccesfull()) {
 			logFileWriter.logSignal(order.getOrderID(), buyingPrice, kpi);
 			blockSignal(kpi.getInstrument(), kpi.getSignalTyp(), order.getOrderID());
 		} else
 			System.out.println("Order was rejected");
-			aktualisierePosition();
-			
+		aktualisierePosition();
+
 	}
 
 	public void pushRanomOrder(RandomOrder randomOrder) {
@@ -245,39 +249,52 @@ public class Verwaltung extends StopableThread {
 	}
 
 	private void blockSignal(String instrument, int signal, String id) {
-		InstrumentOrderIdPair iop = new InstrumentOrderIdPair(signal, instrument);
-		blockedSignals.put(id, iop);
+		InstrumentOrderIdPair iop = new InstrumentOrderIdPair(id, signal, instrument);
+		if (!blockedSignalContainsSignal(instrument, signal))
+			blockedSignals.add(iop);
+
+		for (InstrumentOrderIdPair iopp : blockedSignals) {
+			System.out.println(iopp.getInstrument() + " " + iopp.getSignal());
+
+		}
 	}
 
 	private void aktualisiereBlockedSignals() {
 		ArrayList<Integer> ids = getTradeIDs();
 
-		ArrayList<String> idsToRemove = new ArrayList<>();
+		ArrayList<Integer> idsToRemove = new ArrayList<>();
 
-		for (String id : blockedSignals.keySet()) {
+		for (InstrumentOrderIdPair iopp : blockedSignals) {
 
-			if (!ids.contains(Integer.parseInt(id))) {
-				idsToRemove.add(id);
+			if (!ids.contains(Integer.parseInt(iopp.getId()))) {
+				idsToRemove.add(blockedSignals.indexOf(iopp));
 			}
+
 		}
-		
-		for(String id : idsToRemove) {
-			blockedSignals.remove(id);
+
+		for (Integer i : idsToRemove) {
+			blockedSignals.remove(i);
 		}
+
 	}
 
 	private boolean signalIsBlocked(String instrument, int signal) {
-		//aktualisiereBlockedSignals();
-		
-		boolean output = false;
-		
-		for(Entry<String, InstrumentOrderIdPair> e : blockedSignals.entrySet()) {
-			if(e.getValue().getInstrument().equals(instrument) && e.getValue().getSignal() == signal) output = true;
-		}
-		
-		
+		aktualisiereBlockedSignals();
+		boolean output = blockedSignalContainsSignal(instrument, signal);
+
+		System.out.println("Instrument: " + instrument + "Signal: " + signal + "Ergebnis: " + output);
 		return output;
-		
+
+	}
+
+	private boolean blockedSignalContainsSignal(String instrument, int signal) {
+		boolean output = false;
+		for (InstrumentOrderIdPair iopp : blockedSignals) {
+
+			if (iopp.getInstrument().equals(instrument) && iopp.getSignal() == signal)
+				output = true;
+		}
+		return output;
 	}
 
 	public JsonCandlesRoot getJsonCandlesRoot(int count, String instrument, String from, String to, String price,

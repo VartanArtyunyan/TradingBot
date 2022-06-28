@@ -5,8 +5,9 @@ public class InstrumentOrderIdPair {
 	int signal;
 	String id;
 	String instrument;
-	public InstrumentOrderIdPair(int signal, String instrument) {
+	public InstrumentOrderIdPair(String id, int signal, String instrument) {
 		super();
+		this.id = id;
 		this.signal = signal;
 		this.instrument = instrument;
 	}

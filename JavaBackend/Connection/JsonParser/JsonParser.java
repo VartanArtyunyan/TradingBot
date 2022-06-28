@@ -243,11 +243,18 @@ public class JsonParser {
 
 	public OrderResponse makeOrderResponseFromJson(String input) {
 		JsonObject responseObject = new JsonObject(input);
-		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction")
-				&& !responseObject.contains("orderFillTransaction") && !responseObject.contains("tradeOpened");
+		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction");
 		String id = null;
+		if (!responseObject.contains("orderFillTransaction"))
+			wasSuccessfull = false;
+		if (!responseObject.contains("tradeOpened"))
+			wasSuccessfull = false;
+		
+		System.out.println(input);
 		if (wasSuccessfull) {
+
 			JsonObject orderFillTransaction = responseObject.getObject("orderFillTransaction");
+
 			JsonObject tradeOpened = orderFillTransaction.getObject("tradeOpened");
 			id = tradeOpened.getValue("tradeID");
 		}
