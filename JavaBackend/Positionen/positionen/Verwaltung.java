@@ -80,9 +80,9 @@ public class Verwaltung extends StopableThread {
 
 	public void startTraiding() {
 		// addThread(webInterfaceConnection);
-		addThread(calenderConnection);
-		 addThread(signals);
-		// addThread(rngTrader);
+		//addThread(calenderConnection);
+		addThread(signals);
+		addThread(rngTrader);
 		addThread(this);
 		startThreads();
 	}
@@ -126,7 +126,7 @@ public class Verwaltung extends StopableThread {
 
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * einsatz;
-		double units = buyingPrice * kurs;
+		double units = buyingPrice / kurs;
 
 		mainConnection.placeLimitOrder(upcomingEvent.getInstrument(), upcomingEvent.getTime(), units, upperLimit,
 				tsUpperLimt, lowerLimit);
@@ -141,7 +141,7 @@ public class Verwaltung extends StopableThread {
 		double kurs = getKurs(calenderOrder.getInstrument());
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * einsatz;
-		double units = buyingPrice * kurs;
+		double units = buyingPrice / kurs;
 
 		double volatility = (calenderOrder.getVolatility().equals("Medium")) ? 1 : 2;
 
@@ -176,7 +176,7 @@ public class Verwaltung extends StopableThread {
 		double factor = einsatz * (order.isLong() ? 1 : -1);
 		double buyingPrice = curBalance * factor * order.getFaktor();
 		double kurs = mainConnection.getKurs(order.getInstrument());
-		double units = buyingPrice * kurs;
+		double units = buyingPrice / kurs;
 
 		mainConnection.placeOrder(order.getInstrument(), units);
 		aktualisierePosition();
@@ -223,7 +223,7 @@ public class Verwaltung extends StopableThread {
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * factor;
 		double kurs = getKurs(randomOrder.getInstrument());
-		double units = buyingPrice * kurs;
+		double units = buyingPrice / kurs;
 
 		double upperBorder = 1.001;
 		double lowerBorder = 0.999;

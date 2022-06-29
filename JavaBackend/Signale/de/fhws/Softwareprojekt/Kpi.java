@@ -270,22 +270,22 @@ public class Kpi implements Comparable<Kpi> {
 		 * 
 		 * return checkPrecision(wert, false); } return 0;
 		 */
-		double wert = lastPrice * 0.9990;
+		double wert = lastPrice * 0.999999;
 		return checkPrecision(wert, false);
 	}
 
 	public double getLongTakeProfit() {
-		double wert = lastPrice * 1.002;
+		double wert = lastPrice * 1.000002;
 		return checkPrecision(wert, true);
 	}
 
 	public double getShortStopLoss() {
-		double wert = lastPrice * 1.001;
+		double wert = lastPrice * 1.000001;
 		return checkPrecision(wert, true);
 	}
 
 	public double getShortTakeProfit() {
-		double wert = lastPrice * 0.998;
+		double wert = lastPrice * 0.999998;
 		return checkPrecision(wert, false);
 	}
 
