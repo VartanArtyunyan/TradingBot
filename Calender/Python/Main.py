@@ -40,8 +40,12 @@ while(True):
 
     while (bool(List_Storage.list_news)):
         List_Storage.filterOldEvents()
-       # Event.wait()
+
+        time.sleep(5)
+        #Event.wait()
+
         List_Storage.EventLoop()
+        time.sleep(5)
         List_Storage.upcoming_events()
 
 
