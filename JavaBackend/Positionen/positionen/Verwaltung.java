@@ -14,6 +14,7 @@ import Threads.StopableThread;
 import de.fhws.Softwareprojekt.JsonCandlesRoot;
 import de.fhws.Softwareprojekt.JsonInstrumentsRoot;
 import de.fhws.Softwareprojekt.Kpi;
+import de.fhws.Softwareprojekt.KpiCalculator;
 import de.fhws.Softwareprojekt.Signals;
 import randomTrader.RandomOrder;
 import randomTrader.randomTrader;
@@ -40,7 +41,7 @@ public class Verwaltung extends StopableThread {
 	ArrayList<InstrumentOrderIdPair> blockedSignals;
 
 	double einsatz;
-
+ KpiCalculator calculator;
 	public Verwaltung(ApiConnection connection, ApiConnection randomConnection, String granularity, double einsatz) {
 
 		this.einsatz = einsatz;
@@ -200,7 +201,7 @@ public class Verwaltung extends StopableThread {
 
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
-		double units = buyingPrice * kpi.getLastPrice();
+		double units = buyingPrice /kpi.getUnitPrice(calculator);
 
 		OrderResponse order = mainConnection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
 

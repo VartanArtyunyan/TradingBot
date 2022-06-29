@@ -350,7 +350,19 @@ public class Kpi implements Comparable<Kpi> {
 			// wird.
 			return runden(wert, 5);
 	}
-
+	
+public double getUnitPrice (KpiCalculator calculator)
+{
+	if(instrument.contains("EUR"))
+		return 1;
+	else 
+	{
+		String convertedInstrument="EUR_"+instrument.substring(0, 2);
+      Kpi kpi=calculator.getAll(convertedInstrument,granularity,periods);
+		return 1/kpi.lastPrice;
+	}
+	
+}
 	@Override
 	public int compareTo(Kpi wert2) {
 		// Beide long Positionen

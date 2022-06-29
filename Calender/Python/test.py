@@ -75,7 +75,10 @@ import datetime
 
 now = datetime.datetime.utcnow()
 
-out = (now + datetime.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+out = (now + datetime.timedelta(hours=1))   #.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
-print(now)
-print(out)
+ergebnis = out > now
+
+next_day = (datetime.datetime.utcnow() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+seconds = (next_day - datetime.datetime.utcnow()).total_seconds()
+print(seconds)

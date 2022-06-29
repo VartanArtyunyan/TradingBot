@@ -10,12 +10,6 @@ longShort = True    #true bei long, false bei short
 POP_TRADING_PAIRS = ["EUR/USD", "USD/JPY", "GBP/USD", "AUD/USD", "USD/CAD", "USD/CNY", "USD/CHF", "USD/HKD", "EUR/GBP", "USD/KRW"]
 
 
-def longShort_by_name(event):
-    #Negatives Vorher-Nachher wirkt sich negativ auf Kurs aus -> Kurs 
-    negativ_delta_names = ["Handelsbilanz"]
-    
-    minor_impact_names = ["Importe", "Exporte"]
-
 
 @staticmethod
 def DateStringToObject(word):
@@ -27,6 +21,11 @@ def DateStringToObject(word):
 def breakTimer(EventTime):
     return EventTime - datetime.datetime.utcnow()
 
+def longShort_by_name(event):
+    #Negatives Vorher-Nachher wirkt sich negativ auf Kurs aus -> Kurs 
+    negativ_delta_names = ["Handelsbilanz"]
+    
+    minor_impact_names = ["Importe", "Exporte"]
 
 def calculate_delta_actual_prev(event):
     actual = float(event["actual"])
