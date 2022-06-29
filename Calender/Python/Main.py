@@ -5,7 +5,7 @@ import Connection
 import ReaderWriter
 from Client import Client
 from StoreList import StoreList
-from threading import Event
+
     
 
 def pause_timer():
@@ -40,7 +40,6 @@ while(True):
 
     while (bool(List_Storage.list_news)):
         List_Storage.filterOldEvents()
-        Event.wait()
         List_Storage.EventLoop()
         List_Storage.upcoming_events()
 
