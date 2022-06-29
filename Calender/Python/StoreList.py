@@ -25,14 +25,13 @@ class StoreList:
     def filterOldEvents(self):
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
+            time_compared = next_time < datetime.datetime.utcnow()              #true wenn jetztige Zeit nach der Eventzeit
             
-            if next_time < datetime.datetime.utcnow():
+            if time_compared and (nextEvent["isSpeech"] or nextEvent["isReport"]):
                 self.list_news.remove(nextEvent)
                 continue
-            if nextEvent["actual"] is not None:     #dürfte nicht gebraucht werden, da die Zeit sowieso verglichen wurde
+            elif time_compared and nextEvent["actual"] is not None:
                 self.list_news.remove(nextEvent)
-                
-            
                 
             
                 
@@ -43,6 +42,7 @@ class StoreList:
             update = Connection.checkEvent(nextEvent)
             #print(update["actual"])
             if update["actual"] is not None:
+                print(datetime.datetime.now())
                 print("new actual:" + str (nextEvent))
                 self.handleNextEvent(update, pre_string)
                 self.list_news.remove(nextEvent)
@@ -55,7 +55,7 @@ class StoreList:
             if Calculation.breakTimer(next_time) > datetime.timedelta(minutes = 10):
                 continue
             elif next_time > datetime.datetime.utcnow() and nextEvent["isTentative"] is False:       #isTentative = True -> Release der Nachricht ist unklar und entspricht nicht der hinterlegten Zeit
-                
+                print(datetime.datetime.now())
                 print("Upcoming: " + str (nextEvent))
                 self.handleNextEvent(nextEvent, pre_string)
                 
