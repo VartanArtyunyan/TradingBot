@@ -1,6 +1,5 @@
 import datetime
 import json
-from os import wait
 import time
 import Connection
 import ReaderWriter
@@ -25,6 +24,7 @@ list_pairs = json.loads(cl.read())
 
 
 while(True):
+    print("I'm awake, today is " + str(datetime.date.today()))
     file_name = "Events" + str(datetime.date.today()) + ".json"
     income_json = Connection.start()
 
@@ -46,10 +46,8 @@ while(True):
 
 
     print("Finished all events for today")
-
-    next_day = datetime.date
-
-    time.sleep(pause_timer)
+    print("Tt's time to sleep")
+    time.sleep(pause_timer())
 
 
 
