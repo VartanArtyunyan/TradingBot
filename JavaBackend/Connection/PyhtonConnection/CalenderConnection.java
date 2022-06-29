@@ -39,7 +39,7 @@ public class CalenderConnection extends SocketConnection {
 			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
 			
-			System.out.println(instrumente);
+			//System.out.println(instrumente);
 			bw.write(instrumente);
 			bw.flush();
 		} catch (IOException e) {
@@ -55,7 +55,7 @@ public class CalenderConnection extends SocketConnection {
 			String s = null;
 			if(!connection.isInputShutdown()) {
 			if(br != null) s = br.readLine();
-			if (s != null) System.out.println(s);
+			//if (s != null) System.out.println(s);
 			if (s != null) push(s);
 			}
 			// verwaltung.pushOrder(makeOrder(s));
@@ -85,10 +85,10 @@ public class CalenderConnection extends SocketConnection {
 		}
 		
 		json = new String(jsonCharArray);
-		System.out.println(json);
+		//System.out.println(json);
 		JsonObject order = new JsonObject(json);
 		
-		System.out.println("Orderjson:" + order);
+		//System.out.println("Orderjson:" + order);
 		
 		if(order.contains("order")) {
 			verwaltung.pushCalenderOrder(makeOrder(order));

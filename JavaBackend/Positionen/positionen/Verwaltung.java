@@ -41,7 +41,6 @@ public class Verwaltung extends StopableThread {
 	ArrayList<InstrumentOrderIdPair> blockedSignals;
 
 	double einsatz;
- KpiCalculator calculator;
 	public Verwaltung(ApiConnection connection, ApiConnection randomConnection, String granularity, double einsatz) {
 
 		this.einsatz = einsatz;
@@ -81,9 +80,9 @@ public class Verwaltung extends StopableThread {
 
 	public void startTraiding() {
 		// addThread(webInterfaceConnection);
-		addThread(calenderConnection);
-		 addThread(signals);
-		// addThread(rngTrader);
+		//addThread(calenderConnection);
+		addThread(signals);
+		//addThread(rngTrader);
 		addThread(this);
 		startThreads();
 	}
@@ -127,7 +126,7 @@ public class Verwaltung extends StopableThread {
 
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * einsatz;
-		double units = buyingPrice * kurs;
+		double units = buyingPrice / kurs;
 
 		mainConnection.placeLimitOrder(upcomingEvent.getInstrument(), upcomingEvent.getTime(), units, upperLimit,
 				tsUpperLimt, lowerLimit);
@@ -142,7 +141,7 @@ public class Verwaltung extends StopableThread {
 		double kurs = getKurs(calenderOrder.getInstrument());
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * einsatz;
-		double units = buyingPrice * kurs;
+		double units = buyingPrice / kurs;
 
 		double volatility = (calenderOrder.getVolatility().equals("Medium")) ? 1 : 2;
 
@@ -177,7 +176,7 @@ public class Verwaltung extends StopableThread {
 		double factor = einsatz * (order.isLong() ? 1 : -1);
 		double buyingPrice = curBalance * factor * order.getFaktor();
 		double kurs = mainConnection.getKurs(order.getInstrument());
-		double units = buyingPrice * kurs;
+		double units = buyingPrice / kurs;
 
 		mainConnection.placeOrder(order.getInstrument(), units);
 		aktualisierePosition();
@@ -201,7 +200,7 @@ public class Verwaltung extends StopableThread {
 
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
-		double units = buyingPrice /kpi.getUnitPrice(calculator);
+		double units = buyingPrice /kpi.getUnitPrice(new KpiCalculator(this));
 
 		OrderResponse order = mainConnection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
 
@@ -224,7 +223,7 @@ public class Verwaltung extends StopableThread {
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * factor;
 		double kurs = getKurs(randomOrder.getInstrument());
-		double units = buyingPrice * kurs;
+		double units = buyingPrice / kurs;
 
 		double upperBorder = 1.001;
 		double lowerBorder = 0.999;
@@ -254,10 +253,7 @@ public class Verwaltung extends StopableThread {
 		if (!blockedSignalContainsSignal(instrument, signal))
 			blockedSignals.add(iop);
 
-		for (InstrumentOrderIdPair iopp : blockedSignals) {
-			System.out.println(iopp.getInstrument() + " " + iopp.getSignal());
-
-		}
+		
 	}
 
 	private void aktualisiereBlockedSignals() {
@@ -283,7 +279,7 @@ public class Verwaltung extends StopableThread {
 		aktualisiereBlockedSignals();
 		boolean output = blockedSignalContainsSignal(instrument, signal);
 
-		System.out.println("Instrument: " + instrument + "Signal: " + signal + "Ergebnis: " + output);
+		//System.out.println("Instrument: " + instrument + " Signal: " + signal + "Ergebnis: " + output);
 		return output;
 
 	}
