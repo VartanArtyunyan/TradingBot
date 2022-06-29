@@ -38,14 +38,21 @@ while(True):
 
     #List_Storage.filterSpeechAndReport()   kann jetzt weggelassen werden, da filter in Schleife aktiv und auch speach/report jetzt upcoming kommen
 
+    for i in range(3):                  #beseitigt den Bug, dass nicht alle ausgefilter werden beim ersten Durchlauf
+        List_Storage.filterOldEvents()
+
+
+
     while (bool(List_Storage.list_news)):
         List_Storage.filterOldEvents()
+<<<<<<< HEAD
 
         time.sleep(5)
         #Event.wait()
 
+=======
+>>>>>>> f2ba491c798e14e9758399b4b15ce0c03727a99c
         List_Storage.EventLoop()
-        time.sleep(5)
         List_Storage.upcoming_events()
 
 
