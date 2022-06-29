@@ -353,6 +353,7 @@ public class Kpi implements Comparable<Kpi> {
 	
 public double getUnitPrice (KpiCalculator calculator)
 {
+	
 	if(instrument.contains("EUR"))
 		return 1;
 	else 

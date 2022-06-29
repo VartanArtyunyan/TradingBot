@@ -41,7 +41,6 @@ public class Verwaltung extends StopableThread {
 	ArrayList<InstrumentOrderIdPair> blockedSignals;
 
 	double einsatz;
- KpiCalculator calculator;
 	public Verwaltung(ApiConnection connection, ApiConnection randomConnection, String granularity, double einsatz) {
 
 		this.einsatz = einsatz;
@@ -83,7 +82,7 @@ public class Verwaltung extends StopableThread {
 		// addThread(webInterfaceConnection);
 		//addThread(calenderConnection);
 		addThread(signals);
-		addThread(rngTrader);
+		//addThread(rngTrader);
 		addThread(this);
 		startThreads();
 	}
@@ -201,7 +200,7 @@ public class Verwaltung extends StopableThread {
 
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
-		double units = buyingPrice /kpi.getUnitPrice(calculator);
+		double units = buyingPrice /kpi.getUnitPrice(new KpiCalculator(this));
 
 		OrderResponse order = mainConnection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
 
@@ -254,10 +253,7 @@ public class Verwaltung extends StopableThread {
 		if (!blockedSignalContainsSignal(instrument, signal))
 			blockedSignals.add(iop);
 
-		for (InstrumentOrderIdPair iopp : blockedSignals) {
-			System.out.println(iopp.getInstrument() + " " + iopp.getSignal());
-
-		}
+		
 	}
 
 	private void aktualisiereBlockedSignals() {
@@ -283,7 +279,7 @@ public class Verwaltung extends StopableThread {
 		aktualisiereBlockedSignals();
 		boolean output = blockedSignalContainsSignal(instrument, signal);
 
-		System.out.println("Instrument: " + instrument + "Signal: " + signal + "Ergebnis: " + output);
+		//System.out.println("Instrument: " + instrument + " Signal: " + signal + "Ergebnis: " + output);
 		return output;
 
 	}
