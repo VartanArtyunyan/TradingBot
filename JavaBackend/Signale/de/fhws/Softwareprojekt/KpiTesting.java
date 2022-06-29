@@ -15,7 +15,6 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import API.ApiConnection;
 import API.Connection;
-import LogFileWriter.LogFileWriter;
 import positionen.Verwaltung;
 
 //Damit Before-All als nicht statisch deklariert werden kann
@@ -24,10 +23,11 @@ public class KpiTesting {
 	ArrayList<Kpi> currencies = new ArrayList<>();
 	// double [] macd=new double[] {1,1,1,1,1};
 	Connection con = new Connection();
-	ApiConnection connection = new ApiConnection(con);
+//	ApiConnection connection = new ApiConnection(con);
+	Verwaltung verwaltung;
 	Kpi basicKpi;
 	ArrayList<Kpi> basicKpiList = new ArrayList<>();
-	KpiCalculator werte = new KpiCalculator(connection);
+	KpiCalculator werte = new KpiCalculator(verwaltung);
 	JsonInstrumentsRoot instrumentsRoot = werte.getInstruments();
 	ArrayList<String> currenciesString = new ArrayList<String>();
 

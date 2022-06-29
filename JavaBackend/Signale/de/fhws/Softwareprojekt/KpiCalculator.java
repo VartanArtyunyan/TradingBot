@@ -3,7 +3,6 @@ package de.fhws.Softwareprojekt;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import API.ApiConnection;
 import Threads.GetATRThread;
 import Threads.GetBasisKpiThread;
 import Threads.GetMACDThread;
@@ -12,14 +11,15 @@ import Threads.GetParabolicSARThread;
 import Threads.GetRSIThread;
 import Threads.GetSMAThread;
 import Threads.KpiThread;
+import positionen.Verwaltung;
 
 public class KpiCalculator {
 
-	private ApiConnection connection;
+	//private ApiConnection connection;
+private Verwaltung verwaltung;
+	public KpiCalculator(Verwaltung verwaltung) {
 
-	public KpiCalculator(ApiConnection connection) {
-
-		this.connection = connection;
+		this.verwaltung=verwaltung;
 	}
 
 	public Kpi getAll(String instrument, String granularity, int emaperiods, Object... signale) {
@@ -261,7 +261,7 @@ public class KpiCalculator {
 		// String jsonString = getResponse(connection);
 		// JSON in Objekte mappen
 		// ObjectMapper om = new ObjectMapper();
-		JsonCandlesRoot root = connection.getJsonCandlesRoot(4900, instrument, startDate(granularity), null, "M",
+		JsonCandlesRoot root = verwaltung.getJsonCandlesRoot(4900, instrument, startDate(granularity), null, "M",
 				granularity);
 		return root;
 	}
@@ -429,7 +429,7 @@ public class KpiCalculator {
 		// String jsonString = getResponse(connection);
 		// JSON in Objekte mappen
 		// ObjectMapper om = new ObjectMapper();
-		return connection.getJsonInstrumentsRoot();
+		return verwaltung.getJsonInstrumentsRoot();
 		// } catch (Exception e) {
 		// System.out.println(e.getMessage());
 		// }
