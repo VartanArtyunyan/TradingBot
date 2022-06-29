@@ -358,7 +358,7 @@ public double getUnitPrice (KpiCalculator calculator)
 		return 1;
 	else 
 	{
-		String convertedInstrument="EUR_"+instrument.substring(0, 2);
+		String convertedInstrument="EUR_"+instrument.substring(0, 3);
       Kpi kpi=calculator.getAll(convertedInstrument,granularity,periods);
 		return 1/kpi.lastPrice;
 	}

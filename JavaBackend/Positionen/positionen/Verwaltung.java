@@ -80,7 +80,7 @@ public class Verwaltung extends StopableThread {
 
 	public void startTraiding() {
 		// addThread(webInterfaceConnection);
-		//addThread(calenderConnection);
+		addThread(calenderConnection);
 		addThread(signals);
 		//addThread(rngTrader);
 		addThread(this);
@@ -141,7 +141,7 @@ public class Verwaltung extends StopableThread {
 		double kurs = getKurs(calenderOrder.getInstrument());
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * einsatz;
-		double units = buyingPrice / kurs;
+		double units = buyingPrice;
 
 		double volatility = (calenderOrder.getVolatility().equals("Medium")) ? 1 : 2;
 
