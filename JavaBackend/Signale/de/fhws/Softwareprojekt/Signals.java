@@ -69,11 +69,11 @@ public class Signals extends StopableThread {
 			if (signal0 | signal1) {
 				int r = kombiniereMACDEMAPSAR(kpi);
 				if (r != 0) {
-					System.out.println(r);
+					//System.out.println(r);
 					// kpi.longShort = (r == 1) ? true : false; //wird temporär geändert, um Signale
 					// von der Methode zu überprüfen
 					kpi.longShort = (r == 1) ? true : false;
-					ausgabe("alles", kpi, instrument);
+					//ausgabe("alles", kpi, instrument);
 					kpi = kpi.resetKpiElements(kpi, "atr", "sma", "sma50", "rsi");
 					if (signal0)
 						kpi.signalTyp = 1;
@@ -90,10 +90,10 @@ public class Signals extends StopableThread {
 					int s = kombiniereMACD_PSAR(kpi);
 					if (s != 0) {
 						// sperrt ebenfalls signal 0 und 1 & signal 2 soll nur signal 2 sperren
-						System.out.println(s);
+						//System.out.println(s);
 						kpi.signalStrenght = 0.5;
 						kpi.longShort = (s == 1) ? true : false;
-						ausgabe("alles", kpi, instrument);
+						//ausgabe("alles", kpi, instrument);
 						kpi.signalTyp = 1;
 						kpi = kpi.resetKpiElements(kpi, "atr", "sma", "sma50", "rsi", "ema");
 						verwaltung.pushSignal(kpi);
@@ -107,11 +107,11 @@ public class Signals extends StopableThread {
 				kpi.useATRAsSLTP = true;
 				
 				if (t != 0) {
-					System.out.println(t);
+					//System.out.println(t);
 					kpi.signalStrenght = 0.5;
 					kpi.longShort = (t == 1) ? true : false;
 					// kpi.longShort = (t == 1) ? false : true;
-					ausgabe("alles", kpi, instrument);
+				//	ausgabe("alles", kpi, instrument);
 					kpi = kpi.resetKpiElements(kpi, "sma", "sma50", "rsi", "macd", "macdTriggert");
 					kpi.signalTyp = 2;
 					verwaltung.pushSignal(kpi);
@@ -121,11 +121,11 @@ public class Signals extends StopableThread {
 			if (signal3) {
 				int u = kombiniereMACDSMA(kpi);
 				if (u != 0) {
-					System.out.println(u);
+					//System.out.println(u);
 					kpi.signalStrenght = 0.5;
 					kpi.longShort = (u == 1) ? true : false;
 					// kpi.longShort = (u == 1) ? false : true;
-					ausgabe("alles", kpi, instrument);
+					//ausgabe("alles", kpi, instrument);
 					kpi = kpi.resetKpiElements(kpi, "rsi", "atr", "parabolicSAR", "ema");
 					kpi.signalTyp = 3;
 					verwaltung.pushSignal(kpi);
@@ -196,11 +196,11 @@ public class Signals extends StopableThread {
 
 	public static void ausgabe(String emaName, Kpi kpi, JsonInstrumentsInstrument instrument) {
 
-		System.out.println(kpi.instrument + " " + instrument.displayName + " " + instrument.type + " " + emaName + ":  "
+		 System.out.println(kpi.instrument + " " + instrument.displayName + " " + instrument.type + " " + emaName + ":  "
 				+ kpi.ema + " MCAD: " + kpi.macd + " MACDTriggert: " + kpi.macdTriggert + " ParaboliocSAR: "
 				+ kpi.parabolicSAR + " RSI: " + kpi.rsi + " ATR: " + kpi.atr /* + " Supertrend: " + kpi.superTrend */
 				+ " SMA: " + kpi.sma + " (" + kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: "
-				+ kpi.avg + "  " + kpi.firstTime + " - " + kpi.lastTime + ")");
+				+ kpi.avg + "  " + kpi.firstTime + " - " + kpi.lastTime + ")"); 
 	}
 
 	public static int kombiniereMACDSMA(Kpi kpi) {
@@ -600,7 +600,7 @@ public class Signals extends StopableThread {
 			double trigger = werte.macdsTriggert.get(werte.macdsTriggert.size() - i);
 
 			double macdVerhaeltnis = macd - trigger;
-			System.out.println(i + ". Durchlauf: Verhältnis " + macdVerhaeltnis);
+			//System.out.println(i + ". Durchlauf: Verhältnis " + macdVerhaeltnis);
 			// System.out.println(MACDAktuell);
 			// Wie ist das aktuelle Verhältnis?:
 			if (i == 1) {

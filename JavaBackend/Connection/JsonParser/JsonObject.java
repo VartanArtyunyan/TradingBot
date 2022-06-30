@@ -24,6 +24,8 @@ public class JsonObject {
 	 public JsonObject(String Json) {
 		
 		content = new HashMap<>();
+		
+		if(Json == null) return;
 		//System.out.println("vor umwandlung zu CharArray");
 		final char[] cArray = Json.toCharArray();
 		//System.out.println("nach umwandlung zu CharArray");
