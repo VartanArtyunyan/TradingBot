@@ -91,6 +91,15 @@ public class ApiConnection {
 		return jsonParser.makeOrderResponseFromJson(responseJson);
 
 	}
+	
+	public OrderResponse placeOrder(String instrument, double units) {
+
+		String orderJson = jsonParser.makeOrederRequestJson(instrument, units); //
+
+		String responseJson = connection.placeOrder(orderJson);
+		
+		return jsonParser.makeOrderResponseFromJson(responseJson);
+	}
 
 	public void placeLimitOrder(String instrument, String cancleTime, double units, double limit, double takeProfit,
 			double stopLoss) {
@@ -105,15 +114,10 @@ public class ApiConnection {
 	}
 
 	private OrderResponse makeFailedOrderResponse() {
-		return new OrderResponse(false, "-1");
+		return new OrderResponse(false, false, "-1");
 	}
 
-	public void placeOrder(String instrument, double units) {
-
-		String orderJson = jsonParser.makeOrederRequestJson(instrument, units); //
-
-		connection.placeOrder(orderJson);
-	}
+	
 
 	public double getBalance() {
 

@@ -21,87 +21,104 @@ public class CalenderConnection extends SocketConnection {
 
 	Verwaltung verwaltung;
 	String instrumente;
+	String input;
 
 	public CalenderConnection(Verwaltung verwaltung, int port) {
-		super(port,"Warte auf Client für Event basiertes Trading", "Client für eventbasiertes Trading hat sich verbunden");
+		super(port, "Warte auf Client für Event basiertes Trading",
+				"Client für eventbasiertes Trading hat sich verbunden");
 		this.verwaltung = verwaltung;
 		instrumente = makeInstrumentJson(verwaltung.getJsonInstrumentsRoot());
-		
+
 	}
 
 	@Override
 	public void onStart() {
-		try {
-			ss = new ServerSocket(port);
-			System.out.println("warte auf Client");
-			connection = ss.accept();
-			System.out.println("Ein Client hat sich verbunden");
-			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-			
-			//System.out.println(instrumente);
-			bw.write(instrumente);
-			bw.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		System.out.println("waiting for NewsTrader to Connect ...");
+		connectToNewsTrader();
 
 	}
 
 	@Override
 	public void onTick() {
 		try {
-			String s = null;
-			if(!connection.isInputShutdown()) {
-			if(br != null) s = br.readLine();
-			//if (s != null) System.out.println(s);
-			if (s != null) push(s);
+			if (br != null)
+				input = br.readLine();
+			if (connection.isConnected() && input != null) {
+
+				if (input != null)
+					push(input);
+			} else {
+				System.out.println("Lost connection to NewsTrader, waiting for reconnect ...");
+				connectToNewsTrader();
 			}
 			// verwaltung.pushOrder(makeOrder(s));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
+	}
+
+	private void connectToNewsTrader() {
+		try {
+			ss = new ServerSocket(port);
+			connection = ss.accept();
+			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+			bw.write(instrumente);
+			bw.flush();
+			System.out.println("NewsTrader connected at port: " + port);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	private void push(String input) {
-		
-		
+	private String convertMessageToJson(String input) {
 		String[] sArray = input.split(" ");
-		
+
 		String json = "";
-		
-		for(int i = 0; i < sArray.length; i++) {
+
+		for (int i = 0; i < sArray.length; i++) {
 			json += sArray[i];
 		}
-		
+
 		char[] jsonCharArray = json.toCharArray();
-		
-		for(int i = 0; i < jsonCharArray.length; i++) {
-			if(jsonCharArray[i] == '\'') jsonCharArray[i] = '\"';
-			if(jsonCharArray[i] == '/') jsonCharArray[i] = '_';
+
+		for (int i = 0; i < jsonCharArray.length; i++) {
+			if (jsonCharArray[i] == '\'')
+				jsonCharArray[i] = '\"';
+			if (jsonCharArray[i] == '/')
+				jsonCharArray[i] = '_';
 		}
 		
-		json = new String(jsonCharArray);
-		//System.out.println(json);
+		return new String(jsonCharArray);
+	}
+
+	private void push(String input) {
+
+		
+
+		String json = convertMessageToJson(input);
+		// System.out.println(json);
+
+		//System.out.println("Recived Message from NewsTrader: " + json);
 		JsonObject order = new JsonObject(json);
-		
-		//System.out.println("Orderjson:" + order);
-		
-		if(order.contains("order")) {
+
+		// System.out.println("Orderjson:" + order);
+
+		if (order.contains("order")) {
 			verwaltung.pushCalenderOrder(makeOrder(order));
+
 		}
-		if(order.contains("upcomingEvent")) {
+		if (order.contains("upcoming")) {
 			verwaltung.pushUpcommingEvent(makeUpcomingEven(order));
+
 		}
 	}
 
 	private CalenderOrder makeOrder(JsonObject orderJson) {
-		
+
 		JsonObject order = orderJson.getObject("order");
-		
 
 		String instrument = order.getValue("instrument");
 		double faktor = Double.parseDouble(order.getValue("factor"));
@@ -110,18 +127,17 @@ public class CalenderConnection extends SocketConnection {
 
 		return new CalenderOrder(instrument, faktor, volatility, longShort);
 	}
-	
+
 	private UpcomingEvent makeUpcomingEven(JsonObject orderJson) {
-		
-		JsonObject order = orderJson.getObject("upcomingEvent");
-		
+
+		JsonObject order = orderJson.getObject("upcoming");
+
 		String instrument = order.getValue("instrument");
 		String time = order.getValue("time");
-		int volatility = Integer.parseInt(order.getValue("volatility"));
-		
-		
+		String volatility = order.getValue("volatility");
+
 		return new UpcomingEvent(instrument, time, volatility);
-		
+
 	}
 
 	public String makeInstrumentJson(JsonInstrumentsRoot jir) {

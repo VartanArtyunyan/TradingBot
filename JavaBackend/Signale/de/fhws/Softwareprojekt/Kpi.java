@@ -196,9 +196,7 @@ public class Kpi implements Comparable<Kpi> {
 		return lastPrice;
 	}
 
-	public double getKaufpreis() {
-		return 0.0; // müsste eigentlich 0,02*kontostand zurückgeben
-	}
+	
 
 	public double runden(double wert, int n) {
 		return ((Math.round(wert * Math.pow(10, n)) / Math.pow(10, n)));
