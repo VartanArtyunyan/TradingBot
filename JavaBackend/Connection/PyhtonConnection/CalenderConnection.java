@@ -50,6 +50,8 @@ public class CalenderConnection extends SocketConnection {
 					push(input);
 			} else {
 				System.out.println("Lost connection to NewsTrader, waiting for reconnect ...");
+				connection.close();
+				ss.close();
 				connectToNewsTrader();
 			}
 			// verwaltung.pushOrder(makeOrder(s));

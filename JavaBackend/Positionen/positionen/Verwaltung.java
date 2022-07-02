@@ -57,17 +57,17 @@ public class Verwaltung extends StopableThread {
 		rngTrader = new randomTrader(this);
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
-		setTimer(1800000);
+		//setTimer(1800000);
 	}
 
 	@Override
 	public void onTick() {
 
 	}
-	
+
 	@Override
 	public void onTimer() {
-		takeProfit();
+		//takeProfit();
 	}
 
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
@@ -108,14 +108,14 @@ public class Verwaltung extends StopableThread {
 	public void addThread(StopableThread st) {
 		threads.add(st);
 	}
-	
+
 	private void takeProfit() {
 		aktualisierePosition();
-		
-		for(trade t : trades) {
+
+		for (trade t : trades) {
 			double unrealizedPL = Double.parseDouble(t.unrealizedPL);
-			if(unrealizedPL > 1.0) {
-				closeWholePosition(t.getInstrument());                                         
+			if (unrealizedPL > 1.0) {
+				closeWholePosition(t.getInstrument());
 			}
 		}
 	}
@@ -127,7 +127,7 @@ public class Verwaltung extends StopableThread {
 	}
 
 	public void pushUpcommingEvent(UpcomingEvent upcomingEvent) {
-
+		if(containsPosition(upcomingEvent.getInstrument())) return;
 		if (!eneoughBalance()) {
 			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
@@ -138,8 +138,8 @@ public class Verwaltung extends StopableThread {
 		double upperLimit = kurs * 1.0015;
 		double lowerLimit = kurs * 0.9985;
 
-		double tsUpperLimt = kurs * 1.0045;
-		double tsLowerLimit = kurs * 0.9955;
+		double tsUpperLimt = kurs * 1.00045;
+		double tsLowerLimit = kurs * 0.99955;
 
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * einsatz;
@@ -155,7 +155,7 @@ public class Verwaltung extends StopableThread {
 	}
 
 	public void pushCalenderOrder(CalenderOrder calenderOrder) {
-
+		if(containsPosition(calenderOrder.getInstrument())) return;
 		// {order:{instument:"EUR_UID",factor:2.3,volatility:2,longShort:true}}
 
 		double kurs = getKurs(calenderOrder.getInstrument());
@@ -167,7 +167,7 @@ public class Verwaltung extends StopableThread {
 
 		units = units * calenderOrder.getFaktor() * volatility;
 
-		double tsAbweichung = 0.001 * volatility;
+		double tsAbweichung = 0.0005 * volatility;
 
 		double takeProfit = 1.0;
 		double stopLoss = 1.0;
@@ -306,18 +306,18 @@ public class Verwaltung extends StopableThread {
 	private void aktualisiereBlockedSignals() {
 		ArrayList<Integer> ids = getTradeIDs();
 
-		ArrayList<Integer> idsToRemove = new ArrayList<>();
+		ArrayList<InstrumentOrderIdPair> iopsToRemove = new ArrayList<>();
 
 		for (InstrumentOrderIdPair iopp : blockedSignals) {
 
 			if (!ids.contains(Integer.parseInt(iopp.getId()))) {
-				idsToRemove.add(blockedSignals.indexOf(iopp));
+				iopsToRemove.add(iopp);
 			}
 
 		}
 
-		for (Integer i : idsToRemove) {
-			blockedSignals.remove(i);
+		for (InstrumentOrderIdPair iopp : iopsToRemove) {
+			blockedSignals.remove(iopp);
 		}
 
 	}

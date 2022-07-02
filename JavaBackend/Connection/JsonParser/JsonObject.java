@@ -90,8 +90,9 @@ public class JsonObject {
 		
 		String lastVar = varCache.toString();
 		//System.out.println(lastVar);
-		//int cutoff = lastVar.length() -1;
-		lastVar = lastVar.substring(0, lastVar.length() - 1);
+		int cutoff = lastVar.length() -1;
+		if(cutoff < 0) cutoff = 0;
+		lastVar = lastVar.substring(0, cutoff);
 		content.put(nameCache.toString(), lastVar);
 		
 		
