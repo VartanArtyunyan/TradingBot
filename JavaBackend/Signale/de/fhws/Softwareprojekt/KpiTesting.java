@@ -23,8 +23,8 @@ public class KpiTesting {
 	ArrayList<Kpi> currencies = new ArrayList<>();
 	// double [] macd=new double[] {1,1,1,1,1};
 	Connection con = new Connection();
-//	ApiConnection connection = new ApiConnection(con);
-	Verwaltung verwaltung;
+	ApiConnection connection = new ApiConnection(con);
+	Verwaltung verwaltung=new Verwaltung(connection, connection, "M15", 2000);
 	Kpi basicKpi;
 	ArrayList<Kpi> basicKpiList = new ArrayList<>();
 	KpiCalculator werte = new KpiCalculator(verwaltung);
