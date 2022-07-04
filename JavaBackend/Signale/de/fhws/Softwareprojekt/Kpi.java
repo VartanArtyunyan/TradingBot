@@ -73,6 +73,8 @@ public class Kpi implements Comparable<Kpi> {
 	// Rsi
 	double rsi = 0;
 	ArrayList<Double> rsiListe = new ArrayList<>();
+
+	
 	// Wenn zwei unterschiedliche Perioden eines Indikators verglichen werden
 	// sollen.Wird die kpi ab dem 2 Vorkommen des Indikators ergänzt
 	ArrayList<Kpi> KpiList = new ArrayList<>();
@@ -364,6 +366,7 @@ public double getUnitPrice (KpiCalculator calculator)
 	}
 	
 }
+
 	@Override
 	public int compareTo(Kpi wert2) {
 		// Beide long Positionen
