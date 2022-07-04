@@ -47,10 +47,11 @@ public class Main {
 					+ "eventBased = (true/false){true aktiviert das eventbasierte Trading\r\n"
 					+ "random = (true/false){true aktiviert das Random-Trading(für das Random-Trading muss ein extra Account angegeben werden)}\r\n"
 					+ "randomAccountToken = {token für den account der für das Random-Trading genutzt werden soll (nur relevant wenn random = true)}");
+			System.out.println("\n\nDrücke Enter um das Programm zu beenden...");
+			try{System.in.read();}
+			catch(Exception e){}
 
 		}
-		System.out.println("\n\nDrücke Enter um das Programm zu beenden...");
-		try{System.in.read();}
-		catch(Exception e){}
+		
 	}
 }

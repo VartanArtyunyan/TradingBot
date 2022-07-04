@@ -242,14 +242,16 @@ public class JsonParser {
 	}
 
 	public OrderResponse makeOrderResponseFromJson(String input) {
+		OrderResponse output;
 		JsonObject responseObject = new JsonObject(input);
 		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction");
 		boolean wasReduced = false;
 		String id = null;
+		String reason = "";
 		if (!responseObject.contains("orderFillTransaction"))
 			wasSuccessfull = false;
 
-		//System.out.println(input);
+		// System.out.println(input);
 		if (wasSuccessfull) {
 
 			JsonObject orderFillTransaction = responseObject.getObject("orderFillTransaction");
@@ -261,12 +263,23 @@ public class JsonParser {
 				JsonObject tradeReduced = orderFillTransaction.getObject("tradeReduced");
 				id = tradeReduced.getValue("tradeID");
 				wasReduced = true;
-			} else
+			} else {
 				wasSuccessfull = false;
+				reason = "There was ne Reason given, neither does it spesificly state in the Json that the order was cancled, but there also isnt a orderID in the Json, therefore I asume that the order was cancled";
+			}
 
+			output = new OrderResponse(wasSuccessfull, wasReduced, id);
+			output.setReasonForRejection(reason);
+			return output;
+		} else {
+			JsonObject orderCancel = new JsonObject("orderCancelTransaction");
+			reason = orderCancel.getValue("reason");
+			System.out.println("Reason(im JsonParser: " + reason);
+			output = new OrderResponse(wasSuccessfull, wasReduced, id);
+			output.setReasonForRejection(reason);
+			return output;
 		}
 
-		return new OrderResponse(wasSuccessfull,wasReduced, id);
 	}
 
 }

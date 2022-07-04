@@ -27,7 +27,7 @@ public class EmaListe {
 		
 		Connection con = new Connection();
 		ApiConnection connection = new ApiConnection(con);
-		
+		Verwaltung verwaltung = new Verwaltung(connection, connection, "M30", 0.01);
 		/*
 		System.out.println("Instrumentliste - Suchbegriff:");
 		String filter;
@@ -38,7 +38,7 @@ public class EmaListe {
 		}
 		;*/
 		
-		KpiCalculator e = new KpiCalculator(connection);
+		KpiCalculator e = new KpiCalculator(verwaltung);
 		Kpi kpi = e.getAll("EUR_USD", "M15", 200, "sma", 20, "sma", 50, "atr", 14, "parabolicSAR", 0.02, 0.02,
 				0.2, "macd", 12, 26, 9);
 		//Kpi test2 = e.aufrufAlles("USD_JPY", 200, 14, "M15",0.02, 0.02, 0.2, 12, 26, 9, 2, 2);
