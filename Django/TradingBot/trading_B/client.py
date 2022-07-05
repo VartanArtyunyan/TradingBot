@@ -11,13 +11,11 @@ def recv_msg():
             sys.exit(0)
         recv_msg = recv_msg.decode()
         print(recv_msg)
-        f = open("../jsonData/basedata.json", "w")
+        f = open("../jsonData/basedata.json", "a")
         f.write(recv_msg)
 
 
-
 # Main
-
 host = 'localhost'
 port = 12001
 
