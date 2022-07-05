@@ -1,9 +1,14 @@
 
 import socket
-import json
+import threading
 import sys
+<<<<<<< HEAD:Django/TradingBot/trading_B/client.py
 import os
+=======
 
+
+# Get Message
+>>>>>>> 80316a51da5074e78d880951e99383788f81f63f:Django/TradingBot/Socket_Data/client.py
 
 def recv_msg():
     while True:
@@ -14,6 +19,7 @@ def recv_msg():
         print(recv_msg)
         f = open("../jsonData/basedata.json", "w")
         f.write(recv_msg)
+
 
 
 # Main

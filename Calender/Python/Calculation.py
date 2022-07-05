@@ -10,12 +10,6 @@ longShort = True    #true bei long, false bei short
 POP_TRADING_PAIRS = ["EUR/USD", "USD/JPY", "GBP/USD", "AUD/USD", "USD/CAD", "USD/CNY", "USD/CHF", "USD/HKD", "EUR/GBP", "USD/KRW"]
 
 
-def longShort_by_name(event):
-    #Negatives Vorher-Nachher wirkt sich negativ auf Kurs aus -> Kurs 
-    negativ_delta_names = ["Handelsbilanz"]
-    
-    minor_impact_names = ["Importe", "Exporte"]
-
 
 @staticmethod
 def DateStringToObject(word):
@@ -25,8 +19,13 @@ def DateStringToObject(word):
 
 @staticmethod
 def breakTimer(EventTime):
-    return EventTime - datetime.datetime.now()
+    return EventTime - datetime.datetime.utcnow()
 
+def longShort_by_name(event):
+    #Negatives Vorher-Nachher wirkt sich negativ auf Kurs aus -> Kurs 
+    negativ_delta_names = ["Handelsbilanz"]
+    
+    minor_impact_names = ["Importe", "Exporte"]
 
 def calculate_delta_actual_prev(event):
     actual = float(event["actual"])
@@ -79,16 +78,15 @@ def calculate(event):
 
     #return trading_factor
 
-    if (isBetterThanExpected is not None) and (consensus is not None):
+    """  if (isBetterThanExpected is not None) and (consensus is not None):
         delta_actual_consensus = actual - consensus
 
         #bte true?  actual > consensus? -> longShort = True
         #bte true?  actual < consensus? -> longShort = True
 
     else:
-        delta_actprev_percent
+        delta_actprev_percent """
 
-    factor_string = "factor:" + str(endfactor)
+    #factor_string = "factor:" + str(endfactor)
 
-    return  factor_string
-
+    return  endfactor

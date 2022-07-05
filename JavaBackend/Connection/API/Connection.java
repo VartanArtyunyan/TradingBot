@@ -4,22 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import AccountMng.Account;
 import JsonParser.JsonObject;
 
 public class Connection {
 
 	private static String standartToken = "f65f26fa3004b13f58f04794df17cc30-bf43fa11c4789a9146937ce2c36f553e";
 	private static String standartUrlString = "https://api-fxpractice.oanda.com/v3";
-	private static String standartAccId = "101-012-22085247-001";
+	//private static String standartAccId = "101-012-22085247-001";
 
 	//HttpURLConnection connection;
 	//URL url;
@@ -30,12 +25,19 @@ public class Connection {
 	public Connection() {
 		urlPrefix = standartUrlString;
 		token = standartToken;
-		accId = standartAccId;
+		setAccountID();
 	}
 
 	public Connection(String token) {
 		this.token = token;
 		urlPrefix = standartUrlString;
+		setAccountID();
+	}
+	
+	private void setAccountID()	{
+		JsonObject accounts = new JsonObject(GET(urlPrefix + "/accounts"));
+		accounts = new JsonObject(accounts.getArray("accounts").get(0));
+		accId = accounts.getValue("id");
 	}
 
 	public String getAccountIDs() {
@@ -100,6 +102,7 @@ public class Connection {
 	
 		 return POST((urlPrefix + "/accounts/" + accId + "/orders"), requestJson);
 	}
+	
 
 	private HttpURLConnection makeConnection(String urlString, String requestMethod) throws IOException {
 		

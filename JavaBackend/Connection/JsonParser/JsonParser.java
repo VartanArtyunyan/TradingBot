@@ -36,14 +36,13 @@ public class JsonParser {
 		output.openObject("order");
 		output.addValue("type", "MARKET");
 		output.addValue("instrument", instrument);
-
 		output.addValue("units", Double.toString(round(units, 0)));
-		// output.addString("price", Double.toString(price));
+
 		output.openObject("takeProfitOnFill");
-		output.addValue("price", Double.toString(round(takeProfit,3)));
+		output.addValue("price", Double.toString(round(takeProfit, 3)));
 		output.closeObject();
 		output.openObject("stopLossOnFill");
-		output.addValue("price", Double.toString(round(stopLoss,3)));
+		output.addValue("price", Double.toString(round(stopLoss, 3)));
 		output.closeObject();
 		output.closeObject();
 
@@ -59,6 +58,29 @@ public class JsonParser {
 		output.addValue("units", Double.toString(round(units, 0)));
 		// output.addString("price", Double.toString(price));
 
+		output.closeObject();
+
+		return output.build();
+	}
+
+	public String makeLimitOrderRequestJson(String instrument, String cancleTime, double units, double limit,
+			double takeProfit, double stopLoss) {
+		JsonBuilder output = new JsonBuilder();
+
+		output.openObject("order");
+		output.addValue("type", "LIMIT");
+		output.addValue("instrument", instrument);
+
+		output.addValue("units", Double.toString(round(units, 0)));
+		output.addValue("price", Double.toString(round(limit, 3)));
+		output.addValue("gtdTime", cancleTime);
+
+		output.openObject("takeProfitOnFill");
+		output.addValue("price", Double.toString(round(takeProfit, 3)));
+		output.closeObject();
+		output.openObject("stopLossOnFill");
+		output.addValue("price", Double.toString(round(stopLoss, 3)));
+		output.closeObject();
 		output.closeObject();
 
 		return output.build();
@@ -175,59 +197,89 @@ public class JsonParser {
 
 			JsonInstrumentsInstrument jii = new JsonInstrumentsInstrument();
 
-			jii.displayName = instrument.getValue("displayName");
-			jii.displayPrecision = Integer.parseInt(instrument.getValue("displayPrecision"));
-			jii.marginRate = instrument.getValue("marginRate");
-			jii.maximumOrderUnits = instrument.getValue("maximumOrderUnits");
-			jii.maximumPositionSize = instrument.getValue("maximumPositionSize");
-			jii.maximumTrailingStopDistance = instrument.getValue("maximumTrailingStopDistance");
-			jii.minimumTradeSize = instrument.getValue("minimumTradeSize");
-			jii.minimumTrailingStopDistance = instrument.getValue("minimumTrailingStopDistance");
-			jii.name = instrument.getValue("name");
-			jii.pipLocation = Integer.parseInt(instrument.getValue("pipLocation"));
-			jii.tradeUnitsPrecision = Integer.parseInt(instrument.getValue("tradeUnitsPrecision"));
-			jii.type = instrument.getValue("type");
+			if (!instrument.getValue("displayName").contains("TRY")) {
 
-			output.instruments.add(jii);
+				jii.displayName = instrument.getValue("displayName");
+				jii.displayPrecision = Integer.parseInt(instrument.getValue("displayPrecision"));
+				jii.marginRate = instrument.getValue("marginRate");
+				jii.maximumOrderUnits = instrument.getValue("maximumOrderUnits");
+				jii.maximumPositionSize = instrument.getValue("maximumPositionSize");
+				jii.maximumTrailingStopDistance = instrument.getValue("maximumTrailingStopDistance");
+				jii.minimumTradeSize = instrument.getValue("minimumTradeSize");
+				jii.minimumTrailingStopDistance = instrument.getValue("minimumTrailingStopDistance");
+				jii.name = instrument.getValue("name");
+				jii.pipLocation = Integer.parseInt(instrument.getValue("pipLocation"));
+				jii.tradeUnitsPrecision = Integer.parseInt(instrument.getValue("tradeUnitsPrecision"));
+				jii.type = instrument.getValue("type");
 
+				output.instruments.add(jii);
+			}
 		}
 
 		return output;
 	}
-	
+
 	public trade convertAPIStringToTrade(String json) {
-		
+
 		JsonObject jo = new JsonObject(json);
-		
-		if(jo.contains("trade")) jo = jo.getObject("trade");
-		
+
+		if (jo.contains("trade"))
+			jo = jo.getObject("trade");
+
 		int id = Integer.parseInt(jo.getValue("id"));
 		String instrument = jo.getValue("instrument");
 		double price = Double.parseDouble(jo.getValue("price"));
 		String openTime = jo.getValue("openTime");
-		int initialUnits = 0;//Integer.parseInt(jo.getValue("initialUnits"));
+		int initialUnits = 0;// Integer.parseInt(jo.getValue("initialUnits"));
 		String initialMarginRequired = jo.getValue("initialMarginRequired");
-		int currentunits = 0;//Integer.parseInt(jo.getValue("currentUnits"));
+		int currentunits = 0;// Integer.parseInt(jo.getValue("currentUnits"));
 		String realizedPL = jo.getValue("realizedPL");
 		String unrealizedPL = jo.getValue("unrealizedPL");
 		String marginUsed = jo.getValue("marginUsed");
-					
-		return new trade(id, instrument, price, openTime, initialUnits, initialMarginRequired, currentunits,
-				realizedPL, unrealizedPL, marginUsed);
+
+		return new trade(id, instrument, price, openTime, initialUnits, initialMarginRequired, currentunits, realizedPL,
+				unrealizedPL, marginUsed);
 	}
-	
-	
 
 	public OrderResponse makeOrderResponseFromJson(String input) {
+		OrderResponse output;
 		JsonObject responseObject = new JsonObject(input);
 		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction");
-		JsonObject orderFillTransaction = responseObject.getObject("orderFillTransaction");
-		JsonObject tradeOpened = orderFillTransaction.getObject("tradeOpened");
-		String id = tradeOpened.getValue("tradeID");
+		boolean wasReduced = false;
+		String id = null;
+		String reason = "";
+		if (!responseObject.contains("orderFillTransaction"))
+			wasSuccessfull = false;
 
-		return new OrderResponse(wasSuccessfull, id);
+		// System.out.println(input);
+		if (wasSuccessfull) {
+
+			JsonObject orderFillTransaction = responseObject.getObject("orderFillTransaction");
+
+			if (orderFillTransaction.contains("tradeOpened")) {
+				JsonObject tradeOpened = orderFillTransaction.getObject("tradeOpened");
+				id = tradeOpened.getValue("tradeID");
+			} else if (orderFillTransaction.contains("tradeReduced")) {
+				JsonObject tradeReduced = orderFillTransaction.getObject("tradeReduced");
+				id = tradeReduced.getValue("tradeID");
+				wasReduced = true;
+			} else {
+				wasSuccessfull = false;
+				reason = "There was ne Reason given, neither does it spesificly state in the Json that the order was cancled, but there also isnt a orderID in the Json, therefore I asume that the order was cancled";
+			}
+
+			output = new OrderResponse(wasSuccessfull, wasReduced, id);
+			output.setReasonForRejection(reason);
+			return output;
+		} else {
+			JsonObject orderCancel = new JsonObject("orderCancelTransaction");
+			reason = orderCancel.getValue("reason");
+			System.out.println("Reason(im JsonParser: " + reason);
+			output = new OrderResponse(wasSuccessfull, wasReduced, id);
+			output.setReasonForRejection(reason);
+			return output;
+		}
+
 	}
-
-
 
 }

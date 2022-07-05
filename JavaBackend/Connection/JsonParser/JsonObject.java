@@ -24,6 +24,8 @@ public class JsonObject {
 	 public JsonObject(String Json) {
 		
 		content = new HashMap<>();
+		
+		if(Json == null) return;
 		//System.out.println("vor umwandlung zu CharArray");
 		final char[] cArray = Json.toCharArray();
 		//System.out.println("nach umwandlung zu CharArray");
@@ -42,7 +44,7 @@ public class JsonObject {
 	
 		
 		//System.out.println("vor schleife");
-		for (int i = 2; i < cArray.length - 1; i++) {
+		for (int i = 2; i < cArray.length; i++) {
 
 				switch (state) {
 
@@ -85,11 +87,14 @@ public class JsonObject {
 				}
 
 		}
-		//System.out.println("nach schleife");
-		String lastVar = varCache.toString();
 		
-		lastVar = lastVar.substring(0, lastVar.length() - 1);
+		String lastVar = varCache.toString();
+		//System.out.println(lastVar);
+		int cutoff = lastVar.length() -1;
+		if(cutoff < 0) cutoff = 0;
+		lastVar = lastVar.substring(0, cutoff);
 		content.put(nameCache.toString(), lastVar);
+		
 		
 		
 		//System.out.println(contents.size());

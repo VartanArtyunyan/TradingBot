@@ -8,16 +8,18 @@ import de.fhws.Softwareprojekt.Kpi;
 public class WebInterfaceConnection extends SocketConnection{
 	
 	
-
+	
 	public WebInterfaceConnection(int port) {
-		super(port);
+		super(port, "Warte auf WebInterface", "WebInterface hat sich verbunden");
 		// TODO Auto-generated constructor stub
 	}
 	
 	private void sendMessage(String message) throws IOException {
+		if(bw != null && !connection.isOutputShutdown()) {
 		bw.write(message);
 		bw.newLine();
 		bw.flush();
+		}
 	}
 	
 	public void pushSignal(int orderID, double buyingPrice, Kpi kpi) {
@@ -31,14 +33,14 @@ public class WebInterfaceConnection extends SocketConnection{
 		message.addValue("buyingPrice", buyingPrice);
 		message.addValue("lastPrice", kpi.getLastPrice());
 		message.addValue("takeProfit", kpi.getTakeProfit());
-		message.addValue("stopLoss", kpi.getShortStopLoss());
+		message.addValue("stopLoss", kpi.getStopLoss());
 		message.addValue("macd", kpi.getMacd());
 		message.addValue("macdTriggered", kpi.getMacdTriggert());
-		message.addValue("parabolicSAR", kpi.getParabolicSAR());
-		message.addValue("ema", kpi.getEma());
-		message.addValue("sma", 0);
-		message.addValue("atr", 0);
-		message.addValue("rsi", 0);
+		message.addValue("parabolicSAR14", kpi.getParabolicSAR());
+		message.addValue("ema200", kpi.getEma());
+		message.addValue("sma20", kpi.getSma());
+		message.addValue("sma50", kpi.getSma2());
+		message.addValue("atr14", kpi.getAtr());
 		message.closeObject();
 		
 		boolean repeat = true;

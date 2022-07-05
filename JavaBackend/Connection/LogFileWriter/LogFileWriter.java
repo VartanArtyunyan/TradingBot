@@ -32,7 +32,6 @@ public class LogFileWriter extends StopableThread implements Closeable {
 
 	ArrayList<Integer> loggedOpenTradeIDs;
 
-	LogFile file;
 
 	public LogFileWriter(Verwaltung verwaltung, WebInterfaceConnection webInterfaceConnection) {
 		this.verwaltung = verwaltung;
