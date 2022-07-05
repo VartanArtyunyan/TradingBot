@@ -1,7 +1,14 @@
+from calendar import c
 from django.db import models
 import uuid
 
 # Create your models here.
+
+
+class sd(models.Model):
+    instrument = models.CharField(max_length=10)
+    lastTime = models.CharField(max_length=25)
+    buyingPrice = models.FloatField()
 
 
 class Signal(models.Model):
@@ -20,7 +27,7 @@ class Signal(models.Model):
     atr = models.FloatField()
     rsi = models.FloatField()
 
-    def __str__(self):
+    def __getitem__(self):
         return self.id
 
     class Meta:

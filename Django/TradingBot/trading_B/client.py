@@ -1,10 +1,8 @@
+
 import socket
 import json
 import sys
-
-from trading_B.models import Signal
-
-# Get Message
+import os
 
 
 def recv_msg():
@@ -13,8 +11,9 @@ def recv_msg():
         if not recv_msg:
             sys.exit(0)
         recv_msg = recv_msg.decode()
-
         print(recv_msg)
+        f = open("../jsonData/basedata.json", "w")
+        f.write(recv_msg)
 
 
 # Main
