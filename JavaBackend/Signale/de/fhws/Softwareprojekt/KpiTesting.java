@@ -21,7 +21,6 @@ import positionen.Verwaltung;
 @TestInstance(Lifecycle.PER_CLASS)
 public class KpiTesting {
 	ArrayList<Kpi> currencies = new ArrayList<>();
-	// double [] macd=new double[] {1,1,1,1,1};
 	Connection con = new Connection();
 	ApiConnection connection = new ApiConnection(con);
 	Verwaltung verwaltung=new Verwaltung(connection, connection, "M15", 2000);
@@ -30,14 +29,6 @@ public class KpiTesting {
 	KpiCalculator werte = new KpiCalculator(verwaltung);
 	JsonInstrumentsRoot instrumentsRoot = werte.getInstruments();
 	ArrayList<String> currenciesString = new ArrayList<String>();
-
-	// Tom
-	/*
-	 * Kpi production=new Kpi(); Verwaltung verwaltung; LogFileWriter logFileWriter;
-	 * Signals s=new Signals(connection, verwaltung, logFileWriter);
-	 */
-
-//  startMe BeforeAll Methode has to be static
 	@BeforeAll
 	public void beforeAll() {
 
@@ -51,19 +42,7 @@ public class KpiTesting {
 					0.2, "macd", 12, 26, 9, "rsi", 14));
 			basicKpiList.add(werte.getBasisKpi(k, 200, "M15", werte.getCandles(k, "M15")));
 		});
-		// k,"M15",200,"atr",14,"rsi",14,"sma",14,"parabolicSAR",14,0.02, 0.02,
-		// 0.2,"macd",12,26,9,"parabolicSAR",21,0.02, 0.02, 0.2
-		// k,"M15","ema", 200,"sma", 20,"atr",14,"macd",12,26,9,"parabolicSAR",14,0.02,
-		// 0.02, 0.2,"atr",14
-		// currenciesString.parallelStream().sorted().forEach(k->currencies.add(werte.getBasisKpi(k,
-		// 200, "M15",werte.getCandles(k, "M15")))) ;
-		// currenciesString.parallelStream().sorted().forEach(k->basicKpiList.add(werte.getAll(k,
-		// 200, 14, "M15", 0.02, 0.02, 0.2, 12, 26, 9)));
-		// Kpi testKpi = werte.getAll(instrument.name, "M15", 200,
-		// "sma",20,"sma",50,"atr",14,"parabolicSAR",0.02,0.02,0.2,"macd",12,26,9);
 	}
-	
-
 
 	@Test
 	public void rsiTest() {

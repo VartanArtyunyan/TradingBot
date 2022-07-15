@@ -15,8 +15,8 @@ import positionen.Verwaltung;
 
 public class KpiCalculator {
 
-	//private ApiConnection connection;
 private Verwaltung verwaltung;
+
 	public KpiCalculator(Verwaltung verwaltung) {
 
 		this.verwaltung=verwaltung;
@@ -99,8 +99,8 @@ private Verwaltung verwaltung;
 			}
 		}
 		Kpi kpiTemp;
-		//Vereinigung zu einem großen KpiObjekt
-//Wenn ein Indikator zwei mal aufgerufen wurde. Dann wird die Kpi in die KpiList geschrieben.
+//Vereinigung zu einem großen KpiObjekt
+//Wenn ein Indikator zwei mal aufgerufen wurde.Dann wird die Kpi in die KpiList geschrieben.
 
 		boolean p = false;
 		boolean s = false;
@@ -113,8 +113,6 @@ private Verwaltung verwaltung;
 
 			kpiTemp = threads.get(b).getErgebnis();
 			if ((kpiTemp.emas.size() > 0) && (kpiTemp.macd == 0)) {
-				
-
 				kpi.KpiList.add(kpiTemp);
 			}
 
@@ -195,9 +193,6 @@ private Verwaltung verwaltung;
 	}
 
 	public Kpi getBasisKpi(String instrument, int periods, String granularity, JsonCandlesRoot jcr) {
-
-		// HttpURLConnection connection;
-
 		Kpi kpi = getInitialKpi(instrument, periods, granularity, jcr);
 
 		// KPI's ermitteln **************************************
@@ -242,29 +237,6 @@ private Verwaltung verwaltung;
 		return kpi;
 	}
 
-	public Kpi getInitialKpi(String instrument, int periods, String granularity, JsonCandlesRoot jcr) {
-		Kpi kpi = new Kpi(instrument, granularity, periods);
-		kpi.root = jcr;
-		return kpi;
-	}
-
-	public JsonCandlesRoot getCandles(String instrument, String granularity) {
-		// HttpURLConnection connection;
-		// URL url = new URL(oanda + account + "instruments/" + instrument +
-		// "/candles?count=4900&granularity="
-		// + granularity + "&from=" +
-		// startDate(granularity)+"&alignmentTimezone=Europe/Berlin&dailyAlignment=22");
-		// + "&alignmentTimezone=Europe/Berlin"
-		// connection = (HttpURLConnection) url.openConnection();
-		// connection.setRequestProperty("Authorization", token);
-		// Candle-Liste abrufen
-		// String jsonString = getResponse(connection);
-		// JSON in Objekte mappen
-		// ObjectMapper om = new ObjectMapper();
-		JsonCandlesRoot root = verwaltung.getJsonCandlesRoot(4900, instrument, startDate(granularity), null, "M",
-				granularity);
-		return root;
-	}
 
 	public Kpi getParabolicSAR(String instrument, String granularity, int periods, double tempBF, double inkrementBF,
 			double maxBF, JsonCandlesRoot jcr) {
@@ -366,80 +338,10 @@ private Verwaltung verwaltung;
 		return md;
 	}
 
-	private String startDate(String granularity) {
-		LocalDate date = LocalDate.now();
-		int tage = 1;
-		switch (granularity) {
-		case ("D"): {
-			tage = 4900;// Samstags keine Werte--> ca. 1000 Candle
-			break;
-		}
-		case ("H1"): {
-			tage = 200;// ein Monat ca. 500 Candles
-			break;
-		}
-		case ("M15"): {
-			tage = 65;// 30/4
-			break;
-		}
-		case ("M10"): {
-			tage = 43;
-			break;
-		}
-		case ("M5"): {
-			tage = 22;
-			break;
 
-		}
-		case ("M1"): {
-			tage = 3;
-			break;
-		}
-		}
-		date = date.minusDays(tage);
-
-		String month = date.getMonthValue() < 10 ? "0" + date.getMonthValue() : "" + date.getMonthValue();
-		String day = date.getDayOfMonth() < 10 ? "0" + date.getDayOfMonth() : "" + date.getDayOfMonth();
-
-		return date.getYear() + "-" + month + "-" + day + "T00:00:00.000000000Z";
-
-		/*
-		 * durch API unterstützte Granularitäten S5 5 second candlesticks, minute
-		 * alignment S10 10 second candlesticks, minute alignment S15 15 second
-		 * candlesticks, minute alignment S30 30 second candlesticks, minute alignment
-		 * M1 1 minute candlesticks, minute alignment M2 2 minute candlesticks, hour
-		 * alignment M4 4 minute candlesticks, hour alignment M5 5 minute candlesticks,
-		 * hour alignment M10 10 minute candlesticks, hour alignment M15 15 minute
-		 * candlesticks, hour alignment M30 30 minute candlesticks, hour alignment H1 1
-		 * hour candlesticks, hour alignment H2 2 hour candlesticks, day alignment H3 3
-		 * hour candlesticks, day alignment H4 4 hour candlesticks, day alignment H6 6
-		 * hour candlesticks, day alignment H8 8 hour candlesticks, day alignment H12 12
-		 * hour candlesticks, day alignment D 1 day candlesticks, day alignment W 1 week
-		 * candlesticks, aligned to start of week M 1 month candlesticks, aligned to
-		 * first day of the month
-		 */
-	}
-
-	public JsonInstrumentsRoot getInstruments() {
-		// try {
-		// URL url = new URL(oanda + account + "instruments");
-		// HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		// connection.setRequestProperty("Authorization", token);
-
-		// String jsonString = getResponse(connection);
-		// JSON in Objekte mappen
-		// ObjectMapper om = new ObjectMapper();
-		return verwaltung.getJsonInstrumentsRoot();
-		// } catch (Exception e) {
-		// System.out.println(e.getMessage());
-		// }
-		// return null;
-	}
 
 	public Kpi getATR(String instrument, int periods, String granularity, JsonCandlesRoot jcr)
-
 	{
-
 		Kpi kpi = getInitialKpi(instrument, periods, granularity, jcr);
 		double betrag = 0;
 		double prev = 0;
@@ -532,4 +434,75 @@ private Verwaltung verwaltung;
 		}
 		return kpi;
 	}
+	
+	public Kpi getInitialKpi(String instrument, int periods, String granularity, JsonCandlesRoot jcr) {
+		Kpi kpi = new Kpi(instrument, granularity, periods);
+		kpi.root = jcr;
+		return kpi;
+	}
+	
+	public JsonCandlesRoot getCandles(String instrument, String granularity) {
+			JsonCandlesRoot root = verwaltung.getJsonCandlesRoot(4900, instrument, startDate(granularity), null, "M",
+				granularity);
+		return root;
+	}
+	
+	public JsonInstrumentsRoot getInstruments() {	
+		return verwaltung.getJsonInstrumentsRoot();	
+	}
+	
+	private String startDate(String granularity) {
+		LocalDate date = LocalDate.now();
+		int tage = 1;
+		switch (granularity) {
+		case ("D"): {
+			tage = 4900;// Samstags keine Werte--> ca. 1000 Candle
+			break;
+		}
+		case ("H1"): {
+			tage = 200;// ein Monat ca. 500 Candles
+			break;
+		}
+		case ("M15"): {
+			tage = 65;// 30/4
+			break;
+		}
+		case ("M10"): {
+			tage = 43;
+			break;
+		}
+		case ("M5"): {
+			tage = 22;
+			break;
+
+		}
+		case ("M1"): {
+			tage = 3;
+			break;
+		}
+		}
+		date = date.minusDays(tage);
+
+		String month = date.getMonthValue() < 10 ? "0" + date.getMonthValue() : "" + date.getMonthValue();
+		String day = date.getDayOfMonth() < 10 ? "0" + date.getDayOfMonth() : "" + date.getDayOfMonth();
+
+		return date.getYear() + "-" + month + "-" + day + "T00:00:00.000000000Z";
+
+		/*
+		 * durch API unterstützte Granularitäten S5 5 second candlesticks, minute
+		 * alignment S10 10 second candlesticks, minute alignment S15 15 second
+		 * candlesticks, minute alignment S30 30 second candlesticks, minute alignment
+		 * M1 1 minute candlesticks, minute alignment M2 2 minute candlesticks, hour
+		 * alignment M4 4 minute candlesticks, hour alignment M5 5 minute candlesticks,
+		 * hour alignment M10 10 minute candlesticks, hour alignment M15 15 minute
+		 * candlesticks, hour alignment M30 30 minute candlesticks, hour alignment H1 1
+		 * hour candlesticks, hour alignment H2 2 hour candlesticks, day alignment H3 3
+		 * hour candlesticks, day alignment H4 4 hour candlesticks, day alignment H6 6
+		 * hour candlesticks, day alignment H8 8 hour candlesticks, day alignment H12 12
+		 * hour candlesticks, day alignment D 1 day candlesticks, day alignment W 1 week
+		 * candlesticks, aligned to start of week M 1 month candlesticks, aligned to
+		 * first day of the month
+		 */
+	}
+
 }
