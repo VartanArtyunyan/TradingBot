@@ -21,17 +21,25 @@ public class Connection {
 	String token;
 	String urlPrefix;
 	String accId;
+	
+	boolean showLog;
+	
+	public void toggleLog() {
+		showLog = !showLog;
+	}
 
 	public Connection() {
 		urlPrefix = standartUrlString;
 		token = standartToken;
 		setAccountID();
+		showLog = false;
 	}
 
 	public Connection(String token) {
 		this.token = token;
 		urlPrefix = standartUrlString;
 		setAccountID();
+		showLog = false;
 	}
 	
 	private void setAccountID()	{
@@ -98,7 +106,7 @@ public class Connection {
 	}
 
 	public String placeOrder(String requestJson) {
-		System.out.println(requestJson);
+		if(showLog)System.out.println(requestJson);
 	
 		 return POST((urlPrefix + "/accounts/" + accId + "/orders"), requestJson);
 	}
@@ -180,7 +188,7 @@ public class Connection {
 			if(debug) {
 				 print(jsonString);
 			}
-		} else {
+		} else if(debug && status >= 299){
 			br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
 			while ((line = br.readLine()) != null) {
 				jsonString += line;
@@ -188,6 +196,7 @@ public class Connection {
 			br.close();
 			System.out.println("Fhelercode mit url: " + connection.getURL().getPath() + "ResponseCode: " + status);
 			 print(jsonString);
+			 jsonString = "";
 		}
 		
 		

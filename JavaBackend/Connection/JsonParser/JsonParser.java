@@ -274,7 +274,7 @@ public class JsonParser {
 		} else {
 			JsonObject orderCancel = new JsonObject("orderCancelTransaction");
 			reason = orderCancel.getValue("reason");
-			System.out.println("Reason(im JsonParser: " + reason);
+			
 			output = new OrderResponse(wasSuccessfull, wasReduced, id);
 			output.setReasonForRejection(reason);
 			return output;

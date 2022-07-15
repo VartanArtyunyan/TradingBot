@@ -11,11 +11,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import PyhtonConnection.CalenderOrder;
 import PyhtonConnection.WebInterfaceConnection;
 import Threads.StopableThread;
 import de.fhws.Softwareprojekt.Kpi;
 import positionen.Verwaltung;
 import positionen.trade;
+import randomTrader.RandomOrder;
 
 public class LogFileWriter extends StopableThread implements Closeable {
 
@@ -24,14 +26,12 @@ public class LogFileWriter extends StopableThread implements Closeable {
 	String path;
 	WebInterfaceConnection webInterfaceConnection;
 	Verwaltung verwaltung;
-	String header = "ID;Instrument;last Time;Kaufpreis;last Price;TakeProfit;StopLoss;macd;macdTrigger;parabolicSAR;ema200;SMA20;SMA50;ATR;RSI;VerkaufsPreis\n";
 
 	String notSoldText = "Noch Nicht Verkauft";
 
 	ArrayList<Integer> lastCheckedOpenTradeIDs;
 
 	ArrayList<Integer> loggedOpenTradeIDs;
-
 
 	public LogFileWriter(Verwaltung verwaltung, WebInterfaceConnection webInterfaceConnection) {
 		this.verwaltung = verwaltung;
@@ -81,10 +81,21 @@ public class LogFileWriter extends StopableThread implements Closeable {
 		return loggedOpenTradeIDs;
 	}
 
-	public void logSignal(String orderID,double buyingPrice, Kpi kpi) {
+	public void logSignal(String orderID, double buyingPrice, Kpi kpi) {
 		int id = Integer.parseInt(orderID);
 		addOpenTradeId(id);
-		webInterfaceConnection.pushSignal(id,buyingPrice, kpi);
+		webInterfaceConnection.pushSignal(id, buyingPrice, kpi);
+	}
+
+	public void logCalendar(int orderID, double buyingPrice, CalenderOrder calendarOrder) {
+		addOpenTradeId(orderID);
+		webInterfaceConnection.pushCalendar(orderID, buyingPrice, calendarOrder);
+	}
+
+	public void logRandom(int orderID, double buyingPrice, double stopLoss, double takeProfit,
+			RandomOrder randomOrder) {
+		addOpenTradeId(orderID);
+		webInterfaceConnection.pushRandom(orderID, buyingPrice, stopLoss, takeProfit, randomOrder);
 	}
 
 	public void addSellingPrice(int id, double realizedPL) {

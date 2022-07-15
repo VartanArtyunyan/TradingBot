@@ -37,7 +37,10 @@ public class StopableThread extends Thread {
 				calculateNextPeriodEnd();
 			}
 		}
-		onClose();
+	}
+	
+	public Boolean isRunning() {
+		return execute;
 	}
 
 	public void onStart() {
@@ -83,6 +86,7 @@ public class StopableThread extends Thread {
 
 	public void stopThread() {
 		execute = false;
+		onClose();
 	}
 
 }

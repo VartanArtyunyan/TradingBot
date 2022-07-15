@@ -41,6 +41,8 @@ public class Verwaltung extends StopableThread {
 	ArrayList<StopableThread> threads = new ArrayList<>();
 	ArrayList<InstrumentOrderIdPair> blockedSignals;
 
+	boolean showLog = false;
+
 	double einsatz;
 
 	public Verwaltung(ApiConnection connection, ApiConnection randomConnection, String granularity, double einsatz) {
@@ -51,40 +53,67 @@ public class Verwaltung extends StopableThread {
 		// gui = new GUI();
 		calenderConnection = new CalenderConnection(this, 12000);
 		webInterfaceConnection = new WebInterfaceConnection(12001);
-		//logFileWriter = new LogFileWriter(this, webInterfaceConnection);
+		logFileWriter = new LogFileWriter(this, webInterfaceConnection);
 		this.granularity = granularity;
 		signals = new Signals(this, logFileWriter, this.granularity);
 
 		rngTrader = new randomTrader(this);
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
-		//setTimer(1800000);
+		// setTimer(1800000);
 	}
 
 	@Override
 	public void onTick() {
 		Scanner scanner = new Scanner(System.in);
 		String input = "";
-		
+
 		input = scanner.nextLine();
 		input = input.toLowerCase();
 
-		if (input.equals("stop")) {
-			
+		switch (input) {
+		case "starttrading":
+			startThreads();
+			break;
+		case "stoptrading":
 			stopThreads();
-
-		} else {
+			break;
+		case "log":
+			toggleLog();
+			break;
+		case "trades":
+			printPositions();
+			break;
+		case "close":
+			stopThread();
+			break;
+		default:
 			System.out.println("ungültige eingabe");
+			break;
 		}
+
 	}
 
 	@Override
 	public void onTimer() {
-		//takeProfit();
+
+	}
+
+	@Override
+	public void onClose() {
+		stopThreads();
+		webInterfaceConnection.stopThread();
+		calenderConnection.stopThread();
+		logFileWriter.stopThread();
 	}
 
 	public JsonInstrumentsRoot getJsonInstrumentsRoot() {
 		return mainConnection.getJsonInstrumentsRoot();
+	}
+
+	public void toggleLog() {
+		showLog = !showLog;
+		mainConnection.toggleLog();
 	}
 
 	public ArrayList<Integer> getTradeIDs() {
@@ -93,44 +122,40 @@ public class Verwaltung extends StopableThread {
 		for (trade t : trades) {
 			output.add(t.getId());
 		}
-
 		return output;
 	}
 
 	public void startTraiding() {
-		// addThread(webInterfaceConnection);
-		addThread(calenderConnection);
-		addThread(signals);
-		// addThread(rngTrader);
-		addThread(this);
 		startThreads();
+	}
+
+	public void runBot() {
+		addThread(signals);
+		addThread(rngTrader);
+		webInterfaceConnection.start();
+		
+		calenderConnection.start();
+		logFileWriter.start();
+		this.start();
 	}
 
 	public void startThreads() {
 		for (StopableThread st : threads) {
-			st.start();
+			if (!st.isAlive())
+				st.start();
 		}
 	}
+	
 
+	@SuppressWarnings("deprecation")
 	public void stopThreads() {
 		for (StopableThread st : threads) {
-			st.stopThread();
+			st.stop();
 		}
 	}
 
 	public void addThread(StopableThread st) {
 		threads.add(st);
-	}
-
-	private void takeProfit() {
-		aktualisierePosition();
-
-		for (trade t : trades) {
-			double unrealizedPL = Double.parseDouble(t.unrealizedPL);
-			if (unrealizedPL > 1.0) {
-				closeWholePosition(t.getInstrument());
-			}
-		}
 	}
 
 	public boolean eneoughBalance() {
@@ -140,9 +165,11 @@ public class Verwaltung extends StopableThread {
 	}
 
 	public void pushUpcommingEvent(UpcomingEvent upcomingEvent) {
-		if(containsPosition(upcomingEvent.getInstrument())) return;
+		if (containsPosition(upcomingEvent.getInstrument()))
+			return;
 		if (!eneoughBalance()) {
-			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			if (showLog)
+				System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
 		}
 
@@ -157,18 +184,22 @@ public class Verwaltung extends StopableThread {
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * einsatz;
 		double units = buyingPrice / kurs;
-		System.out.print("News Trader pushed Upcoming Event -> Following request was send to Oanda: ");
+		if (showLog)
+			System.out.print("News Trader pushed Upcoming Event -> Following request was send to Oanda: ");
 		mainConnection.placeLimitOrder(upcomingEvent.getInstrument(), upcomingEvent.getTime(), units, upperLimit,
 				tsUpperLimt, lowerLimit);
-		System.out.print("                                                                          ");
+		if (showLog)
+			System.out.print("                                                                          ");
 		mainConnection.placeLimitOrder(upcomingEvent.getInstrument(), upcomingEvent.getTime(), units * -1, lowerLimit,
 				tsLowerLimit, upperLimit);
-		System.out.println("\n");
+		if (showLog)
+			System.out.println("\n");
 		aktualisierePosition();
 	}
 
 	public void pushCalenderOrder(CalenderOrder calenderOrder) {
-		if(containsPosition(calenderOrder.getInstrument())) return;
+		if (containsPosition(calenderOrder.getInstrument()))
+			return;
 		// {order:{instument:"EUR_UID",factor:2.3,volatility:2,longShort:true}}
 
 		double kurs = getKurs(calenderOrder.getInstrument());
@@ -193,23 +224,29 @@ public class Verwaltung extends StopableThread {
 			stopLoss = (stopLoss + tsAbweichung) * kurs;
 			units *= -1;
 		}
-		System.out.print("News Trader pushed Order -> Following request was send to Oanda: ");
+		if (showLog)
+			System.out.print("News Trader pushed Order -> Following request was send to Oanda: ");
 		OrderResponse order = mainConnection.placeOrder(calenderOrder.getInstrument(), units, takeProfit, stopLoss);
 
 		if (order.wasSuccesfull()) {
-			webInterfaceConnection.pushCalendar(order.getOrderID(), buyingPrice, calenderOrder);
-		} else
-			System.out.println(
-					"Unfortunatly this Order was rejected, Oanda says the reason is: " + order.getReasonForRejection());
+			logFileWriter.logCalendar(order.getOrderID(), buyingPrice, calenderOrder);
+		} else {
+			if (showLog) {
+				System.out.println("Unfortunatly this Order was rejected, Oanda says the reason is: "
+						+ order.getReasonForRejection());
 
-		System.out.println("\n");
+				System.out.println("\n");
+			}
+		}
 		aktualisierePosition();
+
 	}
 
 	public void pushOrder(Order order) {
 
 		if (!eneoughBalance()) {
-			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			if (showLog)
+				System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
 		}
 
@@ -218,17 +255,21 @@ public class Verwaltung extends StopableThread {
 		double buyingPrice = curBalance * factor * order.getFaktor();
 		double kurs = mainConnection.getKurs(order.getInstrument());
 		double units = buyingPrice / kurs;
-		System.out.print("Something pushed an Order Manualy -> Following request was send to Oanda: ");
+		if (showLog)
+			System.out.print("Something pushed an Order Manualy -> Following request was send to Oanda: ");
 		OrderResponse orderResponse = mainConnection.placeOrder(order.getInstrument(), units);
 
 		if (orderResponse.wasSuccesfull()) {
 
-		} else
-			System.out.println("Unfortunatly this Order was rejected, Oanda says the reason is: "
-					+ orderResponse.getReasonForRejection());
-
+		} else {
+			if (showLog)
+				System.out.println("Unfortunatly this Order was rejected, Oanda says the reason is: "
+						+ orderResponse.getReasonForRejection());
+		}
 		aktualisierePosition();
-		System.out.println("\n");
+		if (showLog)
+			System.out.println("\n");
+
 	}
 
 	public void pushSignal(Kpi kpi) {
@@ -238,7 +279,8 @@ public class Verwaltung extends StopableThread {
 			return;
 
 		if (!eneoughBalance()) {
-			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			if (showLog)
+				System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
 		}
 
@@ -250,16 +292,20 @@ public class Verwaltung extends StopableThread {
 		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
 		double units = buyingPrice / kpi.getUnitPrice(new KpiCalculator(this));
 
-		System.out.print("Signal has been detected -> Following request was send to Oanda: ");
+		if (showLog)
+			System.out.print("Signal has been detected -> Following request was send to Oanda: ");
 		OrderResponse order = mainConnection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
 
 		if (order.wasSuccesfull()) {
 			blockSignal(kpi.getInstrument(), kpi.getSignalTyp(), order.getOrderID());
 			webInterfaceConnection.pushSignal(order.getOrderID(), buyingPrice, kpi);
-		} else
-			System.out.println(
-					"Unfortunatly this Order was rejected, Oanda says the reason is: " + order.getReasonForRejection());
-		System.out.println("\n");
+		} else {
+			if (showLog)
+				System.out.println("Unfortunatly this Order was rejected, Oanda says the reason is: "
+						+ order.getReasonForRejection());
+			if (showLog)
+				System.out.println("\n");
+		}
 		aktualisierePosition();
 
 	}
@@ -282,24 +328,27 @@ public class Verwaltung extends StopableThread {
 		double takeProfit = kurs * (randomOrder.isLong() ? upperBorder : lowerBorder);
 		double stopLoss = kurs * (randomOrder.isShort() ? upperBorder : lowerBorder);
 
-		System.out
-				.print("RandomTrader decidet randomly that its time to trade -> Following request was send to Oanda: ");
+		if (showLog)
+			System.out.print(
+					"RandomTrader decidet randomly that its time to trade -> Following request was send to Oanda: ");
 		OrderResponse order = mainConnection.placeOrder(randomOrder.getInstrument(), units, takeProfit, stopLoss);
 
 		if (order.wasSuccesfull()) {
 			webInterfaceConnection.pushRandom(order.getOrderID(), buyingPrice, stopLoss, takeProfit, randomOrder);
-		} else
+		} else if (showLog)
 			System.out.println(
 					"Unfortunatly this Order was rejected, Oanda says the reason is: " + order.getReasonForRejection());
 
-		System.out.println("\n");
+		if (showLog)
+			System.out.println("\n");
 		aktualisierePosition();
 	}
 
 	public void placeOrder(String instrument, double units, double takeProfit, double stopLoss) {
 
 		if (!eneoughBalance()) {
-			System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			if (showLog)
+				System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
 			return;
 		}
 
@@ -310,7 +359,7 @@ public class Verwaltung extends StopableThread {
 	}
 
 	private void blockSignal(String instrument, int signal, int id) {
-		InstrumentOrderIdPair iop = new InstrumentOrderIdPair(""+id, signal, instrument);
+		InstrumentOrderIdPair iop = new InstrumentOrderIdPair("" + id, signal, instrument);
 		if (!blockedSignalContainsSignal(instrument, signal))
 			blockedSignals.add(iop);
 
@@ -374,19 +423,6 @@ public class Verwaltung extends StopableThread {
 		positionen.add(a);
 	}
 
-	public void closeWholePosition(String i) {
-
-		mainConnection.closeWholePosition(i);
-
-		aktualisierePosition();
-	}
-
-	public void closePosition(String i, int anzahl) {
-		mainConnection.closePosition(i, anzahl);
-
-		aktualisierePosition();
-	}
-
 	public void aktualisierePosition() {
 		trades = mainConnection.getTrades();
 
@@ -441,7 +477,9 @@ public class Verwaltung extends StopableThread {
 		ArrayList<trade> output = new ArrayList<>();
 
 		for (Integer i : IDs) {
-			output.add(mainConnection.getTrade(i));
+			trade t = mainConnection.getTrade(i);
+			if (t != null)
+				output.add(t);
 		}
 
 		return output;
@@ -471,9 +509,15 @@ public class Verwaltung extends StopableThread {
 		return false;
 	}
 
+	public void printPositions() {
+		aktualisierePosition();
+		System.out.println(toString());
+	}
+
 	public String toString() {
 		String output = "";
 		output += "Positionen:";
+		output += positionen.size();
 		output += "\n";
 		for (position p : positionen) {
 			output += p;
@@ -481,6 +525,7 @@ public class Verwaltung extends StopableThread {
 		}
 		output += "\n";
 		output += "Trades:";
+		output += trades.size();
 		output += "\n";
 		for (trade t : trades) {
 			output += t;

@@ -71,7 +71,7 @@ public class CalenderConnection extends SocketConnection {
 			bw.flush();
 			System.out.println("NewsTrader connected at port: " + port);
 		} catch (IOException e) {
-			e.printStackTrace();
+			if(this.isRunning())e.printStackTrace();
 		}
 	}
 	
