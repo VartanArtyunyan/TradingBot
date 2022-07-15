@@ -15,11 +15,11 @@ class Signal(models.Model):
     stopLoss = models.FloatField()
     macd = models.FloatField()
     macdTriggered = models.FloatField()
-    parabolicSAR = models.FloatField()
-    ema = models.FloatField()
-    sma = models.FloatField()
-    atr = models.FloatField()
-    rsi = models.FloatField()
+    parabolicSAR14 = models.FloatField()
+    ema200 = models.FloatField()
+    sma20 = models.FloatField()
+    sma50 = models.FloatField()
+    atr14 = models.FloatField()
     realizedPL = models.FloatField(null=True, blank=True, default=None)
 
     def __getitem__(self):
@@ -80,4 +80,3 @@ class Random(models.Model):
 
     class Meta:
         ordering = ['id']
-
