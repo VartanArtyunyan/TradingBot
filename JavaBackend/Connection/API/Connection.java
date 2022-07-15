@@ -152,14 +152,14 @@ public class Connection {
 
 	}
 	
-	public void print(String input) {
+	private void print(String input) {
 		String[] sArray = input.split(",");
 		for (int i = 0; i < sArray.length; i++) {
 			System.out.println(sArray[i]);
 		}
 	}
 
-	public String getResponse(HttpURLConnection connection, boolean print) throws IOException {
+	private String getResponse(HttpURLConnection connection, boolean debug) throws IOException {
 		String jsonString = "";
 		
 		//System.out.println("Response wurde gstartet mit url: " + url.getPath());
@@ -177,7 +177,7 @@ public class Connection {
 				jsonString += line;
 			}
 			br.close();
-			if(print) {
+			if(debug) {
 				 print(jsonString);
 			}
 		} else {

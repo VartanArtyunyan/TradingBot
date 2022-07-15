@@ -12,12 +12,6 @@ public class JsonObject {
 		content = new HashMap<>();
 	}
 
-	public void addVar(String name, String inhalt) {
-		content.put(name, inhalt);
-	}
-	
-	
-	
 	
 	
 	
@@ -101,6 +95,7 @@ public class JsonObject {
 
 	}
 	 
+	 
 	public boolean contains(String input) {
 		return content.containsKey(input);
 	}
@@ -117,6 +112,8 @@ public class JsonObject {
 	public String getValue(String input) {
 		return content.get(input);
 	}
+	
+	
 
 
 

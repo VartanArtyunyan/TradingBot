@@ -36,13 +36,13 @@ public class JsonParser {
 		output.openObject("order");
 		output.addValue("type", "MARKET");
 		output.addValue("instrument", instrument);
-		output.addValue("units", Double.toString(round(units, 0)));
+		output.addValue("units", Double.toString(truncate(units, 0)));
 
 		output.openObject("takeProfitOnFill");
-		output.addValue("price", Double.toString(round(takeProfit, 3)));
+		output.addValue("price", Double.toString(truncate(takeProfit, 3)));
 		output.closeObject();
 		output.openObject("stopLossOnFill");
-		output.addValue("price", Double.toString(round(stopLoss, 3)));
+		output.addValue("price", Double.toString(truncate(stopLoss, 3)));
 		output.closeObject();
 		output.closeObject();
 
@@ -55,7 +55,7 @@ public class JsonParser {
 		output.openObject("order");
 		output.addValue("type", "MARKET");
 		output.addValue("instrument", instrument);
-		output.addValue("units", Double.toString(round(units, 0)));
+		output.addValue("units", Double.toString(truncate(units, 0)));
 		// output.addString("price", Double.toString(price));
 
 		output.closeObject();
@@ -71,22 +71,22 @@ public class JsonParser {
 		output.addValue("type", "LIMIT");
 		output.addValue("instrument", instrument);
 
-		output.addValue("units", Double.toString(round(units, 0)));
-		output.addValue("price", Double.toString(round(limit, 3)));
+		output.addValue("units", Double.toString(truncate(units, 0)));
+		output.addValue("price", Double.toString(truncate(limit, 3)));
 		output.addValue("gtdTime", cancleTime);
 
 		output.openObject("takeProfitOnFill");
-		output.addValue("price", Double.toString(round(takeProfit, 3)));
+		output.addValue("price", Double.toString(truncate(takeProfit, 3)));
 		output.closeObject();
 		output.openObject("stopLossOnFill");
-		output.addValue("price", Double.toString(round(stopLoss, 3)));
+		output.addValue("price", Double.toString(truncate(stopLoss, 3)));
 		output.closeObject();
 		output.closeObject();
 
 		return output.build();
 	}
 
-	public double round(double input, double places) {
+	private double truncate(double input, double places) {
 
 		double multiplicant = Math.pow(10, places);
 

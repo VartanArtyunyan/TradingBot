@@ -36,7 +36,6 @@ public class StopableThread extends Thread {
 				onTimer();
 				calculateNextPeriodEnd();
 			}
-			
 		}
 		onClose();
 	}
@@ -53,15 +52,11 @@ public class StopableThread extends Thread {
 
 	}
 
-
-	
 	public void onClose() {
 		
 	}
 
 	public void setTimer(long period) {
-		if (period < refreshTime)
-			return;
 		this.period = period;
 		nextPeriodEnd = System.currentTimeMillis() + period;
 		timerIsSet = true;
