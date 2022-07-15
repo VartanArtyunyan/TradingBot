@@ -18,7 +18,7 @@ public class ApiConnection {
 
 	public ApiConnection(Connection connection) {
 		jsonParser = new JsonParser();
-		connection = connection;
+		this.connection = connection;
 		candleCache = new CandleCache();
 
 	}

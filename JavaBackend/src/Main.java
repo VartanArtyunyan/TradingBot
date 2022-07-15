@@ -14,7 +14,14 @@ public class Main {
 	static double einsatz = 0.01;
 
 	public static void main(String[] args) {
+		
+		Connection con = new Connection();
+		ApiConnection connection = new ApiConnection(con);
+		
+		Verwaltung verwaltung = new Verwaltung(connection, connection, granularity, einsatz);
 
+		verwaltung.startTraiding();
+		/*
 		ConfigFileReader configFile = new ConfigFileReader("../config.txt");
 		
 
@@ -51,7 +58,7 @@ public class Main {
 			try{System.in.read();}
 			catch(Exception e){}
 
-		}
+		} */
 		
 	}
 }

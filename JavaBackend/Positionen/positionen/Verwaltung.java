@@ -20,6 +20,7 @@ import randomTrader.RandomOrder;
 import randomTrader.randomTrader;
 
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Map.Entry;
 
 import API.ApiConnection;
@@ -50,7 +51,7 @@ public class Verwaltung extends StopableThread {
 		// gui = new GUI();
 		calenderConnection = new CalenderConnection(this, 12000);
 		webInterfaceConnection = new WebInterfaceConnection(12001);
-		logFileWriter = new LogFileWriter(this, webInterfaceConnection);
+		//logFileWriter = new LogFileWriter(this, webInterfaceConnection);
 		this.granularity = granularity;
 		signals = new Signals(this, logFileWriter, this.granularity);
 
@@ -62,7 +63,19 @@ public class Verwaltung extends StopableThread {
 
 	@Override
 	public void onTick() {
+		Scanner scanner = new Scanner(System.in);
+		String input = "";
+		
+		input = scanner.nextLine();
+		input = input.toLowerCase();
 
+		if (input.equals("stop")) {
+			
+			stopThreads();
+
+		} else {
+			System.out.println("ungültige eingabe");
+		}
 	}
 
 	@Override
