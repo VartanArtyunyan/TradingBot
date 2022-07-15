@@ -114,7 +114,7 @@ public class ApiConnection {
 	}
 
 	private OrderResponse makeFailedOrderResponse() {
-		return new OrderResponse(false, false, "-1");
+		return new OrderResponse(false, false, -1);
 	}
 
 	
