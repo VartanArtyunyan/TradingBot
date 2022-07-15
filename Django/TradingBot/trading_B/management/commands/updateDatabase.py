@@ -65,9 +65,12 @@ def saveStuff():
                 d = vals["calendar"]["longShort"]
                 e = vals["calendar"]["name"]
                 f = vals["calendar"]["countryCode"]
-                g = vals["signal"]["realizedPL"]
+                g = vals["calendar"]["realizedPL"]
+                h = vals["calendar"]["buyingPrice"]
+                i = vals["calendar"]["time"]
+
                 req = Calendar(id=a, instrument=b, factor=c, longShort=d,
-                               name=e, countryCode=f, realizedPL=g)
+                               name=e, countryCode=f, realizedPL=g, buyingPrice=h, time=i)
                 req.save()
 
             if(val == "upcoming"):
@@ -77,9 +80,10 @@ def saveStuff():
                 d = vals["upcoming"]["time"]
                 e = vals["upcoming"]["name"]
                 f = vals["upcoming"]["countryCode"]
-                g = vals["signal"]["realizedPL"]
+                g = vals["upcoming"]["realizedPL"]
+                h = vals["upcoming"]["buyingPrice"]
                 req = Upcoming(id=a, instrument=b, volatility=c, time=d,
-                               name=e, countryCode=f, realizedPL=g)
+                               name=e, countryCode=f, realizedPL=g, buyingPrice=h)
                 req.save()
 
             if(val == "random"):
@@ -90,7 +94,7 @@ def saveStuff():
                 e = vals["random"]["takeProfit"]
                 f = vals["random"]["stopLoss"]
                 g = vals["random"]["sellingPrice"]
-                h = vals["signal"]["realizedPL"]
+                h = vals["random"]["realizedPL"]
                 req = Random(id=a, instrument=b, buyingPrice=c, time=d,
                              takeProfit=e, stopLoss=f, sellingPrice=g, realizedPL=h)
                 req.save()
