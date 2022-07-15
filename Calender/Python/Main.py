@@ -53,7 +53,7 @@ while(True):
 
 
     print("Finished all events for today")
-    print("Tt's time to sleep")
+    print("It's time to sleep")
     time.sleep(pause_timer())
 
 

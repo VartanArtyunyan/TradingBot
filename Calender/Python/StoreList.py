@@ -68,14 +68,16 @@ class StoreList:
         volatility = event["volatility"]
         core = None
         currency = event["currencyCode"]
+        eventName = event["name"]
+        country_code = event["countryCode"]
         
         if pre_string == "order":
             factor = Calculation.calculate(event)
             longShort = Calculation.longShort(event)
-            core = {"instrument":None,"volatility":volatility,"factor":factor, "longShort":longShort}
+            core = {"name":eventName,"countryCode":country_code,"instrument":None,"volatility":volatility,"factor":factor, "longShort":longShort}
         else:
             time = (Calculation.DateStringToObject(event["dateUtc"]) + datetime.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-            core = {"instrument":None,"volatility":volatility,"time":time}
+            core = {"name":eventName,"countryCode":country_code,"instrument":None,"volatility":volatility,"time":time}
         
         
         for instrument in self.list_pairs["instrumente"]:
