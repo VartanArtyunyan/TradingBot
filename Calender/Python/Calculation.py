@@ -4,7 +4,7 @@ import datetime
 
 FACTOR_VOTALITY_HIGH = 2.0
 FACTOR_VOTALITY_MEDIUM = 1.0
-longShort = True    #true bei long, false bei short
+#longShort = True    -> true bei long, false bei short
 
 #Nutzung im Faktor möglich
 POP_TRADING_PAIRS = ["EUR/USD", "USD/JPY", "GBP/USD", "AUD/USD", "USD/CAD", "USD/CNY", "USD/CHF", "USD/HKD", "EUR/GBP", "USD/KRW"]
