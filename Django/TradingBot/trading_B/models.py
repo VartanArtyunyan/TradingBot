@@ -12,7 +12,7 @@ class sd(models.Model):
 
 
 class Signal(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     instrument = models.CharField(max_length=10)
     lastTime = models.CharField(max_length=25)
     buyingPrice = models.FloatField()
@@ -26,6 +26,7 @@ class Signal(models.Model):
     sma = models.FloatField()
     atr = models.FloatField()
     rsi = models.FloatField()
+    realizedPL = models.FloatField(null=True, blank=True, default=None)
 
     def __getitem__(self):
         return self.id
@@ -34,40 +35,50 @@ class Signal(models.Model):
         ordering = ['id']
 
 
-""" class Calendar(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+class Calendar(models.Model):
+    id = models.AutoField(primary_key=True, editable=False)
     instrument = models.CharField(max_length=10)
-    rating = models.IntegerField()
+    factor = models.FloatField()
+    longShort = models.BooleanField()
+    name = models.CharField(max_length=100)
+    countryCode = models.CharField(max_length=10)
+    realizedPL = models.FloatField(null=True, blank=True, default=None)
 
-    def __str__(self):
+    def __getitem__(self):
         return self.id
 
     class Meta:
         ordering = ['id']
-
 
 
 class Upcoming(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     instrument = models.CharField(max_length=10)
-    rating = models.IntegerField()
+    volatility = models.CharField(max_length=10)
+    time = models.CharField(max_length=25)
+    name = models.CharField(max_length=100)
+    countryCode = models.CharField(max_length=10)
+    realizedPL = models.FloatField(null=True, blank=True, default=None)
 
-    def __str__(self):
+    def __getitem__(self):
         return self.id
 
     class Meta:
         ordering = ['id']
-
 
 
 class Random(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     instrument = models.CharField(max_length=10)
-    rating = models.IntegerField()
+    buyingPrice = models.FloatField()
+    time = models.CharField(max_length=25)
+    takeProfit = models.FloatField()
+    stopLoss = models.FloatField()
+    sellingPrice = models.FloatField()
+    realizedPL = models.FloatField(null=True, blank=True, default=None)
 
-    def __str__(self):
+    def __getitem__(self):
         return self.id
 
     class Meta:
         ordering = ['id']
- """

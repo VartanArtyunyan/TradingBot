@@ -4,6 +4,7 @@ import threading
 import sys
 import os
 
+
 def recv_msg():
     while True:
         recv_msg = s.recv(1024)
@@ -11,7 +12,7 @@ def recv_msg():
             sys.exit(0)
         recv_msg = recv_msg.decode()
         print(recv_msg)
-        f = open("../jsonData/basedata.json", "a")
+        f = open("../jsonData/basedata.txt", "a")
         f.write(recv_msg)
 
 
