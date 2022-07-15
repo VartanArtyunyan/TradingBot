@@ -184,7 +184,7 @@ public class Verwaltung extends StopableThread {
 		OrderResponse order = mainConnection.placeOrder(calenderOrder.getInstrument(), units, takeProfit, stopLoss);
 
 		if (order.wasSuccesfull()) {
-
+			webInterfaceConnection.pushCalendar(order.getOrderID(), buyingPrice, calenderOrder);
 		} else
 			System.out.println(
 					"Unfortunatly this Order was rejected, Oanda says the reason is: " + order.getReasonForRejection());
@@ -241,8 +241,8 @@ public class Verwaltung extends StopableThread {
 		OrderResponse order = mainConnection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
 
 		if (order.wasSuccesfull()) {
-			logFileWriter.logSignal(order.getOrderID(), buyingPrice, kpi);
 			blockSignal(kpi.getInstrument(), kpi.getSignalTyp(), order.getOrderID());
+			webInterfaceConnection.pushSignal(order.getOrderID(), buyingPrice, kpi);
 		} else
 			System.out.println(
 					"Unfortunatly this Order was rejected, Oanda says the reason is: " + order.getReasonForRejection());
@@ -274,7 +274,7 @@ public class Verwaltung extends StopableThread {
 		OrderResponse order = mainConnection.placeOrder(randomOrder.getInstrument(), units, takeProfit, stopLoss);
 
 		if (order.wasSuccesfull()) {
-
+			webInterfaceConnection.pushRandom(order.getOrderID(), buyingPrice, stopLoss, takeProfit, randomOrder);
 		} else
 			System.out.println(
 					"Unfortunatly this Order was rejected, Oanda says the reason is: " + order.getReasonForRejection());
@@ -296,8 +296,8 @@ public class Verwaltung extends StopableThread {
 
 	}
 
-	private void blockSignal(String instrument, int signal, String id) {
-		InstrumentOrderIdPair iop = new InstrumentOrderIdPair(id, signal, instrument);
+	private void blockSignal(String instrument, int signal, int id) {
+		InstrumentOrderIdPair iop = new InstrumentOrderIdPair(""+id, signal, instrument);
 		if (!blockedSignalContainsSignal(instrument, signal))
 			blockedSignals.add(iop);
 

@@ -4,10 +4,10 @@ public class OrderResponse {
 	
 	private boolean succesfull;
 	private boolean tradeReduced;
-	private String tradeID;
+	private int tradeID;
 	private String reasonForejection;
 
-	public OrderResponse(boolean succesfull, boolean tradeReduced, String orderID) {
+	public OrderResponse(boolean succesfull, boolean tradeReduced, int orderID) {
 		this.succesfull = succesfull;
 		this.tradeID = orderID;
 		this.tradeReduced = tradeReduced;
@@ -18,7 +18,7 @@ public class OrderResponse {
 		return succesfull;
 	}
 
-	public String getOrderID() {
+	public int getOrderID() {
 		return tradeID;
 	}
 	

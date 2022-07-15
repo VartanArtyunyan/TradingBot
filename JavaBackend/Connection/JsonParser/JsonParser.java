@@ -246,7 +246,7 @@ public class JsonParser {
 		JsonObject responseObject = new JsonObject(input);
 		boolean wasSuccessfull = !responseObject.contains("orderCancelTransaction");
 		boolean wasReduced = false;
-		String id = null;
+		int id = -1;
 		String reason = "";
 		if (!responseObject.contains("orderFillTransaction"))
 			wasSuccessfull = false;
@@ -258,10 +258,10 @@ public class JsonParser {
 
 			if (orderFillTransaction.contains("tradeOpened")) {
 				JsonObject tradeOpened = orderFillTransaction.getObject("tradeOpened");
-				id = tradeOpened.getValue("tradeID");
+				id =  Integer.parseInt(tradeOpened.getValue("tradeID"));
 			} else if (orderFillTransaction.contains("tradeReduced")) {
 				JsonObject tradeReduced = orderFillTransaction.getObject("tradeReduced");
-				id = tradeReduced.getValue("tradeID");
+				id = Integer.parseInt(tradeReduced.getValue("tradeID"));
 				wasReduced = true;
 			} else {
 				wasSuccessfull = false;
