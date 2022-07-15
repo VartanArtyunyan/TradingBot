@@ -16,9 +16,9 @@ public class ApiConnection {
 	JsonInstrumentsRoot availableInstruemts;
 	CandleCache candleCache;
 
-	public ApiConnection(Connection c) {
+	public ApiConnection(Connection connection) {
 		jsonParser = new JsonParser();
-		connection = c;
+		connection = connection;
 		candleCache = new CandleCache();
 
 	}

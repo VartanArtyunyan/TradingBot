@@ -15,9 +15,9 @@ public class JsonBuilder {
 		
 	}
 
-	public void addValue(String name, String string) {
-		if (inArray()) json += "\"" + string + "\",";
-		else json += "\"" + name + "\":\"" + string + "\",";
+	public void addValue(String name, String value) {
+		if (inArray()) json += "\"" + value + "\",";
+		else json += "\"" + name + "\":\"" + value + "\",";
 	}
 	
 	public void addValue(String name, double value) {
@@ -34,15 +34,15 @@ public class JsonBuilder {
 		if (inArray()) json +=  value + ",";
 		else json += "\"" + name + "\":" + value + ",";
 	}
-
+	
 	private void pushObject() {
 		stack.push(false);
 	}
-
+	
 	private void pushArray() {
 		stack.push(true);
 	}
-
+	
 	private boolean popObject() {
 		boolean output = !stack.peek();
 
