@@ -147,7 +147,7 @@ public class Verwaltung extends StopableThread {
 	}
 	
 
-	@SuppressWarnings("deprecation")
+	
 	public void stopThreads() {
 		for (StopableThread st : threads) {
 			st.stop();

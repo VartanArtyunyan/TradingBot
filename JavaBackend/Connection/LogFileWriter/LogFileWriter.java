@@ -129,7 +129,8 @@ public class LogFileWriter extends StopableThread implements Closeable {
 
 			loggedOpenTradeIDs = new ArrayList<>();
 			String input = br.readLine();
-			String[] ids = input.split(";");
+			String[] ids = new String[0];
+			if(input != null) ids = input.split(";");
 
 			for (int i = 0; i < ids.length; i++) {
 
@@ -137,7 +138,6 @@ public class LogFileWriter extends StopableThread implements Closeable {
 
 			}
 
-			br.close();
 
 		} catch (FileNotFoundException e) {
 			loggedOpenTradeIDs = new ArrayList<>();

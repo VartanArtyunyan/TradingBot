@@ -48,7 +48,12 @@ public class SocketConnection extends StopableThread {
 	public void onClose() {
 
 		try {
-			ss.close();
+			if(ss!=null)ss.close();
+			
+			if(connection!=null)connection.close();
+			
+			if(br!=null)br.close();
+			
 		} catch (IOException e) {
 		}
 	}

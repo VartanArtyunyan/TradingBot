@@ -22,6 +22,7 @@ public class CalenderConnection extends SocketConnection {
 	Verwaltung verwaltung;
 	String instrumente;
 	String input;
+	boolean isConnected;
 
 	public CalenderConnection(Verwaltung verwaltung, int port) {
 		super(port, "Warte auf Client für Event basiertes Trading",
@@ -42,7 +43,7 @@ public class CalenderConnection extends SocketConnection {
 	@Override
 	public void onTick() {
 		try {
-			if (br != null)
+			if (br != null && connection.isConnected() && ss.isBound())
 				input = br.readLine();
 			if (connection.isConnected() && input != null) {
 
@@ -56,7 +57,16 @@ public class CalenderConnection extends SocketConnection {
 			}
 			// verwaltung.pushOrder(makeOrder(s));
 		} catch (IOException e) {
-			e.printStackTrace();
+			if(isRunning())System.out.println("Lost connection to NewsTrader, waiting for reconnect ...");
+			try {
+				connection.close();
+				ss.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				if(this.isRunning())e1.printStackTrace();
+			}
+			
+			connectToNewsTrader();
 		}
 
 	}
