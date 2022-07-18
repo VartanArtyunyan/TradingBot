@@ -81,10 +81,10 @@ public class LogFileWriter extends StopableThread implements Closeable {
 		return loggedOpenTradeIDs;
 	}
 
-	public void logSignal(String orderID, double buyingPrice, Kpi kpi) {
-		int id = Integer.parseInt(orderID);
-		addOpenTradeId(id);
-		webInterfaceConnection.pushSignal(id, buyingPrice, kpi);
+	public void logSignal(int orderID, double buyingPrice, Kpi kpi) {
+		
+		addOpenTradeId(orderID);
+		webInterfaceConnection.pushSignal(orderID, buyingPrice, kpi);
 	}
 
 	public void logCalendar(int orderID, double buyingPrice, CalenderOrder calendarOrder) {

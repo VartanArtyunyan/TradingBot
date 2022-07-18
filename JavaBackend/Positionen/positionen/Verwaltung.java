@@ -61,6 +61,7 @@ public class Verwaltung extends StopableThread {
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
 		// setTimer(1800000);
+		
 	}
 
 	@Override
@@ -132,8 +133,8 @@ public class Verwaltung extends StopableThread {
 	public void runBot() {
 		addThread(signals);
 		addThread(rngTrader);
-		webInterfaceConnection.start();
 		
+		webInterfaceConnection.start();
 		calenderConnection.start();
 		logFileWriter.start();
 		this.start();
@@ -184,6 +185,8 @@ public class Verwaltung extends StopableThread {
 		double curBalance = mainConnection.getBalance();
 		double buyingPrice = curBalance * einsatz;
 		double units = buyingPrice / kurs;
+		
+		
 		if (showLog)
 			System.out.print("News Trader pushed Upcoming Event -> Following request was send to Oanda: ");
 		mainConnection.placeLimitOrder(upcomingEvent.getInstrument(), upcomingEvent.getTime(), units, upperLimit,
@@ -200,7 +203,12 @@ public class Verwaltung extends StopableThread {
 	public void pushCalenderOrder(CalenderOrder calenderOrder) {
 		if (containsPosition(calenderOrder.getInstrument()))
 			return;
-		// {order:{instument:"EUR_UID",factor:2.3,volatility:2,longShort:true}}
+		
+		if (!eneoughBalance()) {
+			if (showLog)
+				System.out.println("Kauf wurde aufgrund von zu niedrigem Kontostand nicht ausgeführt");
+			return;
+		}
 
 		double kurs = getKurs(calenderOrder.getInstrument());
 		double curBalance = mainConnection.getBalance();
@@ -292,20 +300,19 @@ public class Verwaltung extends StopableThread {
 		double buyingPrice = curBalance * factor * kpi.getSignalStrenght();
 		double units = buyingPrice / kpi.getUnitPrice(new KpiCalculator(this));
 
-		if (showLog)
-			System.out.print("Signal has been detected -> Following request was send to Oanda: ");
+		if (showLog) System.out.print("Signal has been detected -> Following request was send to Oanda: ");
 		OrderResponse order = mainConnection.placeOrder(kpi.instrument, units, kpi.getTakeProfit(), kpi.getStopLoss());
 
 		if (order.wasSuccesfull()) {
 			blockSignal(kpi.getInstrument(), kpi.getSignalTyp(), order.getOrderID());
-			webInterfaceConnection.pushSignal(order.getOrderID(), buyingPrice, kpi);
+			logFileWriter.logSignal(order.getOrderID(), buyingPrice, kpi);
 		} else {
 			if (showLog)
-				System.out.println("Unfortunatly this Order was rejected, Oanda says the reason is: "
-						+ order.getReasonForRejection());
+				System.out.println("Unfortunatly this Order was rejected, Oanda says the reason is: " + order.getReasonForRejection());
 			if (showLog)
 				System.out.println("\n");
 		}
+		
 		aktualisierePosition();
 
 	}
@@ -418,11 +425,11 @@ public class Verwaltung extends StopableThread {
 		addPosition(position1);
 
 	}
-
+	
 	private void addPosition(position a) {
 		positionen.add(a);
 	}
-
+	
 	public void aktualisierePosition() {
 		trades = mainConnection.getTrades();
 
@@ -441,7 +448,7 @@ public class Verwaltung extends StopableThread {
 		}
 		zusammenschluss();
 	}
-
+	
 	public void zusammenschluss() {
 
 		for (int i = 0; i < positionen.size(); i++) {

@@ -21,6 +21,9 @@ public class Main {
 		Verwaltung verwaltung = new Verwaltung(connection, connection, granularity, einsatz);
 
 		verwaltung.runBot();
+		
+		
+		
 		/*
 		ConfigFileReader configFile = new ConfigFileReader("../config.txt");
 		
