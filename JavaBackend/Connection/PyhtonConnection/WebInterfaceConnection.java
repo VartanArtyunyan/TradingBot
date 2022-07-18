@@ -110,6 +110,7 @@ public class WebInterfaceConnection extends SocketConnection {
 		message.openObject("update");
 		message.addValue("id", tradeID);
 		message.addValue("realizedPL", realizedPL);
+		message.closeObject();
 		
 		trySending(message.build());
 	}

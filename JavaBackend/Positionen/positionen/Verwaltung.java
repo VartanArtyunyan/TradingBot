@@ -38,7 +38,7 @@ public class Verwaltung extends StopableThread {
 	ArrayList<position> positionen;
 	ArrayList<trade> trades;
 	String granularity;
-	ArrayList<StopableThread> threads = new ArrayList<>();
+	ArrayList<StopableThread> threads;
 	ArrayList<InstrumentOrderIdPair> blockedSignals;
 
 	boolean showLog = false;
@@ -55,9 +55,7 @@ public class Verwaltung extends StopableThread {
 		webInterfaceConnection = new WebInterfaceConnection(12001);
 		logFileWriter = new LogFileWriter(this, webInterfaceConnection);
 		this.granularity = granularity;
-		signals = new Signals(this, logFileWriter, this.granularity);
-
-		rngTrader = new randomTrader(this);
+		
 		positionen = new ArrayList<position>();
 		trades = new ArrayList<trade>();
 		// setTimer(1800000);
@@ -131,19 +129,28 @@ public class Verwaltung extends StopableThread {
 	}
 
 	public void runBot() {
-		addThread(signals);
-		addThread(rngTrader);
 		
 		webInterfaceConnection.start();
 		calenderConnection.start();
 		logFileWriter.start();
 		this.start();
 	}
-
+	
+	public void updateThreads()
+	{
+		threads = new ArrayList<>();
+		signals = new Signals(this, logFileWriter, this.granularity);
+		rngTrader = new randomTrader(this);
+		
+		addThread(signals);
+		addThread(rngTrader);
+		
+	}
 	public void startThreads() {
+		updateThreads();
 		for (StopableThread st : threads) {
 			if (!st.isAlive())
-				st.start();
+				st.startThread();
 		}
 	}
 	
@@ -341,7 +348,7 @@ public class Verwaltung extends StopableThread {
 		OrderResponse order = mainConnection.placeOrder(randomOrder.getInstrument(), units, takeProfit, stopLoss);
 
 		if (order.wasSuccesfull()) {
-			webInterfaceConnection.pushRandom(order.getOrderID(), buyingPrice, stopLoss, takeProfit, randomOrder);
+			logFileWriter.logRandom(order.getOrderID(), buyingPrice, stopLoss, takeProfit, randomOrder);
 		} else if (showLog)
 			System.out.println(
 					"Unfortunatly this Order was rejected, Oanda says the reason is: " + order.getReasonForRejection());

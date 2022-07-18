@@ -74,15 +74,14 @@ public class LogFileWriter extends StopableThread implements Closeable {
 	}
 
 	private boolean tradeIsSold(trade t) {
-		return t.getRealizedPl() == 0;
+		return t.getRealizedPl() != 0;
 	}
 
 	private ArrayList<Integer> getMissingIDs() {
-		return loggedOpenTradeIDs;
+		return new ArrayList<>(loggedOpenTradeIDs);
 	}
 
 	public void logSignal(int orderID, double buyingPrice, Kpi kpi) {
-		
 		addOpenTradeId(orderID);
 		webInterfaceConnection.pushSignal(orderID, buyingPrice, kpi);
 	}

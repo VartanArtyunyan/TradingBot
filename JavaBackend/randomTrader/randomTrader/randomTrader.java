@@ -26,7 +26,7 @@ public class randomTrader extends StopableThread{
 	}
 	
 	public void caclulateNextBuy() {
-		long wait = (int) (Math.random()*600000);
+		long wait = (int) (Math.random()*6000);
 		setTimer(wait);
 	}
 	

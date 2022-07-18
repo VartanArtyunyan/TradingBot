@@ -73,7 +73,9 @@ public class trade {
 		output+= ", ";
 		output+= "price: " + price;
 		output+= ", ";
-		output+= "initialUnits: " + initialUnits;
+		output+= "unrealizedPL: " + unrealizedPL;
+		output+= ", ";
+		output+= "realizedPL: " + realizedPL;
 		
 		return output;
 	}
