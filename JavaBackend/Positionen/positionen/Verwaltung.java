@@ -38,7 +38,7 @@ public class Verwaltung extends StopableThread {
 	ArrayList<position> positionen;
 	ArrayList<trade> trades;
 	String granularity;
-	ArrayList<StopableThread> threads;
+	ArrayList<StopableThread> threads = new ArrayList<>();;
 	ArrayList<InstrumentOrderIdPair> blockedSignals;
 
 	boolean showLog = false;
@@ -529,11 +529,16 @@ public class Verwaltung extends StopableThread {
 	}
 
 	public String toString() {
+		
+		ArrayList<position>pcopy = new ArrayList<>(positionen);
+		ArrayList<trade> tcopy = new ArrayList<>(trades);
+		
+		
 		String output = "";
 		output += "Positionen:";
 		output += positionen.size();
 		output += "\n";
-		for (position p : positionen) {
+		for (position p : pcopy) {
 			output += p;
 			output += "\n";
 		}
@@ -541,7 +546,7 @@ public class Verwaltung extends StopableThread {
 		output += "Trades:";
 		output += trades.size();
 		output += "\n";
-		for (trade t : trades) {
+		for (trade t : tcopy) {
 			output += t;
 			output += "\n";
 		}

@@ -25,8 +25,8 @@ public class CalenderConnection extends SocketConnection {
 	boolean isConnected;
 
 	public CalenderConnection(Verwaltung verwaltung, int port) {
-		super(port, "Warte auf Client für Event basiertes Trading",
-				"Client für eventbasiertes Trading hat sich verbunden");
+		super(port, "waiting for NewsTrader to Connect ...",
+				"NewsTrader connected");
 		this.verwaltung = verwaltung;
 		instrumente = makeInstrumentJson(verwaltung.getJsonInstrumentsRoot());
 
@@ -34,7 +34,6 @@ public class CalenderConnection extends SocketConnection {
 
 	@Override
 	public void onStart() {
-
 		System.out.println("waiting for NewsTrader to Connect ...");
 		connectToNewsTrader();
 
@@ -42,6 +41,10 @@ public class CalenderConnection extends SocketConnection {
 
 	@Override
 	public void onTick() {
+		listenForMessage();
+	}
+	
+	private void listenForMessage() {
 		try {
 			if (br != null && connection.isConnected() && ss.isBound())
 				input = br.readLine();
@@ -68,7 +71,6 @@ public class CalenderConnection extends SocketConnection {
 			
 			connectToNewsTrader();
 		}
-
 	}
 
 	private void connectToNewsTrader() {
