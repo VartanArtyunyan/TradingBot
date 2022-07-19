@@ -95,7 +95,8 @@ public class Kpi implements Comparable<Kpi> {
 		return this.instrument.equals(input.instrument);
 
 	}
-
+	
+	//löschen von Kpi Werte, die nicht benötigt werden
 	public Kpi resetKpiElements(Kpi kpi, String... werte) {
 		for (String s : werte) {
 			if (s.compareTo("atr") == 0)
@@ -200,7 +201,7 @@ public class Kpi implements Comparable<Kpi> {
 	}
 
 	
-
+	//Runden-Funktionen für checkPrecision()
 	public double runden(double wert, int n) {
 		return ((Math.round(wert * Math.pow(10, n)) / Math.pow(10, n)));
 	}
@@ -227,7 +228,8 @@ public class Kpi implements Comparable<Kpi> {
 			return runden(lastPrice - 0.0005, 4);
 		}
 	}
-
+	
+	//Entscheidung, ob Stoploss mit ATR oder Standardmäßig berechnet wird
 	public double getStopLoss() {
 		if (useATRAsSLTP = true) {
 			if (isLong())
@@ -241,7 +243,7 @@ public class Kpi implements Comparable<Kpi> {
 				return getShortStopLoss();
 		}
 	}
-
+	//Entscheidung, ob Takeprofit mit ATR oder Standardmäßig berechnet wird
 	public double getTakeProfit() {
 		if (useATRAsSLTP = true) {
 
@@ -259,18 +261,7 @@ public class Kpi implements Comparable<Kpi> {
 		
 	}
 
-	// Muss bearbeitet werden
-	public double getLongStopLoss() { // soll n boolean übergeben werden & Multiplikator für ATR -> alles in Signals
-										// übergeben
-		// Hier muss mit der DisplayPrecision
-		/*
-		 * if(verkaufslimit==0) { double wert = lastPrice * 0.9990; return
-		 * checkPrecision(wert, false); } else if(verkaufslimit==1) return
-		 * getLongStopLossATR(1); else if(verkaufslimit==2) { double wert = lastPrice *
-		 * 0.9990;
-		 * 
-		 * return checkPrecision(wert, false); } return 0;
-		 */
+	public double getLongStopLoss() { 
 		double wert = lastPrice * 0.999999;
 		return checkPrecision(wert, false);
 	}
@@ -290,7 +281,6 @@ public class Kpi implements Comparable<Kpi> {
 		return checkPrecision(wert, false);
 	}
 
-//// Bis hierhin
 	public double convertIntegerATRInDouble(boolean plusMinus) {
 		// ATR dient hier als Stoploss-/Takeprofit-Wert
 		// Es wird der IntegerATR als String umgewandelt, um "0.00" davorzusetzen und zu
@@ -337,7 +327,7 @@ public class Kpi implements Comparable<Kpi> {
 		return checkPrecision(wert, false);
 	}
 
-//Hilfsmethode zur Ermittlung von StoppLosses und TakeProfits
+    //Hilfsmethode zur Ermittlung von StoppLosses und TakeProfits
 	public double checkPrecision(double wert, boolean aufrunden) {
 
 		if (instrument.contains("USD_THB") || instrument.contains("USD_INR")
