@@ -19,7 +19,8 @@
     {% block content %}
     {% for signals in sigs %}
     {% if signals.realizedPL is None %}
-    <div>Das Instrument {{ signals.instrument }} wurde um {{ signals.lastTime }} für {{ signals.buyingPrice }} gekauft.
+    <div>Das Instrument {{ signals.instrument }} wurde um {{ signals.lastTime }} für {{ signals.buyingPrice }} Euro
+      gekauft.
     </div>
     {% endif %} {% endfor %}
     {% endblock content %}
