@@ -99,7 +99,7 @@ public class JsonBuilder {
 		return stack.peek();
 	}
 
-	public void removeLastChar() {
+	private void removeLastChar() {
 		json = json.substring(0, json.length() - 1);
 	}
 

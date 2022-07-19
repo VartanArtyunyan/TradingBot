@@ -17,7 +17,7 @@ import de.fhws.Softwareprojekt.Kpi;
 import de.fhws.Softwareprojekt.KpiCalculator;
 import de.fhws.Softwareprojekt.Signals;
 import randomTrader.RandomOrder;
-import randomTrader.randomTrader;
+import randomTrader.RandomTrader;
 
 import java.util.HashSet;
 import java.util.Scanner;
@@ -28,13 +28,12 @@ import API.ApiConnection;
 public class Verwaltung extends StopableThread {
 
 	ApiConnection mainConnection;
-	ApiConnection randomConnection;
 	GUI gui;
 	LogFileWriter logFileWriter;
 	Signals signals;
 	CalenderConnection calenderConnection;
 	WebInterfaceConnection webInterfaceConnection;
-	randomTrader rngTrader;
+	RandomTrader rngTrader;
 	ArrayList<position> positionen;
 	ArrayList<trade> trades;
 	String granularity;
@@ -45,7 +44,7 @@ public class Verwaltung extends StopableThread {
 
 	double einsatz;
 
-	public Verwaltung(ApiConnection connection, ApiConnection randomConnection, String granularity, double einsatz) {
+	public Verwaltung(ApiConnection connection, String granularity, double einsatz) {
 
 		this.einsatz = einsatz;
 		this.mainConnection = connection;
@@ -140,7 +139,7 @@ public class Verwaltung extends StopableThread {
 	{
 		threads = new ArrayList<>();
 		signals = new Signals(this, logFileWriter, this.granularity);
-		rngTrader = new randomTrader(this);
+		rngTrader = new RandomTrader(this);
 		
 		addThread(signals);
 		addThread(rngTrader);

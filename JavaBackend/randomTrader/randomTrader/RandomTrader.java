@@ -5,11 +5,11 @@ import java.util.Date;
 import Threads.StopableThread;
 import positionen.Verwaltung;
 
-public class randomTrader extends StopableThread{
+public class RandomTrader extends StopableThread{
 	
 	Verwaltung verwaltung;
 	
-	public randomTrader(Verwaltung verwaltung) {
+	public RandomTrader(Verwaltung verwaltung) {
 		this.verwaltung = verwaltung;
 		caclulateNextBuy();
 	}
