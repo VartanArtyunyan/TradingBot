@@ -1,8 +1,20 @@
 from calendar import c
 from django.db import models
 import uuid
+from django.utils.timezone import now
 
 # Create your models here.
+
+
+class Balance(models.Model):
+    value = models.FloatField()
+    time = models.DateTimeField(default=now, blank=True)
+
+    def __getitem__(self):
+        return self.id
+
+    class Meta:
+        ordering = ['id']
 
 
 class Signal(models.Model):
@@ -21,6 +33,7 @@ class Signal(models.Model):
     sma50 = models.FloatField()
     atr14 = models.FloatField()
     realizedPL = models.FloatField(null=True, blank=True, default=None)
+    typ = models.CharField(max_length=10)
 
     def __getitem__(self):
         return self.id
@@ -38,8 +51,8 @@ class Calendar(models.Model):
     name = models.CharField(max_length=100)
     countryCode = models.CharField(max_length=10)
     realizedPL = models.FloatField(null=True, blank=True, default=None)
-    buyingPrice = models.FloatField()
-    time = models.DateField(auto_now=True, blank=True)
+    time = models.DateTimeField(default=now, blank=True)
+    typ = models.CharField(max_length=10)
 
     def __getitem__(self):
         return self.id
@@ -52,11 +65,12 @@ class Upcoming(models.Model):
     id = models.AutoField(primary_key=True, editable=False)
     instrument = models.CharField(max_length=10)
     volatility = models.CharField(max_length=10)
-    time = models.DateField(auto_now=True, blank=True)
+    time = models.DateTimeField(default=now, blank=True)
     name = models.CharField(max_length=100)
     countryCode = models.CharField(max_length=10)
     realizedPL = models.FloatField(null=True, blank=True, default=None)
     buyingPrice = models.FloatField()
+    typ = models.CharField(max_length=10)
 
     def __getitem__(self):
         return self.id
@@ -69,11 +83,11 @@ class Random(models.Model):
     id = models.AutoField(primary_key=True, editable=False)
     instrument = models.CharField(max_length=10)
     buyingPrice = models.FloatField()
-    time = models.DateField(auto_now=True, blank=True)
+    time = models.DateTimeField(default=now, blank=True)
     takeProfit = models.FloatField()
     stopLoss = models.FloatField()
-    sellingPrice = models.FloatField()
     realizedPL = models.FloatField(null=True, blank=True, default=None)
+    typ = models.CharField(max_length=10)
 
     def __getitem__(self):
         return self.id
