@@ -35,7 +35,7 @@ class StoreList:
                 
             
                 
-    def EventLoop(self):
+    def check_actual_events(self):
         pre_string = "order"
         for nextEvent in self.list_news:
             #print(nextEvent["name"])
@@ -47,7 +47,7 @@ class StoreList:
                 self.handleNextEvent(update, pre_string)
                 self.list_news.remove(nextEvent)
     
-    def upcoming_events(self):
+    def check_upcoming_events(self):
         pre_string = "upcoming"
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
@@ -98,8 +98,6 @@ class StoreList:
             self.client.send(sending_str)
 
 
-    def getData(self):
-            return self.list_news
 
 
 
