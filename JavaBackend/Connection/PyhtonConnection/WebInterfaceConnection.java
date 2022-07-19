@@ -9,7 +9,7 @@ import randomTrader.RandomOrder;
 public class WebInterfaceConnection extends SocketConnection {
 
 	public WebInterfaceConnection(int port) {
-		super(port, "Warte auf WebInterface", "WebInterface hat sich verbunden");
+		super(port, "Waiting for WebInterface to connect...", "WebInterface connected connected at Port:" + port);
 	}
 
 	private void sendMessage(String message) throws IOException {
@@ -110,6 +110,7 @@ public class WebInterfaceConnection extends SocketConnection {
 		message.openObject("update");
 		message.addValue("id", tradeID);
 		message.addValue("realizedPL", realizedPL);
+		message.closeObject();
 		
 		trySending(message.build());
 	}

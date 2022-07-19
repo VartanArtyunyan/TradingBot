@@ -35,7 +35,7 @@ class StoreList:
                 
             
                 
-    def EventLoop(self):
+    def check_actual_events(self):
         pre_string = "order"
         for nextEvent in self.list_news:
             #print(nextEvent["name"])
@@ -47,7 +47,7 @@ class StoreList:
                 self.handleNextEvent(update, pre_string)
                 self.list_news.remove(nextEvent)
     
-    def upcoming_events(self):
+    def check_upcoming_events(self):
         pre_string = "upcoming"
         for nextEvent in self.list_news:
             next_time =  Calculation.DateStringToObject(nextEvent["dateUtc"])
@@ -68,14 +68,16 @@ class StoreList:
         volatility = event["volatility"]
         core = None
         currency = event["currencyCode"]
+        eventName = event["name"]
+        country_code = event["countryCode"]
         
         if pre_string == "order":
             factor = Calculation.calculate(event)
             longShort = Calculation.longShort(event)
-            core = {"instrument":None,"volatility":volatility,"factor":factor, "longShort":longShort}
+            core = {"name":eventName,"countryCode":country_code,"instrument":None,"volatility":volatility,"factor":factor, "longShort":longShort}
         else:
             time = (Calculation.DateStringToObject(event["dateUtc"]) + datetime.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-            core = {"instrument":None,"volatility":volatility,"time":time}
+            core = {"name":eventName,"countryCode":country_code,"instrument":None,"volatility":volatility,"time":time}
         
         
         for instrument in self.list_pairs["instrumente"]:
@@ -96,8 +98,6 @@ class StoreList:
             self.client.send(sending_str)
 
 
-    def getData(self):
-            return self.list_news
 
 
 

@@ -68,7 +68,7 @@ public class ConfigFileReader {
 			}
 
 			for (Entry<String, String> s : output.entrySet()) {
-				bw.write(s.getKey() + "=" + s.getValue());
+				bw.write(s.getKey() + "=" + s.getValue() + "\n");
 			}
 
 		} catch (FileNotFoundException e) {

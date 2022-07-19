@@ -2,7 +2,7 @@ package Threads;
 
 //<<<<<<< HEAD:JavaBackend/Threads/Threads/stopableThread.java
 public class StopableThread extends Thread {
-
+	
 	boolean execute;
 	long period;
 	long nextPeriodEnd;
@@ -37,7 +37,10 @@ public class StopableThread extends Thread {
 				calculateNextPeriodEnd();
 			}
 		}
-		onClose();
+	}
+	
+	public Boolean isRunning() {
+		return execute;
 	}
 
 	public void onStart() {
@@ -58,7 +61,7 @@ public class StopableThread extends Thread {
 
 	public void setTimer(long period) {
 		this.period = period;
-		nextPeriodEnd = System.currentTimeMillis() + period;
+		//nextPeriodEnd = System.currentTimeMillis() + period;
 		timerIsSet = true;
 	}
 
@@ -80,9 +83,15 @@ public class StopableThread extends Thread {
 	private void setTickRate(int hz) {
 		refreshTime = hz;
 	}
-
+	
+	public void startThread() {
+		
+		this.start();
+	}
+	
 	public void stopThread() {
 		execute = false;
+		onClose();
 	}
 
 }

@@ -43,7 +43,8 @@ public class KpiTesting {
 			basicKpiList.add(werte.getBasisKpi(k, 200, "M15", werte.getCandles(k, "M15")));
 		});
 	}
-
+	
+	//Niklas Indikatoren Check Bereich
 	@Test
 	public void rsiTest() {
 		try {
@@ -51,7 +52,6 @@ public class KpiTesting {
 		} catch (Exception e) {
 			fail("Hätte keine Ausnahme feuern dürfen");
 		}
-
 	}
 
 	@Test
@@ -74,12 +74,10 @@ public class KpiTesting {
 		} catch (Exception e) {
 			fail("Hätte keine Ausnahme feuern duerfen");
 		}
-
 	}
 
 	@Test
 	public void parabiolicSarTest() {
-
 		int zaehlerUeberKurs = 0;
 		int zaehlerUnterKurs = 0;
 		for (Kpi k : currencies) {
@@ -93,26 +91,20 @@ public class KpiTesting {
 
 	}
 
-//Checken dass der macd 4 unter macdTriggert liegt
+//Checken, ob Long Positionen möglich sind
 	@Test
 	public void macdMacdsTriggertlongCheck() {
 		int hauptzaehler = 0;
-
 		for (Kpi k : currencies) {
 
 			int zaehler = 0;
 			for (int i = k.macds.size() - 6; i < k.macds.size(); i++) {
 				if (k.macdsTriggert.get(i - 8) > k.macds.get((i))) {
 					zaehler++;
-
 				}
-
 			}
-
 			hauptzaehler = zaehler == 6 ? hauptzaehler += 1 : hauptzaehler;
 		}
-
-		System.out.println(hauptzaehler);
 		if (hauptzaehler == 0)
 			fail("Keine Chance auf ein Long Signal in dem Durchlauf");
 	}
@@ -141,18 +133,14 @@ public class KpiTesting {
 //Beweisen das getBasicKpi zuverlässig in getAll aufgerufen wird.
 	@Test
 	public void getKpiCheck() {
-
 		int zaehler = 0;
 		for (Kpi k : currencies) {
 			for (Kpi l : basicKpiList) {
-
 				if (l.ema == k.ema && k.avg == l.avg)
-
 					zaehler++;
 			}
 		}
 		double zahl = (double) zaehler / currencies.size();
-		System.out.println(zahl);
 		if (zahl <= 0.2) {
 			fail("Die Zahl lautet" + zahl);
 		}
@@ -160,9 +148,7 @@ public class KpiTesting {
 
 	@Test
 	public void checkPerceicionTest() {
-
 		for (Kpi k : currencies) {
-
 			if (k.instrument.compareTo("USB_THB") == 0) {
 				assertTrue((k.checkPrecision(k.lastPrice, true) > k.lastPrice)
 						&& ((k.checkPrecision(k.lastPrice, true) - k.lastPrice < 0.001)));
@@ -175,24 +161,19 @@ public class KpiTesting {
 	@Test
 	public void smaTest() {
 		for (Kpi k : currencies) {
-
 			if (k.sma > k.lastPrice) {
 				assertFalse((k.sma > 1.05 * k.lastPrice));
-
 			}
 			if (k.sma < k.lastPrice)
 				assertFalse(k.lastPrice > 1.05 * k.sma);
 		}
-
 	}
 
 	@Test
 	public void atrTest() {
-
 		for (Kpi k : currencies) {
 			assertTrue(k.lastPrice > k.atr * 100);
 		}
-
 	}
 
 	@Test
@@ -221,9 +202,9 @@ public class KpiTesting {
 	}
 
 	@Test
-	public void kombiniereMACD_PSARTest() {
+	public void kombiniereMACDPSARTest() {
 		for (Kpi k : currencies) {
-			int ausgabe = Signals.kombiniereMACD_PSAR(k);
+			int ausgabe = Signals.kombiniereMACDPSAR(k);
 			assertTrue(ausgabe == 0 || ausgabe == 1 || ausgabe == -1);
 		}
 	}

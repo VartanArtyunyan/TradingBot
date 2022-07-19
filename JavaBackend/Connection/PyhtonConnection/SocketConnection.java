@@ -10,30 +10,26 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import Threads.StopableThread;
 
-public class SocketConnection extends StopableThread implements Closeable{
-	
-	
+public class SocketConnection extends StopableThread {
+
 	int port;
 	ServerSocket ss;
 	Socket connection;
 	BufferedReader br;
 	BufferedWriter bw;
-	
+
 	String preConnectionText;
 	String postConnectionText;
-	
-	
+
 	public SocketConnection(int port, String preConnectionText, String postConnectionText) {
-		
-		
+
 		this.port = port;
 		this.preConnectionText = preConnectionText;
 		this.postConnectionText = postConnectionText;
-	
-		
+
 	}
-	
-	@Override 
+
+	@Override
 	public void onStart() {
 		try {
 			ss = new ServerSocket(port);
@@ -42,22 +38,24 @@ public class SocketConnection extends StopableThread implements Closeable{
 			System.out.println(postConnectionText);
 			br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-			
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if(this.isRunning())e.printStackTrace();
 		}
 	}
-	
-	
 
-	
-	
-	
 	@Override
-	public void close() throws IOException {
-		br.close();
-		bw.close();
+	public void onClose() {
+
+		try {
+			if(ss!=null)ss.close();
+			
+			if(connection!=null)connection.close();
+			
+			if(br!=null)br.close();
+			
+		} catch (IOException e) {
+		}
 	}
 
 }

@@ -18,9 +18,13 @@ public class ApiConnection {
 
 	public ApiConnection(Connection connection) {
 		jsonParser = new JsonParser();
-		connection = connection;
+		this.connection = connection;
 		candleCache = new CandleCache();
 
+	}
+	
+	public void toggleLog() {
+		connection.toggleLog();
 	}
 
 	public ArrayList<trade> getTrades() {
@@ -37,8 +41,10 @@ public class ApiConnection {
 	public trade getTrade(int id) {
 		String apiResponseString = connection.getTrade(id);
 
-		System.out.println(apiResponseString);
-
+		
+		if(apiResponseString == "") return null;
+		
+		
 		return jsonParser.convertAPIStringToTrade(apiResponseString);
 	}
 
@@ -109,7 +115,9 @@ public class ApiConnection {
 				stopLoss); //
 
 		String responseJson = connection.placeOrder(orderJson);
-
+		
+		//System.out.println(responseJson);
+		
 		// return jsonParser.makeOrderResponseFromJson(responseJson);
 	}
 
@@ -124,14 +132,6 @@ public class ApiConnection {
 		String accountJson = connection.getAccount();
 
 		return jsonParser.getBalanceFromAccountJson(accountJson);
-
-	}
-
-	public void closePosition(String instrument, int anzahl) {
-
-	}
-
-	public void closeWholePosition(String instrument) {
 
 	}
 

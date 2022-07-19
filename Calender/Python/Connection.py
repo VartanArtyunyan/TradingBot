@@ -72,13 +72,8 @@ def start():
 def checkEvent(event):
     
     id = event["id"]
-    #id = "f879e41a-12d2-4d35-8213-6fb9ebb207a0"
-    #eventId = "39da71dd-6a75-4669-adbf-36819ba1089a"
     URL = f"https://calendar-api.fxstreet.com/de/api/v1/eventDates/{id}"
     
-
-    #aktuell = FALSE
-    #while not aktuell:
    
     s = handleConnection(URL)
     jsonEvent = json.loads(s)

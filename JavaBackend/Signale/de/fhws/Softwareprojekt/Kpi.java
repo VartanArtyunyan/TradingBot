@@ -15,7 +15,7 @@ public class Kpi implements Comparable<Kpi> {
 		this.granularity = granularity;
 
 	}
-	
+	//werden für die Klasse Signals benötigt
 	int signalTyp;
 	
 	int ATRMulitiplierSL = 2;
@@ -25,6 +25,7 @@ public class Kpi implements Comparable<Kpi> {
 	double signalStrenght = 1;
 	JsonCandlesRoot root;
 	boolean useATRAsSLTP = false;
+	
 	// Konstruktor
 	public String instrument;
 	public String granularity;
