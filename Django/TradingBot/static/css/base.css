@@ -41,7 +41,7 @@ h2 {
 }
 
 h4 {
-  color: #c5fdf9;
+  color: #edfaf7;
   font-size: 25px;
   margin: 4px;
   margin-top: 20px;
@@ -194,24 +194,31 @@ h4 {
 
 /* Live-Demo Section */
 .first-live {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto auto;
+      grid-template-columns: auto auto;
+  padding: 10px;
+}
+
+.first-live div {
+  margin-right: 20px;
+}
+
+/* General */
+.general {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  width: 60%;
-  -ms-flex-pack: distribute;
-      justify-content: space-around;
 }
 
-.first-live img {
-  margin-right: 60px;
-}
-
-.first-live ul {
-  list-style-type: none;
+.general-pic {
+  width: 950px;
+  height: auto;
 }
 
 .pic {
-  width: 500px;
+  width: 450px;
   height: auto;
 }
 
@@ -234,6 +241,7 @@ h4 {
 }
 
 .personen {
+  margin-top: -10px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -251,7 +259,7 @@ h4 {
 }
 
 .personen-liste {
-  margin: 5px 0px;
+  margin: 20px 0px;
 }
 
 .personen-liste div {

@@ -58,25 +58,35 @@
                 <div>
                     <div class="sections" id="Live-Demo">
                         <h2>Live Demo</h2>
-                        <div>
-                            <h4>Signalbasiert</h4>
+                        <div class="elements">
+                            {% block content %}
+                            <h4>General</h4>
+                            <div class="general">
+                                <img class="general-pic" src="data:image/png;base64, {{chart|safe}}" />
+                            </div>
                             <div class="first-live">
-                                {% block content %} {% if chart %}
-
-                                <img class="pic first-pic" src="data:image/png;base64,
-                                                                              {{chart|safe}}" />
-                                {% endif %} {% endblock content %}
-                                <div>
-                                    <ul>
-                                        <li>Aktueller Bestand:</li>
-                                        <li>Veränderung letzte Woche:</li>
-                                        <li>Höchster gesamter Wert:</li>
-                                        <li>Niedrigster gesamter Wert:</li>
-                                        <li>Ursprünglicher Wert:</li>
-                                    </ul>
+                                <div class="signal">
+                                    <h4>Signal</h4>
+                                    <a href="/signal"><img class="pic first-pic"
+                                            src="data:image/png;base64, {{chart|safe}}" /></a>
+                                </div>
+                                <div class="calendar">
+                                    <h4>Calendar</h4>
+                                    <a href="/calendar"><img class="pic first-pic"
+                                            src="data:image/png;base64,{{chart|safe}}" /></a>
+                                </div>
+                                <div class="upcoming">
+                                    <h4>Upcoming</h4>
+                                    <a href="/upcoming"><img class="pic first-pic"
+                                            src="data:image/png;base64,{{chart|safe}}" /></a>
+                                </div>
+                                <div class="random">
+                                    <h4>Random</h4>
+                                    <a href="/random"><img class="pic first-pic"
+                                            src="data:image/png;base64, {{chart|safe}}" /></a>
                                 </div>
                             </div>
-                            <!-- <div class="pic second-pic"></div> -->
+                            {% endblock content %}
                         </div>
                     </div>
                 </div>
