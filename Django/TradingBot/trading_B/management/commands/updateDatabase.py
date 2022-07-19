@@ -13,12 +13,17 @@ import json
 
 fileIsEmpty = False
 
+""" Checkt ob die basedata datei leer ist """
+
 
 def fileEmpty():
     if os.path.getsize('jsonData/basedata.txt') == 0:
         return True
     else:
         return False
+
+
+""" Liest die Daten aus der basedata datei  """
 
 
 def read():
@@ -33,6 +38,9 @@ def read():
         y = json.dumps([json.loads(JSON_STRING) for JSON_STRING in arr])
         json_object = (json.loads(y))
         return json_object
+
+
+""" Speichert und Updated die Daten in der Datenbank  """
 
 
 def saveStuff():
@@ -131,6 +139,9 @@ def saveStuff():
                         Random_ID.save()
                     except:
                         print("Error occured, please investigate")
+
+
+""" Leert die basedata datei  """
 
 
 def removeFileContent():

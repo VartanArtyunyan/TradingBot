@@ -5,6 +5,8 @@ import requests
 from trading_B.api import defs
 import json
 
+""" Speichert die Daten ueber den aktuellen Kontostand in der Datenbank """
+
 
 def saveBalance():
     session = requests.Session()

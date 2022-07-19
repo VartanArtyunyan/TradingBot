@@ -28,11 +28,13 @@ body {
 }
 
 h2,
-h3,
-a {
+h3 {
   color: wheat;
 }
 
+a {
+  color: white;
+}
 h2 {
   font-size: 40px;
   padding-top: 20px;
@@ -111,7 +113,8 @@ h4 {
 /* Lower  */
 
 .outside {
-  width: 100%;
+  width: 80%;
+  margin-left: 10%;
   display: flex;
   justify-content: center;
 }
@@ -165,6 +168,7 @@ h4 {
 .about-inner {
   margin: 50px 0px;
   div {
+    font-size: 30px;
     color: rgb(255, 255, 255);
   }
 }
@@ -185,13 +189,31 @@ h4 {
 }
 
 .general-pic {
-  width: 950px;
+  width: 600px;
   height: auto;
 }
 
 .pic {
   width: 450px;
   height: auto;
+}
+
+.Werte {
+  display: flex;
+  color: white;
+  font-size: 20px;
+  margin: 5px;
+}
+
+.link-zu-seiten {
+  display: flex;
+  list-style-type: none;
+  li {
+    color: white;
+    margin-right: 10px;
+    font-size: 20px;
+    text-decoration: none;
+  }
 }
 
 /* Sections General */
@@ -208,21 +230,19 @@ h4 {
   margin-top: -10px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   list-style-type: none;
 }
 
 .personen-liste {
-  margin: 20px 0px;
+  margin: 10px 0px;
+  .p-left {
+    font-size: 30px;
+    margin: 15px 0px 5px -10px;
+  }
   div {
+    font-size: 20px;
     color: rgb(255, 255, 255);
   }
-}
-
-.p-left {
-  font-size: 20px;
-  margin: 20px 0px 5px -10px;
 }
 
 hr {

@@ -14,8 +14,16 @@
 <body>
   <div class="outer">
     <h1>Signale</h1>
-    <div class="allgemeines"></div>
-    <div class="offene">Offene Positionen</div>
+    <h2 class="offene">Offene Positionen</h2>
+    <p>(Falls ein minus vor einer Zahl steht wurde es short gekauft, bei keinem auf Long)</p>
+    {% block content %}
+    {% for signals in sigs %}
+    {% if signals.realizedPL is None %}
+    <div>Das Instrument {{ signals.instrument }} wurde um {{ signals.lastTime }} für {{ signals.buyingPrice }} Euro
+      gekauft.
+    </div>
+    {% endif %} {% endfor %}
+    {% endblock content %}
   </div>
 </body>
 

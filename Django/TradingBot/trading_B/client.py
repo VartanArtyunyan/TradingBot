@@ -4,6 +4,8 @@ import threading
 import sys
 import os
 
+""" Daten von der Java Seite erhalten und in der Datei basedate.txt abspeichern """
+
 
 def recv_msg():
     while True:

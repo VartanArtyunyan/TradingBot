@@ -1,0 +1,4 @@
+# Optionale Automatisierung der speicherung der Daten
+
+5 * * * * Django/TradingBot/manage.py updateDatabase
+0 8 * * * Django/TradingBot/manage.py updateBalance
