@@ -7,12 +7,11 @@ class Client:
     HOST = "localhost"
     PORT = 12000
     FORMAT = 'utf-8'
-    DISCONNECT_MESSAGE = "exit"
+
 
     ADDR = (HOST, PORT)
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #client.bind(HOST, PORT)
     client.connect(ADDR)
 
     def send(self, msg):
@@ -22,84 +21,9 @@ class Client:
         
 
     def read(self):
-        #input = None
-        #while input is None:
-            #print(input)
         input = self.client.recv(51200).decode(self.FORMAT)
         return input
 
-""" 
-class client(Thread):
-    def __init__(self, socket, address):
-        Thread.__init__(self)
-        self.sock = socket
-        self.addr = address
-        self.start()
-
-    def run(self):
-        while 1:
-            print('Client sent:', self.sock.recv(1024).decode())
-            self.sock.send(b'Oi you sent something to me') """
-
-
-
-
-
-
-
-
-""" connect = True
-while connect == True:
-    input_msg = ""
-    if input_msg is not "":
-        send(input_msg)
-        input_msg = ""
-    if(input_msg == DISCONNECT_MESSAGE):
-        send(DISCONNECT_MESSAGE)
-        connect = False
-
-    data = client.recv(51200).decode(FORMAT)
-    if data is not None:
-        read(data)
-    else: 
-        input_msg == DISCONNECT_MESSAGE
-        connect = False
-    print(data)
-
-print("[SYSTEM DISCONNECTED]")
-
-
-
-time.sleep(2000) """
-
-
-
-
-
-
-
-
-""" socketObject = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
-try:
-    socketObject.connect(("localhost", 12000))
-    receiveJsonData = socketObject.recv(51200)
-    print(receiveJsonData)
-    socketObject("okay")
-except socket.error as e:
-    print(str(e)) 
-
-time.sleep(2000)
-
-def close():
-    socketObject.close()
-
-def getJson():
-    return receiveJsonData
-
-def buy(jsonData):
-    socketObject.sendall("{jsonData} + /n") 
- """
 
 
 
