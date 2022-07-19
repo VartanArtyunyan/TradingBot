@@ -50,7 +50,6 @@ public class Signals extends StopableThread {
 			Kpi kpi = e.getAll(instrument.name, "M15", 200, "sma", 20, "sma", 50, "atr", 14, "parabolicSAR",14, 0.02, 0.02,
 					0.2, "macd", 12, 26, 9,"rsi",14);
 			//für TP/SL-Entscheidung
-			boolean containsATR = false;
 			// nach kauf für 6 x granularität insturment sperren
 			if (signal0 | signal1) {
 				int r = kombiniereMACDEMAPSAR(kpi);
@@ -65,10 +64,8 @@ public class Signals extends StopableThread {
 					int s = kombiniereMACDPSAR(kpi);
 					if (s != 0) {
 						//sperrt ebenfalls signal 0 und 1 & signal 2 soll nur signal 2 sperren
-						//System.out.println(s);
 						kpi.signalStrenght = 0.5;
 						kpi.longShort = (s == 1) ? true : false;
-						//ausgabe("alles", kpi, instrument);
 						kpi.signalTyp = 1;
 						kpi = kpi.resetKpiElements(kpi, "atr", "sma", "sma50", "rsi", "ema");
 						verwaltung.pushSignal(kpi);
@@ -92,10 +89,8 @@ public class Signals extends StopableThread {
 			if (signal3) {
 				int u = kombiniereMACDSMA(kpi);
 				if (u != 0) {
-					//System.out.println(u);
 					kpi.signalStrenght = 0.5;
 					kpi.longShort = (u == 1) ? true : false;
-					// kpi.longShort = (u == 1) ? false : true;
 					kpi = kpi.resetKpiElements(kpi, "rsi", "atr", "parabolicSAR", "ema");
 					kpi.signalTyp = 3;
 					verwaltung.pushSignal(kpi);
@@ -132,12 +127,10 @@ public class Signals extends StopableThread {
 	public static int kombiniereMACDPSAR(Kpi kpi) {
 		if (pruefePerioden(kpi, "MACD", 6) == -1) {
 			if (pruefePSAR(kpi) == 1) {
-				// System.out.println("MACD_PSAR Long");
 				return 1;
 			}
 		} else if (pruefePerioden(kpi, "MACD", 6) == 1) {
 			if (pruefePSAR(kpi) == -1) {
-				// System.out.println("MACD_PSAR Short");
 				return -1;
 			}
 		}
@@ -161,21 +154,19 @@ public class Signals extends StopableThread {
 
 	public static int kombiniereMACDEMAPSAR(Kpi kpi) {
 		int rueckgabewert = 0;
-		if (pruefeEMA200(kpi) == 1) {
-			// 1. liegt Trend (= 200 EMA) über Kurs?
+		if (pruefeEMA200(kpi) == 1) {					// 1. liegt Trend (= 200 EMA) über Kurs?
 			if (pruefePerioden(kpi, "MACD", 5) == -1) { // 2. liegt MACD-Linie in den letzten 5 Perioden unter
-															// Signallinie?
-				if (pruefePSAR(kpi) == 1) { // 5. ist der PSAR-Wert unter dem Kurs?
+														// der Signallinie?
+				if (pruefePSAR(kpi) == 1) { 			// 3. ist der Kurs über dem PSAR-Wert?
 					rueckgabewert = 1;
 				}
 			}
 		}
 
-		else if (pruefeEMA200(kpi) == -1) {
-			// System.out.println("2.versuch"); // 1. liegt Trend unter Kurs?
-			if (pruefePerioden(kpi, "MACD", 5) == 1) { // 2. liegt MACD-Linie in den letzten 5 Perioden über
-															// Signallinie?
-				if (pruefePSAR(kpi) == -1) { // 5. ist der PSAR-Wert über dem Kurs?
+		else if (pruefeEMA200(kpi) == -1) {				// 1. liegt Trend unter Kurs?
+			if (pruefePerioden(kpi, "MACD", 5) == 1) { 	// 2. liegt MACD-Linie in den letzten 5 Perioden über
+														// Signallinie?
+				if (pruefePSAR(kpi) == -1) { 			// 3. ist der Kurs unter dem PSAR-Wert?
 					rueckgabewert = -1;
 				}
 			}

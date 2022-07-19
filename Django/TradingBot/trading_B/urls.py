@@ -3,5 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index),
-    path("trades", views.trades)
+    path("signal", views.signal),
+    path("calendar", views.calendar),
+    path("upcoming", views.upcoming),
+    path("random", views.random)
 ]

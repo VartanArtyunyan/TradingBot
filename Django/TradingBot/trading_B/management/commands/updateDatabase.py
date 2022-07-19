@@ -1,14 +1,15 @@
 from operator import ge
 import re
+from time import time
 from xmlrpc.client import boolean
 from django.core.management.base import BaseCommand
 from requests import request
-from trading_B.models import Signal, Calendar, Upcoming, Random
+from trading_B.models import Signal, Calendar, Upcoming, Random, Balance
 import json
 import jsonData
 import os
 from django.db import models
-
+import json
 
 fileIsEmpty = False
 
@@ -26,10 +27,10 @@ def read():
         lines = x.readlines()
         arr = []
         for line in lines:
-            arr.append(line.replace('\n', ''))
+            arr.append(line.rstrip('\n'))
+        arr[:] = [item for item in arr if item != '']
         x.close()
-        y = json.dumps([json.loads(JSON_STRING)
-                       for JSON_STRING in arr])
+        y = json.dumps([json.loads(JSON_STRING) for JSON_STRING in arr])
         json_object = (json.loads(y))
         return json_object
 
@@ -53,8 +54,9 @@ def saveStuff():
                 l = vals["signal"]["sma20"]
                 m = vals["signal"]["sma50"]
                 n = vals["signal"]["atr14"]
+                o = "signal"
                 req = Signal(id=a, instrument=b, lastTime=c, buyingPrice=d,
-                             lastPrice=e, takeProfit=f, stopLoss=g, macd=h, macdTriggered=i, parabolicSAR14=j, ema200=k, sma20=l, sma50=m, atr14=n)
+                             lastPrice=e, takeProfit=f, stopLoss=g, macd=h, macdTriggered=i, parabolicSAR14=j, ema200=k, sma20=l, sma50=m, atr14=n, typ=o)
                 req.save()
 
             if(val == "calendar"):
@@ -65,10 +67,10 @@ def saveStuff():
                 e = vals["calendar"]["name"]
                 f = vals["calendar"]["countryCode"]
                 h = vals["calendar"]["buyingPrice"]
-                i = vals["calendar"]["time"]
+                j = "calendar"
 
                 req = Calendar(id=a, instrument=b, factor=c, longShort=d,
-                               name=e, countryCode=f, buyingPrice=h, time=i)
+                               name=e, countryCode=f, buyingPrice=h, typ=j)
                 req.save()
 
             if(val == "upcoming"):
@@ -79,35 +81,34 @@ def saveStuff():
                 e = vals["upcoming"]["name"]
                 f = vals["upcoming"]["countryCode"]
                 h = vals["upcoming"]["buyingPrice"]
+                i = "upcoming"
+
                 req = Upcoming(id=a, instrument=b, volatility=c, time=d,
-                               name=e, countryCode=f, buyingPrice=h)
+                               name=e, countryCode=f, buyingPrice=h, typ=i)
                 req.save()
 
             if(val == "random"):
-                a = vals["random"]["id"]
                 b = vals["random"]["instrument"]
                 c = vals["random"]["buyingPrice"]
-                d = vals["random"]["time"]
                 e = vals["random"]["takeProfit"]
                 f = vals["random"]["stopLoss"]
-                g = vals["random"]["sellingPrice"]
-                req = Random(id=a, instrument=b, buyingPrice=c, time=d,
-                             takeProfit=e, stopLoss=f, sellingPrice=g)
+                h = "random"
+
+                req = Random(instrument=b, buyingPrice=c,
+                             takeProfit=e, stopLoss=f, typ=h)
                 req.save()
 
             if(val == "update"):
                 id = vals["update"]["id"]
-                typ = vals["update"]["type"]
                 pl = vals["update"]["realizedPL"]
-
-                if typ == "signal":
+                if Signal.objects.filter(pk=id).exists():
                     try:
                         Signal_ID = Signal.objects.get(pk=id)
                         Signal_ID.realizedPL = pl
                         Signal_ID.save()
                     except:
                         print("Error occured, please investigate")
-                if typ == "calendar":
+                if Calendar.objects.filter(pk=id).exists():
                     try:
                         Calender_ID = Calendar.objects.get(pk=id)
                         Calender_ID.realizedPL = pl
@@ -115,7 +116,7 @@ def saveStuff():
                     except:
                         print("Error occured, please investigate")
 
-                if typ == "upcoming":
+                if Upcoming.objects.filter(pk=id).exists():
                     try:
                         Upcoming_ID = Upcoming.objects.get(pk=id)
                         Upcoming_ID.realizedPL = pl
@@ -123,7 +124,7 @@ def saveStuff():
                     except:
                         print("Error occured, please investigate")
 
-                if typ == "random":
+                if Random.objects.filter(pk=id).exists():
                     try:
                         Random_ID = Random.objects.get(pk=id)
                         Random_ID.realizedPL = pl
@@ -139,7 +140,6 @@ def removeFileContent():
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        print("Command")
         fileIsEmpty = fileEmpty()
         if not fileIsEmpty:
             saveStuff()

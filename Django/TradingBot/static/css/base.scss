@@ -40,7 +40,7 @@ h2 {
 }
 
 h4 {
-  color: rgb(197, 253, 249);
+  color: rgb(237, 250, 247);
   font-size: 25px;
   margin: 4px;
   margin-top: 20px;
@@ -171,19 +171,26 @@ h4 {
 
 /* Live-Demo Section */
 .first-live {
-  display: flex;
-  width: 60%;
-  justify-content: space-around;
-  img {
-    margin-right: 60px;
-  }
-  ul {
-    list-style-type: none;
+  display: grid;
+  grid-template-columns: auto auto;
+  padding: 10px;
+  div {
+    margin-right: 20px;
   }
 }
 
+/* General */
+.general {
+  display: flex;
+}
+
+.general-pic {
+  width: 950px;
+  height: auto;
+}
+
 .pic {
-  width: 500px;
+  width: 450px;
   height: auto;
 }
 
@@ -197,10 +204,8 @@ h4 {
   padding: 0% 5%;
 }
 
-.last {
-}
-
 .personen {
+  margin-top: -10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -209,7 +214,7 @@ h4 {
 }
 
 .personen-liste {
-  margin: 5px 0px;
+  margin: 20px 0px;
   div {
     color: rgb(255, 255, 255);
   }
