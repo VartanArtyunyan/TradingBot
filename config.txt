@@ -1,10 +1,7 @@
-einsatz=0.01
-signal1=true
-signal2=true
-signal3=true
-signal4=true
-eventBased=true
-random=true
-randomAccountToken=f65f26fa3004b13f58f04794df17cc30-bf43fa11c4789a9146937ce2c36f553e
-
+signal0=true		//Hauptstrategie mit MACD, EMA und Parabolic SAR
+signal1=true		//Strategie mit MACD und Parabolic SAR
+signal2=true		//Strategie mit EMA und ATR
+signal3=true		//Strategie mit MACD und SMA
+eventBased=true	//eventbasiertes Trading
+random=true		//zufälliges Trading
 

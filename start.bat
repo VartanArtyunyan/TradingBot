@@ -4,3 +4,5 @@ cd "..\..\Calender\Python"
 start cmd.exe /C "python Main.py"
 cd "..\..\Django\TradingBot\trading_B
 start cmd.exe /C "python client.py"
+cd ".."
+start cmd.exe /C "python manage.py runserver"
