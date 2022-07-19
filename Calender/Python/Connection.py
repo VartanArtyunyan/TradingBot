@@ -28,9 +28,6 @@ HEADERS = {
 
 
 
-
-
-
 def handleConnection(URL):
 
     CONN.request("GET", URL, PAYLOAD, HEADERS)
