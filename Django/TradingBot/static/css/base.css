@@ -29,9 +29,12 @@ body {
 }
 
 h2,
-h3,
-a {
+h3 {
   color: wheat;
+}
+
+a {
+  color: white;
 }
 
 h2 {
@@ -126,7 +129,8 @@ h4 {
 
 /* Lower  */
 .outside {
-  width: 100%;
+  width: 80%;
+  margin-left: 10%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -189,6 +193,7 @@ h4 {
 }
 
 .about-inner div {
+  font-size: 30px;
   color: white;
 }
 
@@ -213,13 +218,36 @@ h4 {
 }
 
 .general-pic {
-  width: 950px;
+  width: 600px;
   height: auto;
 }
 
 .pic {
   width: 450px;
   height: auto;
+}
+
+.Werte {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  color: white;
+  font-size: 20px;
+  margin: 5px;
+}
+
+.link-zu-seiten {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  list-style-type: none;
+}
+
+.link-zu-seiten li {
+  color: white;
+  margin-right: 10px;
+  font-size: 20px;
+  text-decoration: none;
 }
 
 /* Sections General */
@@ -249,26 +277,21 @@ h4 {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
   list-style-type: none;
 }
 
 .personen-liste {
-  margin: 20px 0px;
+  margin: 10px 0px;
+}
+
+.personen-liste .p-left {
+  font-size: 30px;
+  margin: 15px 0px 5px -10px;
 }
 
 .personen-liste div {
-  color: white;
-}
-
-.p-left {
   font-size: 20px;
-  margin: 20px 0px 5px -10px;
+  color: white;
 }
 
 hr {

@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib import style
 from io import BytesIO
 
+""" Die Methoden werden genutzt um den Graphen abzubilden """
+
 
 def get_graph():
     buffer = BytesIO()
@@ -26,6 +28,5 @@ def get_plot(x, y):
     plt.gca().ticklabel_format(axis="y", useOffset=False)
     plt.gcf().autofmt_xdate()
     plt.plot()
-    plt.savefig('saved_figure.png')
     graph = get_graph()
     return graph

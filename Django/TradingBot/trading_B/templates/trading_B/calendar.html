@@ -12,7 +12,21 @@
 </head>
 
 <body>
-    <div>hello there</div>
+    <div class="outer">
+        <h1>Calendar</h1>
+        <h2 class="offene">Offene Positionen</h2>
+        <p>
+            (Falls ein minus vor einer Zahl steht wurde es short gekauft, bei keinem
+            auf Long)
+        </p>
+        {% block content %} {% for Calendar in sigs %}
+        {% if Calendar.realizedPL is None %}
+        <div>
+            Das Instrument {{ Calendar.instrument }} wurde um {{ Calendar.time }}
+            für {{ Calendar.buyingPrice }} gekauft.
+        </div>
+        {% endif %} {% endfor %} {% endblock content %}
+    </div>
 </body>
 
 </html>

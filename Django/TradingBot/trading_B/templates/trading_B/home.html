@@ -15,6 +15,7 @@
     <div class="outer-flt">
         <div class="blurred-nav"></div>
     </div>
+    <!-- Header Section -->
     <header class="heade">
         <nav class="inner-header">
             <h1 class="logo">Trading-Bot</h1>
@@ -36,55 +37,62 @@
             </div>
         </div>
         <div class="outside">
+            <div id="Bot-Beschreibung"></div>
             <div class="lower">
                 <!-- About-the-Bot Section -->
-                <div class="sections" id="Bot-Beschreibung">
+                <div class="sections">
                     <h2>Trading Bot Beschreibung</h2>
                     <div class="personen">
                         <div class="about-inner">
                             <div>
-                                Signalbasiert (ohne Machine Learning); signale Live berechnen
+                                Der Trading Bot ist auf das Forex Trading ausgerichtet. Es gibt insgesamt drei
+                                verschiedene Strategien aufgrund derer Währungen getradet werden.
                             </div>
-                            <div>
-                                Der Trading Bot ist auf das Forex Trading ausgerichtet. Käufe
-                                und Verkäufe werden automatisch getätigt, falls ein bestimmter
-                                Wert überschritten oder unterschritten wird.
-                            </div>
+                            <br>
+                            <div>Die erste besteht aus
+                                einer Kombination aus Trading Signalen.</div>
+                            <div>Die zweite kauft
+                                Währungen aufgrund von
+                                Nachrichten.</div>
+                            <div>Die dritte kauft Währungen rein zufällig.</div>
+                            <div id="Live-Demo"></div>
                         </div>
+
                     </div>
+
                 </div>
+
                 <hr />
                 <!-- Live-Demo Section -->
                 <div>
-                    <div class="sections" id="Live-Demo">
+                    <div class="sections">
                         <h2>Live Demo</h2>
                         <div class="elements">
                             {% block content %}
-                            <h4>General</h4>
+                            <h4></h4>
                             <div class="general">
-                                <img class="general-pic" src="data:image/png;base64, {{chart|safe}}" />
+                                {% for i in prs %}
+
+                                {% if i|length >= 100 %}
+                                <img class="general-pic" src="data:image/png;base64, {{i|safe}}" />
                             </div>
-                            <div class="first-live">
-                                <div class="signal">
-                                    <h4>Signal</h4>
-                                    <a href="/signal"><img class="pic first-pic"
-                                            src="data:image/png;base64, {{chart|safe}}" /></a>
+                            <div class="signal">
+                                <h4>Umsatz der einzelnen Positionen
+                                </h4>
+                                <div>
+                                    {% else %}
+                                    <div class="Werte">{{ i }}
+                                    </div>
+                                    {% endif %} {% endfor %}
                                 </div>
-                                <div class="calendar">
-                                    <h4>Calendar</h4>
-                                    <a href="/calendar"><img class="pic first-pic"
-                                            src="data:image/png;base64,{{chart|safe}}" /></a>
-                                </div>
-                                <div class="upcoming">
-                                    <h4>Upcoming</h4>
-                                    <a href="/upcoming"><img class="pic first-pic"
-                                            src="data:image/png;base64,{{chart|safe}}" /></a>
-                                </div>
-                                <div class="random">
-                                    <h4>Random</h4>
-                                    <a href="/random"><img class="pic first-pic"
-                                            src="data:image/png;base64, {{chart|safe}}" /></a>
-                                </div>
+
+                                <h4>Details zu den einzelnen Positionen</h4>
+                                <ul class="link-zu-seiten">
+                                    <li><a href="/signal">Signal</a></li>
+                                    <li><a href="/calendar">Calendar</a></li>
+                                    <li><a href="/upcoming">Upcoming</a></li>
+                                    <li><a href="/random">Random</a></li>
+                                </ul>
                             </div>
                             {% endblock content %}
                         </div>
@@ -98,49 +106,45 @@
                         <li class="personen-liste">
                             <div class="p-left">Daniel Harant</div>
                             <div>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam
-                                ad, vero et sed dolore iure eaque? Dicta.
+                                Daniel Harant hat sich um die Verwaltung gekümmert. Sie gewährleistet das fehlerfreie
+                                Zusammenarbeiten der einzelnen Softwarekomponenten.
                             </div>
                         </li>
                         <li class="personen-liste">
                             <div class="p-left">Niklas Meyer</div>
                             <div>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam
-                                ad, vero et sed dolore iure eaque? Dicta.
+                                Niklas Meyer hat sich um die Berechnung der Kennzahlen gekümmert. Die Kennzahlen kamen
+                                von der
+                                Oanda API und wurden aufgrund von mathematischen Formeln berechnet.
                             </div>
                         </li>
                         <li class="personen-liste">
                             <div class="p-left">Tim Heyder</div>
                             <div>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam
-                                ad, vero et sed dolore iure eaque? Dicta.
+                                Tim Heyder beschäftigte sich mit dem News Trading. Entscheidungen zum Kauf von Währungen
+                                werden hierbei aufgrund von aktuellen und erwartenden Nachrichten getroffen.
                             </div>
                         </li>
                         <li class="personen-liste">
                             <div class="p-left">Tom Schneider</div>
                             <div>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam
-                                ad, vero et sed dolore iure eaque? Dicta.
+                                Tom Schneider kümmerte sich darum Rückschlüsse zum Kauf von Währungen aus den von Niklas
+                                Meyer erhobenen Kennzahlen zu ziehen.
                             </div>
                         </li>
                         <li class="personen-liste">
                             <div class="p-left">Vartan Artyunyan</div>
                             <div>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam
-                                ad, vero et sed dolore iure eaque? Dicta.
+                                Vartan Artyunyan kümmerte sich um das technische Gerüst, die Kommunikation über die
+                                Oanda API und die Connection mit den Python Programmen.
                             </div>
                         </li>
                         <li class="personen-liste">
                             <div class="p-left">Samuel Rajabi</div>
                             <div>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                                porro, voluptatum eveniet vel fugiat dolorem dignissimos ipsam
-                                ad, vero et sed dolore iure eaque? Dicta.
+                                Samuel Rajabi arbeitete mit dem Framework Django. Hier werden die getradeten Währungen
+                                in einer Datenbank abgespeichert, das Projekt beschrieben und Daten, der Datenbank
+                                angezeigt und visualisiert.
                             </div>
                         </li>
                     </ul>
