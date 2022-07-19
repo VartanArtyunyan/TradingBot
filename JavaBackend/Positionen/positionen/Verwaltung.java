@@ -71,10 +71,10 @@ public class Verwaltung extends StopableThread {
 		input = input.toLowerCase();
 
 		switch (input) {
-		case "starttrading":
+		case "start":
 			startThreads();
 			break;
-		case "stoptrading":
+		case "pause":
 			stopThreads();
 			break;
 		case "log":
