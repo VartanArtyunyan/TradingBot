@@ -49,12 +49,10 @@ public class Signals extends StopableThread {
 		for (JsonInstrumentsInstrument instrument : instrumentsList) {
 			Kpi kpi = e.getAll(instrument.name, "M15", 200, "sma", 20, "sma", 50, "atr", 14, "parabolicSAR",14, 0.02, 0.02,
 					0.2, "macd", 12, 26, 9,"rsi",14);
-			//für TP/SL-Entscheidung
-			// nach kauf für 6 x granularität insturment sperren
 			if (signal0 | signal1) {
+				//Hauptstrategie
 				int r = kombiniereMACDEMAPSAR(kpi);
 				if (r != 0) {
-					// von der Methode zu überprüfen
 					kpi.longShort = (r == 1) ? true : false;
 					kpi = kpi.resetKpiElements(kpi, "atr", "sma", "sma50", "rsi");
 					if (signal0)
@@ -63,7 +61,6 @@ public class Signals extends StopableThread {
 				} else if (signal1) {
 					int s = kombiniereMACDPSAR(kpi);
 					if (s != 0) {
-						//sperrt ebenfalls signal 0 und 1 & signal 2 soll nur signal 2 sperren
 						kpi.signalStrenght = 0.5;
 						kpi.longShort = (s == 1) ? true : false;
 						kpi.signalTyp = 1;
@@ -74,7 +71,6 @@ public class Signals extends StopableThread {
 			}
 
 			if (signal2) {
-				// andere Kombiniere Methoden
 				int t = kombiniereEMA200ATR(kpi);
 				kpi.useATRAsSLTP = true;
 				if (t != 0) {
@@ -107,7 +103,8 @@ public class Signals extends StopableThread {
 				+ " SMA: " + kpi.sma + " (" + kpi.lastPrice + " min: " + kpi.min + " max: " + kpi.max + " avg: "
 				+ kpi.avg + "  " + kpi.firstTime + " - " + kpi.lastTime + ")"); 
 	}
-
+	
+	//Kombiniere Methoden
 	public static int kombiniereMACDSMA(Kpi kpi) {
 		// long
 		if (pruefePerioden(kpi, "MACD", 6) == -1) {
@@ -174,9 +171,8 @@ public class Signals extends StopableThread {
 		return rueckgabewert;
 	}
 
+	//Prüfe Methoden
 	public static int pruefeMACD(Kpi kpi) {
-		//Optionale Prüfung, ob MACD-Trend in den Vorperioden optimal ist
-
 		boolean verhaeltnisVorzeichenNegativ = false;
 		boolean verhaeltnisVorzeichenPositiv = false;
 		int rueckgabewert = 99;
@@ -236,8 +232,7 @@ public class Signals extends StopableThread {
 		// Ausgabewerte: 1 -> Kurs über Trend; -1 -> Kurs unter Trend; 0 -> Kurs gleich
 		// Preis
 		int rueckgabewert = 99;
-		// double faktorRundung = 1.001;
-		double ema200 = kpi.ema;// * faktorRundung;
+		double ema200 = kpi.ema;
 
 		double aktuellerKurs = kpi.lastPrice;
 
@@ -292,8 +287,6 @@ public class Signals extends StopableThread {
 			double trigger = kpi.macdsTriggert.get(kpi.macdsTriggert.size() - i);
 
 			double macdVerhaeltnis = macd - trigger;
-			//System.out.println(i + ". Durchlauf: Verhältnis " + macdVerhaeltnis);
-			// System.out.println(MACDAktuell);
 			// Wie ist das aktuelle Verhältnis?:
 			if (i == 1) {
 				if (macdVerhaeltnis < 0) {
@@ -414,8 +407,6 @@ public class Signals extends StopableThread {
 		for (int i = 2; i < anzahlVorperioden +2; i++) {
 			double sma20 = kpi.smaList.get(kpi.smaList.size() - i);
 		double sma50 = kpi.KpiList.get(0).smaList.get(kpi.KpiList.get(0).smaList.size() - i);
-		/*	Kpi kpi2=kpi.KpiList.get(0);
-			double sma50=kpi2.smaList.get(kpi2.smaList.size() - i);*/
 			if (sma20 < sma50) {
 				SMA20KleinerSMA50 = true;
 			} else if (sma20 > sma50) {
