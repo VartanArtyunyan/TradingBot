@@ -30,7 +30,6 @@ def getSignalPL():
     PL = 0
     for i in va:
         PL += i[0]
-    print(PL)
     return PL
 
 

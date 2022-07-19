@@ -1,155 +1,163 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Page Title</title>
     <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <link href="http://fonts.googleapis.com/css?family=Rokkitt:400,700|Lato:400,300" rel="stylesheet" type="text/css" />
+    <link
+      href="http://fonts.googleapis.com/css?family=Rokkitt:400,700|Lato:400,300"
+      rel="stylesheet"
+      type="text/css"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="outer-flt">
-        <div class="blurred-nav"></div>
+      <div class="blurred-nav"></div>
     </div>
     <!-- Header Section -->
     <header class="heade">
-        <nav class="inner-header">
-            <h1 class="logo">Trading-Bot</h1>
-            <ul class="main-nav">
-                <li><a href="#Home">Home</a></li>
-                <li><a href="#Bot-Beschreibung">Bot-Beschreibung</a></li>
-                <li><a href="#Live-Demo">Live-Demo</a></li>
-                <li><a href="#Beteiligte-Personen">Beteiligte-Personen</a></li>
-            </ul>
-        </nav>
+      <nav class="inner-header">
+        <h1 class="logo">Trading-Bot</h1>
+        <ul class="main-nav">
+          <li><a href="#Home">Home</a></li>
+          <li><a href="#Bot-Beschreibung">Bot-Beschreibung</a></li>
+          <li><a href="#Live-Demo">Live-Demo</a></li>
+          <li><a href="#Beteiligte-Personen">Beteiligte-Personen</a></li>
+        </ul>
+      </nav>
     </header>
     <main>
-        <!-- Home Section -->
-        <div id="Home">
-            <img class="back-img" src="../../static/pictures/TradingBot.jpg" alt="" />
-            <div class="text-pic">
-                <h1>Gruppe 03</h1>
-                <p>Signalbasiert (ohne Machine Learning); signale Live berechnen</p>
-            </div>
+      <!-- Home Section -->
+      <div id="Home">
+        <img
+          class="back-img"
+          src="../../static/pictures/TradingBot.jpg"
+          alt=""
+        />
+        <div class="text-pic">
+          <h1>Gruppe 03</h1>
+          <p>Signalbasiert (ohne Machine Learning); signale Live berechnen</p>
         </div>
-        <div class="outside">
-            <div id="Bot-Beschreibung"></div>
-            <div class="lower">
-                <!-- About-the-Bot Section -->
-                <div class="sections">
-                    <h2>Trading Bot Beschreibung</h2>
-                    <div class="personen">
-                        <div class="about-inner">
-                            <div>
-                                Der Trading Bot ist auf das Forex Trading ausgerichtet. Es gibt insgesamt drei
-                                verschiedene Strategien aufgrund derer Währungen getradet werden.
-                            </div>
-                            <br>
-                            <div>1. Kombination aus Trading Signalen.</div>
-                            <div>2. Währungshandel aufgrund von
-                                Nachrichten.</div>
-                            <div>3. Rein zufälliger Währungshandel.</div>
-                            <div id="Live-Demo"></div>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <hr />
-                <!-- Live-Demo Section -->
+      </div>
+      <div class="outside">
+        <div id="Bot-Beschreibung"></div>
+        <div class="lower">
+          <!-- About-the-Bot Section -->
+          <div class="sections">
+            <h2>Trading Bot Beschreibung</h2>
+            <div class="personen">
+              <div class="about-inner">
                 <div>
-                    <div class="sections">
-                        <h2>Live Demo</h2>
-                        <div class="elements">
-                            {% block content %}
-                            <h4></h4>
-                            <div class="general">
-                                {% for i in prs %}
-
-                                {% if i|length >= 100 %}
-                                <img class="general-pic" src="data:image/png;base64, {{i|safe}}" />
-                            </div>
-                            <div class="signal">
-                                <h4>Umsatz der einzelnen Positionen
-                                </h4>
-                                <div>
-                                    {% else %}
-                                    <div class="Werte">{{ i }}
-                                    </div>
-                                    {% endif %} {% endfor %}
-                                </div>
-
-                                <h4>Details zu den einzelnen Positionen</h4>
-                                <ul class="link-zu-seiten">
-                                    <li><a href="/signal">Signal</a></li>
-                                    <li><a href="/calendar">Calendar</a></li>
-                                    <li><a href="/upcoming">Upcoming</a></li>
-                                    <li><a href="/random">Random</a></li>
-                                </ul>
-                            </div>
-                            {% endblock content %}
-                        </div>
-                    </div>
+                  Der Trading Bot ist auf das Forex Trading ausgerichtet. Es
+                  gibt insgesamt drei verschiedene Strategien aufgrund derer
+                  Währungen getradet werden.
                 </div>
-                <hr />
-                <!-- About-Us Section -->
-                <div class="sections last" id="Beteiligte-Personen">
-                    <h2>Beteiligte Personen</h2>
-                    <ul class="personen">
-                        <li class="personen-liste">
-                            <div class="p-left">Daniel Harant</div>
-                            <div>
-                                Daniel Harant hat sich um die Verwaltung gekümmert. Sie gewährleistet das fehlerfreie
-                                Zusammenarbeiten der einzelnen Softwarekomponenten.
-                            </div>
-                        </li>
-                        <li class="personen-liste">
-                            <div class="p-left">Niklas Meyer</div>
-                            <div>
-                                Niklas Meyer hat sich um die Berechnung der Kennzahlen gekümmert. Die Kennzahlen kamen
-                                von der
-                                Oanda API und wurden aufgrund von mathematischen Formeln berechnet.
-                            </div>
-                        </li>
-                        <li class="personen-liste">
-                            <div class="p-left">Tim Heyder</div>
-                            <div>
-                                Tim Heyder beschäftigte sich mit dem News Trading. Entscheidungen zum Kauf von Währungen
-                                werden hierbei aufgrund von aktuellen und erwartenden Nachrichten getroffen.
-                            </div>
-                        </li>
-                        <li class="personen-liste">
-                            <div class="p-left">Tom Schneider</div>
-                            <div>
-                                Tom Schneider kümmerte sich darum Rückschlüsse zum Kauf von Währungen aus den von Niklas
-                                Meyer erhobenen Kennzahlen zu ziehen.
-                            </div>
-                        </li>
-                        <li class="personen-liste">
-                            <div class="p-left">Vartan Artyunyan</div>
-                            <div>
-                                Vartan Artyunyan kümmerte sich um das technische Gerüst, die Kommunikation über die
-                                Oanda API und die Connection mit den Python Programmen.
-                            </div>
-                        </li>
-                        <li class="personen-liste">
-                            <div class="p-left">Samuel Rajabi</div>
-                            <div>
-                                Samuel Rajabi arbeitete mit dem Framework Django. Hier werden die getradeten Währungen
-                                in einer Datenbank abgespeichert, das Projekt beschrieben und Daten, der Datenbank
-                                angezeigt und visualisiert.
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                <br />
+                <div>1. Kombination aus Trading Signalen.</div>
+                <div>2. Währungshandel aufgrund von Nachrichten.</div>
+                <div>3. Rein zufälliger Währungshandel.</div>
+                <div id="Live-Demo"></div>
+              </div>
             </div>
-        </div>
-    </main>
-</body>
+          </div>
 
+          <hr />
+          <!-- Live-Demo Section -->
+          <div>
+            <div class="sections">
+              <h2>Demo</h2>
+              <div class="elements">
+                {% block content %}
+                <h4></h4>
+                <div class="general">
+                  {% for i in prs %} {% if i|length >= 100 %}
+                  <img
+                    class="general-pic"
+                    src="data:image/png;base64, {{i|safe}}"
+                  />
+                </div>
+                <div class="signal">
+                  <h4>Umsatz der einzelnen Positionen</h4>
+                  <div>
+                    {% else %}
+                    <div class="Werte">{{ i }}</div>
+                    {% endif %} {% endfor %}
+                  </div>
+
+                  <h4>Details zu den einzelnen Positionen</h4>
+                  <ul class="link-zu-seiten">
+                    <li><a href="/signal">Signal</a></li>
+                    <li><a href="/calendar">Calendar</a></li>
+                    <li><a href="/upcoming">Upcoming</a></li>
+                    <li><a href="/random">Random</a></li>
+                  </ul>
+                </div>
+                {% endblock content %}
+              </div>
+            </div>
+          </div>
+          <hr />
+          <!-- About-Us Section -->
+          <div class="sections last" id="Beteiligte-Personen">
+            <h2>Beteiligte Personen</h2>
+            <ul class="personen">
+              <li class="personen-liste">
+                <div class="p-left">Daniel Harant</div>
+                <div>
+                  Daniel Harant hat sich um die Verwaltung gekümmert. Sie
+                  gewährleistet das fehlerfreie Zusammenarbeiten der einzelnen
+                  Softwarekomponenten.
+                </div>
+              </li>
+              <li class="personen-liste">
+                <div class="p-left">Niklas Meyer</div>
+                <div>
+                  Niklas Meyer hat sich um die Berechnung der Kennzahlen
+                  gekümmert. Die Kennzahlen kamen von der Oanda API und wurden
+                  aufgrund von mathematischen Formeln berechnet.
+                </div>
+              </li>
+              <li class="personen-liste">
+                <div class="p-left">Tim Heyder</div>
+                <div>
+                  Tim Heyder beschäftigte sich mit dem News Trading.
+                  Entscheidungen zum Kauf von Währungen werden hierbei aufgrund
+                  von aktuellen und erwartenden Nachrichten getroffen.
+                </div>
+              </li>
+              <li class="personen-liste">
+                <div class="p-left">Tom Schneider</div>
+                <div>
+                  Tom Schneider kümmerte sich darum Rückschlüsse zum Kauf von
+                  Währungen aus den von Niklas Meyer erhobenen Kennzahlen zu
+                  ziehen.
+                </div>
+              </li>
+              <li class="personen-liste">
+                <div class="p-left">Vartan Artyunyan</div>
+                <div>
+                  Vartan Artyunyan kümmerte sich um das technische Gerüst, die
+                  Kommunikation über die Oanda API und die Connection mit den
+                  Python Programmen.
+                </div>
+              </li>
+              <li class="personen-liste">
+                <div class="p-left">Samuel Rajabi</div>
+                <div>
+                  Samuel Rajabi arbeitete mit dem Framework Django. Hier werden
+                  die getradeten Währungen in einer Datenbank abgespeichert, das
+                  Projekt beschrieben und Daten, der Datenbank angezeigt und
+                  visualisiert.
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
